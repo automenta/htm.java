@@ -126,22 +126,22 @@ public class GeospatialCoordinateEncoderTest {
 		int[] encoding3 = encode(ge, new double[] { -122.229294, 37.486982 }, speed);
 		
 		double overlap1 = overlap(encoding1, encoding2);
-		double overlap2 = overlap(encoding1, encoding3);
-		
-		assertTrue(overlap1 > overlap2);
+		double overlap2 = overlap(encoding1, encoding3);		
+                
+		assertTrue(overlap1 + " greater than " + overlap2, overlap1 > overlap2);
 	}
 	
 	public int[] encode(CoordinateEncoder encoder, double[] coordinate, double radius) {
 		int[] output = new int[encoder.getWidth()];
-		encoder.encodeIntoArray(new Tuple(3, coordinate[0], coordinate[1], radius), output);
+		encoder.encodeIntoArray(new Tuple(coordinate[0], coordinate[1], radius), output);
 		return output;
 	}
 	
 	public double overlap(int[] sdr1, int[] sdr2) {
 		assertEquals(sdr1.length, sdr2.length);
-		int sum = ArrayUtils.sum(ArrayUtils.and(sdr1, sdr2));
+		long sum = ArrayUtils.sum(ArrayUtils.and(sdr1, sdr2));
 
-		return (double)sum / (double)ArrayUtils.sum(sdr1);
+		return ((double)sum) / ((double)ArrayUtils.sum(sdr1));
 	} 
 
 	@Test

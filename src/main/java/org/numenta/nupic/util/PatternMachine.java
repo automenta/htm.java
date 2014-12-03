@@ -77,7 +77,7 @@ public class PatternMachine {
         this.n = n;
         this.w = w;
         random = new MersenneTwister(new int[] { seed });
-        patterns = new LinkedHashMap<Integer, LinkedHashSet<Integer>>();
+        patterns = new LinkedHashMap<>();
         
         generate();
     }
@@ -91,7 +91,7 @@ public class PatternMachine {
             if(i == 80) {
                 System.out.println("at index 80");
             }
-            pattern = sample(new ArrayList<Integer>(xrange(0, n)), w);
+            pattern = sample(new ArrayList<>(xrange(0, n)), w);
             patterns.put(i, pattern);
         }
     }
@@ -114,7 +114,7 @@ public class PatternMachine {
      * @return
      */
     public LinkedHashSet<Integer> numbersForBit(int bit) {
-        LinkedHashSet<Integer> retVal = new LinkedHashSet<Integer>();
+        LinkedHashSet<Integer> retVal = new LinkedHashSet<>();
         for(Integer i : patterns.keySet()) {
             if(patterns.get(i).contains(bit)) {
                 retVal.add(i);
@@ -132,7 +132,7 @@ public class PatternMachine {
      * @return
      */
     public Map<Integer, Set<Integer>> numberMapForBits(Set<Integer> bits) {
-        Map<Integer, Set<Integer>> numberMap = new TreeMap<Integer, Set<Integer>>();
+        Map<Integer, Set<Integer>> numberMap = new TreeMap<>();
         
         for(Integer bit : bits) {
             Set<Integer> numbers = numbersForBit(bit);
@@ -140,7 +140,7 @@ public class PatternMachine {
             for(Integer number : numbers) {
                 Set<Integer> set = null;
                 if((set = numberMap.get(number)) == null) {
-                    numberMap.put(number, set = new HashSet<Integer>());
+                    numberMap.put(number, set = new HashSet<>());
                 }
                 set.add(bit);
             }
@@ -152,7 +152,7 @@ public class PatternMachine {
     public String prettyPrintPattern(Set<Integer> bits, int verbosity) {
         Map<Integer, Set<Integer>> numberMap = numberMapForBits(bits);
         String text = null;
-        List<String> numberList = new ArrayList<String>();
+        List<String> numberList = new ArrayList<>();
         LinkedHashMap<Integer, LinkedHashSet<Integer>> numberItems = sortedMap(numberMap);
         for(Integer number : numberItems.keySet()) {
             String numberText = null;
@@ -178,9 +178,9 @@ public class PatternMachine {
      * @return
      */
     public LinkedHashMap<Integer, LinkedHashSet<Integer>> sortedMap(final Map<Integer, Set<Integer>> map) {
-        LinkedHashMap<Integer, LinkedHashSet<Integer>> retVal = new LinkedHashMap<Integer, LinkedHashSet<Integer>>();
+        LinkedHashMap<Integer, LinkedHashSet<Integer>> retVal = new LinkedHashMap<>();
         
-        List<Integer> sortByKeys = new ArrayList<Integer>(map.keySet());
+        List<Integer> sortByKeys = new ArrayList<>(map.keySet());
         Collections.sort(sortByKeys, new Comparator<Integer>() {
             @Override public int compare(Integer arg0, Integer arg1) {
                 int len0 = map.get(arg0).size();
@@ -190,7 +190,7 @@ public class PatternMachine {
             
         });
         for(Integer key : sortByKeys) {
-            retVal.put(key, new LinkedHashSet<Integer>(map.get(key)));
+            retVal.put(key, new LinkedHashSet<>(map.get(key)));
         }
         
         return retVal;
@@ -206,7 +206,7 @@ public class PatternMachine {
      * @return
      */
     public LinkedHashSet<Integer> xrange(int start, int upperBounds) {
-        LinkedHashSet<Integer> retVal = new LinkedHashSet<Integer>();
+        LinkedHashSet<Integer> retVal = new LinkedHashSet<>();
         for(int i = start;i < upperBounds;i++) {
             retVal.add(i);
         }
@@ -222,7 +222,7 @@ public class PatternMachine {
      * @return
      */
     public LinkedHashSet<Integer> sample(List<Integer> population, int num) {
-        List<Integer> retVal = new ArrayList<Integer>();
+        List<Integer> retVal = new ArrayList<>();
         int len = population.size();
         for(int i = 0;i < num;i++) {
             int j = (int)(random.nextDouble() * (len - i));
@@ -231,7 +231,7 @@ public class PatternMachine {
         }
         
         Collections.sort(retVal);
-        return new LinkedHashSet<Integer>(retVal);
+        return new LinkedHashSet<>(retVal);
     }
     
     

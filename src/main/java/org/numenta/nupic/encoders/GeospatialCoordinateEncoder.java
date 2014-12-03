@@ -55,10 +55,10 @@ public class GeospatialCoordinateEncoder extends CoordinateEncoder {
 	 */
 	@Override
 	public List<Tuple> getDescription() {
-		List<Tuple> retVal = new ArrayList<Tuple>();
-		Tuple desc = new Tuple(2, "longitude", 0);
-		Tuple desc2 = new Tuple(2, "lattitude", 1);
-		Tuple desc3 = new Tuple(2, "speed", 2);
+		List<Tuple> retVal = new ArrayList<>();
+		Tuple desc = new Tuple("longitude", 0);
+		Tuple desc2 = new Tuple("lattitude", 1);
+		Tuple desc3 = new Tuple("speed", 2);
 		retVal.add(desc);
 		retVal.add(desc2);
 		retVal.add(desc3);
@@ -77,7 +77,7 @@ public class GeospatialCoordinateEncoder extends CoordinateEncoder {
 		int[] coordinate = coordinateForPosition(longitude, lattitude);
 		double radius = radiusForSpeed(speed);
 		
-		super.encodeIntoArray(new Tuple(2, coordinate, radius), output);
+		super.encodeIntoArray(new Tuple(coordinate, radius), output);
 	}
 	
 	public int[] coordinateForPosition(double longitude, double lattitude) {
@@ -194,7 +194,7 @@ public class GeospatialCoordinateEncoder extends CoordinateEncoder {
 		 */
 		public Builder scale(int scale) {
 			this.scale = scale;
-			return (Builder)this;
+			return this;
 		}
 		
 		/**
@@ -204,7 +204,7 @@ public class GeospatialCoordinateEncoder extends CoordinateEncoder {
 		 */
 		public Builder timestep(int timestep) {
 			this.timestep = timestep;
-			return (Builder)this;
+			return this;
 		}
 	}
 }

@@ -27,6 +27,7 @@ import gnu.trove.list.array.TDoubleArrayList;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -262,7 +263,7 @@ public class LogEncoder extends Encoder<Double> {
 		
 		Map<String, RangeList> fields = decodeResult.getFields();
 		
-		if (fields.keySet().size() == 0) {
+		if (fields.keySet().isEmpty()) {
 			return decodeResult;
 		}
 		
@@ -279,7 +280,7 @@ public class LogEncoder extends Encoder<Double> {
 		String desc = "";
 		int numRanges = outRanges.size();
 		for (int i = 0; i < numRanges; i++) {
-			MinMax minMax = (MinMax) outRanges.getRange(i);
+			MinMax minMax = outRanges.getRange(i);
 			if (minMax.min() != minMax.max()) {
 				desc += String.format("%.2f-%.2f", minMax.min(), minMax.max());
 			} else {
@@ -298,10 +299,10 @@ public class LogEncoder extends Encoder<Double> {
 			fieldName = getName();
 		}
 		
-		Map<String, RangeList> outFields = new HashMap<String, RangeList>();
+		Map<String, RangeList> outFields = new HashMap<>();
 		outFields.put(fieldName,  outRanges);
 		
-		List<String> fieldNames = new ArrayList<String>();
+		List<String> fieldNames = new ArrayList<>();
 		fieldNames.add(fieldName);
 		
 		return new DecodeResult(outFields, fieldNames);
@@ -316,11 +317,11 @@ public class LogEncoder extends Encoder<Double> {
 		// Need to re-create?	
 		if(bucketValues == null) {
 			List<S> scaledValues = encoder.getBucketValues(t);
-			bucketValues = new ArrayList<S>();
+			bucketValues = new ArrayList<>();
 			
 			for (S scaledValue : scaledValues) {
 				double value = Math.pow(10, (Double)scaledValue);
-				((List<Double>)bucketValues).add(value);
+				((Collection<Double>)bucketValues).add(value);
 			}
 		}
 		return (List<S>)bucketValues;

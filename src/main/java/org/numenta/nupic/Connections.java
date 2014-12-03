@@ -74,14 +74,14 @@ public class Connections {
     private int numColumns = 1; //product of column dimensions
     
     //Extra parameter settings
-    private double synPermMin = 0.0;
-    private double synPermMax = 1.0;
+    private final double synPermMin = 0.0;
+    private final double synPermMax = 1.0;
     private double synPermTrimThreshold = synPermActiveInc / 2.0;
     private int updatePeriod = 50;
-    private double initConnectedPct = 0.5;
+    private final double initConnectedPct = 0.5;
     
     //Internal state
-    private double version = 1.0;
+    private final double version = 1.0;
     public int iterationNum = 0;
     public int iterationLearnNum = 0;
     
@@ -123,7 +123,7 @@ public class Connections {
      */
     private int inhibitionRadius = 0;
     
-    private int proximalSynapseCounter = 0;
+    private final int proximalSynapseCounter = 0;
     
     private double[] overlapDutyCycles;
     private double[] activeDutyCycles;
@@ -134,13 +134,13 @@ public class Connections {
     
 	/////////////////////////////////////// Temporal Memory Vars ///////////////////////////////////////////
     
-    protected Set<Cell> activeCells = new LinkedHashSet<Cell>();
-    protected Set<Cell> winnerCells = new LinkedHashSet<Cell>();
-    protected Set<Cell> predictiveCells = new LinkedHashSet<Cell>();
-    protected Set<Column> predictedColumns = new LinkedHashSet<Column>();
-    protected Set<DistalDendrite> activeSegments = new LinkedHashSet<DistalDendrite>();
-    protected Set<DistalDendrite> learningSegments = new LinkedHashSet<DistalDendrite>();
-    protected Map<DistalDendrite, Set<Synapse>> activeSynapsesForSegment = new LinkedHashMap<DistalDendrite, Set<Synapse>>();
+    protected Set<Cell> activeCells = new LinkedHashSet<>();
+    protected Set<Cell> winnerCells = new LinkedHashSet<>();
+    protected Set<Cell> predictiveCells = new LinkedHashSet<>();
+    protected Set<Column> predictedColumns = new LinkedHashSet<>();
+    protected Set<DistalDendrite> activeSegments = new LinkedHashSet<>();
+    protected Set<DistalDendrite> learningSegments = new LinkedHashSet<>();
+    protected Map<DistalDendrite, Set<Synapse>> activeSynapsesForSegment = new LinkedHashMap<>();
     
     /** Total number of columns */
     protected int[] columnDimensions = new int[] { 2048 };
@@ -331,7 +331,7 @@ public class Connections {
      * @return
      */
     public LinkedHashSet<Cell> getCellSet(int[] cellIndexes) {
-    	LinkedHashSet<Cell> retVal = new LinkedHashSet<Cell>(cellIndexes.length);
+    	LinkedHashSet<Cell> retVal = new LinkedHashSet<>(cellIndexes.length);
     	for(int i = 0;i < cellIndexes.length;i++) {
     		retVal.add(cells[cellIndexes[i]]);
     	}
@@ -1189,12 +1189,12 @@ public class Connections {
         }
         
         if(receptorSynapses == null) {
-            receptorSynapses = new LinkedHashMap<Cell, Set<Synapse>>();
+            receptorSynapses = new LinkedHashMap<>();
         }
         
         Set<Synapse> retVal = null;
         if((retVal = receptorSynapses.get(cell)) == null) {
-            receptorSynapses.put(cell, retVal = new LinkedHashSet<Synapse>());
+            receptorSynapses.put(cell, retVal = new LinkedHashSet<>());
         }
         
         return retVal;
@@ -1212,12 +1212,12 @@ public class Connections {
         }
         
         if(segments == null) {
-            segments = new LinkedHashMap<Cell, List<DistalDendrite>>();
+            segments = new LinkedHashMap<>();
         }
         
         List<DistalDendrite> retVal = null;
         if((retVal = segments.get(cell)) == null) {
-            segments.put(cell, retVal = new ArrayList<DistalDendrite>());
+            segments.put(cell, retVal = new ArrayList<>());
         }
         
         return retVal;
@@ -1235,12 +1235,12 @@ public class Connections {
         }
         
         if(synapses == null) {
-            synapses = new LinkedHashMap<Segment, List<Synapse>>();
+            synapses = new LinkedHashMap<>();
         }
         
         List<Synapse> retVal = null;
         if((retVal = synapses.get(segment)) == null) {
-            synapses.put(segment, retVal = new ArrayList<Synapse>());
+            synapses.put(segment, retVal = new ArrayList<>());
         }
         
         return retVal;
@@ -1258,12 +1258,12 @@ public class Connections {
         }
     	
     	if(synapses == null) {
-            synapses = new LinkedHashMap<Segment, List<Synapse>>();
+            synapses = new LinkedHashMap<>();
         }
         
         List<Synapse> retVal = null;
         if((retVal = synapses.get(segment)) == null) {
-            synapses.put(segment, retVal = new ArrayList<Synapse>());
+            synapses.put(segment, retVal = new ArrayList<>());
         }
         
         return retVal;
@@ -1500,7 +1500,7 @@ public class Connections {
      * @return
      */
     public List<Integer> asCellIndexes(Collection<Cell> cells) {
-        List<Integer> ints = new ArrayList<Integer>();
+        List<Integer> ints = new ArrayList<>();
         for(Cell cell : cells) {
             ints.add(cell.getIndex());
         }
@@ -1516,7 +1516,7 @@ public class Connections {
      * @return
      */
     public List<Integer> asColumnIndexes(Collection<Column> columns) {
-        List<Integer> ints = new ArrayList<Integer>();
+        List<Integer> ints = new ArrayList<>();
         for(Column col : columns) {
             ints.add(col.getIndex());
         }
@@ -1530,7 +1530,7 @@ public class Connections {
      * @return	the specified list of cells
      */
     public List<Cell> asCellObjects(Collection<Integer> cells) {
-        List<Cell> objs = new ArrayList<Cell>();
+        List<Cell> objs = new ArrayList<>();
         for(int i : cells) {
             objs.add(this.cells[i]);
         }
@@ -1543,7 +1543,7 @@ public class Connections {
      * @return		the specified list of columns
      */
     public List<Column> asColumnObjects(Collection<Integer> cols) {
-        List<Column> objs = new ArrayList<Column>();
+        List<Column> objs = new ArrayList<>();
         for(int i : cols) {
             objs.add(this.memory.getObject(i));
         }
@@ -1558,7 +1558,7 @@ public class Connections {
      * @return				a set view of the specified columns
      */
     public LinkedHashSet<Column> getColumnSet(int[] indexes) {
-    	LinkedHashSet<Column> retVal = new LinkedHashSet<Column>();
+    	LinkedHashSet<Column> retVal = new LinkedHashSet<>();
     	for(int i = 0;i < indexes.length;i++) {
     		retVal.add(memory.getObject(indexes[i]));
     	}
@@ -1573,7 +1573,7 @@ public class Connections {
      * @return				a List view of the specified columns
      */
     public List<Column> getColumnList(int[] indexes) {
-    	List<Column> retVal = new ArrayList<Column>();
+    	List<Column> retVal = new ArrayList<>();
     	for(int i = 0;i < indexes.length;i++) {
     		retVal.add(memory.getObject(indexes[i]));
     	}

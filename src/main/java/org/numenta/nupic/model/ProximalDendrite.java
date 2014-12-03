@@ -27,7 +27,7 @@ import java.util.List;
 import org.numenta.nupic.Connections;
 
 public class ProximalDendrite extends Segment {
-	private int index;
+	private final int index;
 	private Pool pool;
 	
 	/**

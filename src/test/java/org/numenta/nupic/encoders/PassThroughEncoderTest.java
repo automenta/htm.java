@@ -27,6 +27,7 @@ import gnu.trove.list.TDoubleList;
 import gnu.trove.list.array.TDoubleArrayList;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import org.junit.*;
 import org.numenta.nupic.util.*;
@@ -43,7 +44,7 @@ public class PassThroughEncoderTest {
 		encoder.encodeIntoArray(bitmap, output);
 		assertEquals(ArrayUtils.sum(bitmap), ArrayUtils.sum(output));
 		Tuple decode = encoder.decode(output, null);
-		assertTrue(((HashMap<String, RangeList>) decode.get(0)).containsKey(encoder.getName()));
+		assertTrue(((Map<String, RangeList>) decode.get(0)).containsKey(encoder.getName()));
 	}
 
 	@Test

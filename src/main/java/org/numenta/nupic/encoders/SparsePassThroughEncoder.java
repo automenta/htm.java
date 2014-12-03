@@ -91,7 +91,7 @@ public class SparsePassThroughEncoder extends PassThroughEncoder {
 			//  vars here together with any sanity checking       //
 			////////////////////////////////////////////////////////
 			
-			((SparsePassThroughEncoder)encoder).init();
+			((PassThroughEncoder)encoder).init();
 			
 			return (SparsePassThroughEncoder)encoder;
 		}

@@ -338,17 +338,17 @@ public class CoordinateEncoderTest {
 	}
 	
 	public int[] encode(CoordinateEncoder encoder, int[] coordinate, double radius) {
-		int[] output = new int[encoder.getWidth()];
-		encoder.encodeIntoArray(new Tuple(2, coordinate, radius), output);
+		int[] output = new int[encoder.getWidth()];                
+		encoder.encodeIntoArray(new Tuple(coordinate, radius), output);
 		return output;
 	}
 	
 	public double overlap(int[] sdr1, int[] sdr2) {
 		assertEquals(sdr1.length, sdr2.length);
-		int sum = ArrayUtils.sum(ArrayUtils.and(sdr1, sdr2));
+		long sum = ArrayUtils.sum(ArrayUtils.and(sdr1, sdr2));
 //		System.out.println("and = " + Arrays.toString(ArrayUtils.where(ArrayUtils.and(sdr1, sdr2), ArrayUtils.WHERE_1)));
 //		System.out.println("sum = " + ArrayUtils.sum(ArrayUtils.and(sdr1, sdr2)));
-		return (double)sum / (double)ArrayUtils.sum(sdr1);
+		return ((double)sum) / ((double)ArrayUtils.sum(sdr1));
 	}
 	
 	public double[] overlapsForRelativeAreas(int n, int w, int[] initPosition, int initRadius, 

@@ -38,7 +38,7 @@ import java.util.Arrays;
  * @param <T>
  */
 public class SparseObjectMatrix<T> extends SparseMatrix<T> {
-    private TIntObjectMap<T> sparseMap = new TIntObjectHashMap<T>();
+    private TIntObjectMap<T> sparseMap = new TIntObjectHashMap<>();
     
     /**
      * Constructs a new {@code SparseObjectMatrix}
@@ -66,7 +66,7 @@ public class SparseObjectMatrix<T> extends SparseMatrix<T> {
     @SuppressWarnings("unchecked")
     @Override
     public <S extends SparseMatrix<T>> S set(int index, T object) {
-        sparseMap.put(index, (T)object);
+        sparseMap.put(index, object);
         return (S)this;
     }
     

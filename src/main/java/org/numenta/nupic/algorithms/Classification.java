@@ -16,7 +16,7 @@ public class Classification<T> {
 	private T[] actualValues;
 	
 	/** Map of step count -to- probabilities */
-	final TIntObjectMap<double[]> probabilities = new TIntObjectHashMap<double[]>();
+	final TIntObjectMap<double[]> probabilities = new TIntObjectHashMap<>();
 	
 	
 	/**
@@ -26,7 +26,7 @@ public class Classification<T> {
 	 * @return
 	 */
 	public T getActualValue(int bucketIndex) {
-		return (T)actualValues[bucketIndex];
+		return actualValues[bucketIndex];
 	}
 	
 	/**

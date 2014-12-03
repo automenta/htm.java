@@ -109,13 +109,13 @@ public class CLAClassifier implements Serializable {
      * bit in the activation pattern and nSteps is the number of steps of
      * prediction desired for that bit.
 	 */
-	Map<Tuple<Integer>, BitHistory> activeBitHistory = new HashMap<Tuple<Integer>, BitHistory>();
+	Map<Tuple<Integer>, BitHistory> activeBitHistory = new HashMap<>();
 	/**
 	 * This keeps track of the actual value to use for each bucket index. We
      * start with 1 bucket, no actual value so that the first infer has something
      * to return
 	 */
-	List<?> actualValues = new ArrayList<Object>();
+	List<?> actualValues = new ArrayList<>();
 	
 	String g_debugPrefix = "CLAClassifier";
 	
@@ -143,7 +143,7 @@ public class CLAClassifier implements Serializable {
 		this.actValueAlpha = actValueAlpha;
 		this.verbosity = verbosity;
 		actualValues.add(null);
-		patternNZHistory = new Deque<Tuple>(steps.size() + 1);
+		patternNZHistory = new Deque<>(steps.size() + 1);
 	}
 	
 	/**
@@ -180,7 +180,7 @@ public class CLAClassifier implements Serializable {
 	 */
 	@SuppressWarnings("unchecked")
 	public <T> Classification<T> compute(int recordNum, Map<String, Object> classification, int[] patternNZ, boolean learn, boolean infer) {
-		Classification<T> retVal = new Classification<T>();
+		Classification<T> retVal = new Classification<>();
 		List<T> actualValues = (List<T>)this.actualValues;
 		
 		// Save the offset between recordNum and learnIteration if this is the first
@@ -200,7 +200,7 @@ public class CLAClassifier implements Serializable {
 			System.out.println(" classificationIn: " + classification);
 		}
 		
-		patternNZHistory.append(new Tuple(2, learnIteration, patternNZ));
+		patternNZHistory.append(new Tuple(learnIteration, patternNZ));
 		System.out.println("deque size = " + learnIteration + "  " + patternNZHistory);
 		
 		//------------------------------------------------------------------------
@@ -235,7 +235,7 @@ public class CLAClassifier implements Serializable {
 				double[] bitVotes = new double[maxBucketIdx + 1];
 				
 				for(int bit : patternNZ) {
-					Tuple<Integer> key = new Tuple<Integer>(2, bit, nSteps);
+					Tuple<Integer> key = new Tuple<>(bit, nSteps);
 					BitHistory history = getActiveBitHistory().get(key);
 					if(history == null) continue;
 					
@@ -273,7 +273,7 @@ public class CLAClassifier implements Serializable {
 			Object actValue = classification.get("actValue");
 			
 			// Update maxBucketIndex
-			maxBucketIdx = (int) Math.max(maxBucketIdx, bucketIdx);
+			maxBucketIdx = Math.max(maxBucketIdx, bucketIdx);
 			
 			// Update rolling average of actual values if it's a scalar. If it's
 		    // not, it must be a category, in which case each bucket only ever
@@ -318,7 +318,7 @@ public class CLAClassifier implements Serializable {
 		        // that we got nSteps time steps ago.
 				for(int bit : learnPatternNZ) {
 					// Get the history structure for this bit and step
-					Tuple key = new Tuple(2, bit, nSteps);
+					Tuple key = new Tuple(bit, nSteps);
 					BitHistory history = getActiveBitHistory().get(key);
 					if(history == null) {
 						getActiveBitHistory().put(key, history = new BitHistory(this, bit, nSteps));
@@ -330,7 +330,7 @@ public class CLAClassifier implements Serializable {
 		
 		if(infer && verbosity >= 1) {
 			System.out.println(" inference: combined bucket likelihoods:");
-			System.out.println("   actual bucket values: " + Arrays.toString((T[])retVal.getActualValues()));
+			System.out.println("   actual bucket values: " + Arrays.toString(retVal.getActualValues()));
 			
 			for(int key : retVal.stepSet()) {
 				System.out.println(String.format("  %d steps: ", key, pFormatArray((double[])retVal.getActualValue(key))));

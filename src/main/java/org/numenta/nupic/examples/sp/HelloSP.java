@@ -27,7 +27,7 @@ import java.util.Random;
 
 import org.numenta.nupic.Connections;
 import org.numenta.nupic.Parameters;
-import org.numenta.nupic.Parameters.KEY;
+import org.numenta.nupic.KEY;
 import org.numenta.nupic.research.SpatialPooler;
 import org.numenta.nupic.util.ArrayUtils;
 import org.numenta.nupic.util.Condition;
@@ -38,11 +38,11 @@ import org.numenta.nupic.util.Condition;
  * @author Neal Miller
  */
 public class HelloSP {
-    private SpatialPooler sp;
-    private Parameters parameters;
-    private Connections mem;
+    private final SpatialPooler sp;
+    private final Parameters parameters;
+    private final Connections mem;
     private int[] inputArray;
-    private int[] activeArray;
+    private final int[] activeArray;
     private int inputSize;
     private int columnNumber;
     

@@ -28,6 +28,7 @@ import gnu.trove.list.array.TDoubleArrayList;
 import gnu.trove.list.array.TIntArrayList;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -449,13 +450,13 @@ public abstract class Encoder<T> {
      */
     public void addEncoder(Encoder<T> parent, String name, Encoder<T> child, int offset) {
     	if(encoders == null) {
-    		encoders = new LinkedHashMap<EncoderTuple, List<EncoderTuple>>();
+    		encoders = new LinkedHashMap<>();
     	}
     	
     	EncoderTuple key = getEncoderTuple(parent);
     	List<EncoderTuple> childEncoders = null;
     	if((childEncoders = encoders.get(key)) == null) {
-    		encoders.put(key, childEncoders = new ArrayList<EncoderTuple>());
+    		encoders.put(key, childEncoders = new ArrayList<>());
     	}
     	childEncoders.add(new EncoderTuple(name, child, offset));
     }
@@ -467,7 +468,7 @@ public abstract class Encoder<T> {
      */
     public EncoderTuple getEncoderTuple(Encoder<T> e) {
     	if(encoders == null) {
-    		encoders = new LinkedHashMap<EncoderTuple, List<EncoderTuple>>();
+    		encoders = new LinkedHashMap<>();
     	}
     	
     	for(EncoderTuple tuple : encoders.keySet()) {
@@ -495,7 +496,7 @@ public abstract class Encoder<T> {
      */
     public Map<EncoderTuple, List<EncoderTuple>> getEncoders() {
     	if(encoders == null) {
-    		encoders = new LinkedHashMap<EncoderTuple, List<EncoderTuple>>();
+    		encoders = new LinkedHashMap<>();
     	}
     	return encoders;
     }
@@ -523,13 +524,13 @@ public abstract class Encoder<T> {
      */
     public List<FieldMetaType> getFlattenedFieldTypeList(Encoder<T> e) { 
     	if(decoderFieldTypes == null) {
-    		decoderFieldTypes = new HashMap<Tuple, List<FieldMetaType>>();
+    		decoderFieldTypes = new HashMap<>();
     	}
     	
     	Tuple key = getEncoderTuple(e);
     	List<FieldMetaType> fieldTypes = null;
     	if((fieldTypes = decoderFieldTypes.get(key)) == null) {
-    		decoderFieldTypes.put(key, fieldTypes = new ArrayList<FieldMetaType>());
+    		decoderFieldTypes.put(key, fieldTypes = new ArrayList<>());
     	}
     	return fieldTypes;
     }
@@ -636,12 +637,12 @@ public abstract class Encoder<T> {
 	 */
 	@SuppressWarnings("unchecked")
 	public List<String> getScalarNames(String parentFieldName) {
-		List<String> names = new ArrayList<String>();
+		List<String> names = new ArrayList<>();
 		if(getEncoders() != null) {
 			List<EncoderTuple> encoders = getEncoders(this);
 			for(Tuple tuple : encoders) {
 				List<String> subNames = ((Encoder<T>)tuple.get(1)).getScalarNames(getName());
-				List<String> hierarchicalNames = new ArrayList<String>();
+				List<String> hierarchicalNames = new ArrayList<>();
 				if(parentFieldName != null) {
 					for(String name : subNames) {
 						hierarchicalNames.add(String.format("%s.%s", parentFieldName, name));
@@ -672,7 +673,7 @@ public abstract class Encoder<T> {
 			return getFlattenedFieldTypeList();
 		}
 		
-		List<FieldMetaType> retVal = new ArrayList<FieldMetaType>();
+		List<FieldMetaType> retVal = new ArrayList<>();
 		for(Tuple t : getEncoders(this)) {
 			List<FieldMetaType> subTypes = ((Encoder<T>)t.get(1)).getDecoderOutputFieldTypes();
 			retVal.addAll(subTypes);
@@ -709,7 +710,7 @@ public abstract class Encoder<T> {
 	 */
 	@SuppressWarnings("unchecked")
 	public List<Encoder<T>> getEncoderList() {
-		List<Encoder<T>> encoders = new ArrayList<Encoder<T>>();
+		List<Encoder<T>> encoders = new ArrayList<>();
 		
 		List<EncoderTuple> registeredList = getEncoders(this);
 		if(registeredList != null && !registeredList.isEmpty()) {
@@ -772,7 +773,7 @@ public abstract class Encoder<T> {
 	 * @return	list of encoded values in String form
 	 */
 	public <S> List<String> getEncodedValues(S inputData) {
-		List<String> retVals = new ArrayList<String>();
+		List<String> retVals = new ArrayList<>();
 		Map<EncoderTuple, List<EncoderTuple>> encoders = getEncoders();
 		if(encoders != null && encoders.size() > 0) {
 			for(EncoderTuple t : encoders.keySet()) {
@@ -838,7 +839,7 @@ public abstract class Encoder<T> {
 	 * 
 	 * @return string representation of scalar values
 	 */
-	public String scalarsToStr(List<?> scalarValues, List<String> scalarNames) {
+	public String scalarsToStr(List<Number> scalarValues, List<String> scalarNames) {
 		if(scalarNames == null || scalarNames.isEmpty()) {
 			scalarNames = getScalarNames("");
 		}
@@ -901,7 +902,7 @@ public abstract class Encoder<T> {
 			throw new IllegalStateException("Bit is outside of allowable range: " + 
 				String.format("[0 - %d]", width));
 		}
-		return new Tuple(2, prevFieldName, bitOffset - prevFieldOffset);
+		return new Tuple(prevFieldName, bitOffset - prevFieldOffset);
 	}
 	
 	/**
@@ -913,7 +914,7 @@ public abstract class Encoder<T> {
 		System.out.println(prefix == null ? "" : prefix);
 		
 		List<Tuple> description = getDescription();
-		description.add(new Tuple(2, "end", getWidth()));
+		description.add(new Tuple("end", getWidth()));
 		
 		int len = description.size() - 1;
 		for(int i = 0;i < len;i++) {
@@ -942,7 +943,7 @@ public abstract class Encoder<T> {
 		System.out.println(prefix == null ? "" : prefix);
 		
 		List<Tuple> description = getDescription();
-		description.add(new Tuple(2, "end", getWidth()));
+		description.add(new Tuple("end", getWidth()));
 		
 		int len = description.size() - 1;
 		for(int i = 0;i < len;i++) {
@@ -1021,8 +1022,8 @@ public abstract class Encoder<T> {
 	 */
 	@SuppressWarnings("unchecked")
 	public Tuple decode(int[] encoded, String parentFieldName) {
-		Map<String, Tuple> fieldsMap = new HashMap<String, Tuple>();
-		List<String> fieldsOrder = new ArrayList<String>();
+		Map<String, Tuple> fieldsMap = new HashMap<>();
+		List<String> fieldsOrder = new ArrayList<>();
 		
 		String parentName = parentFieldName == null || parentFieldName.isEmpty() ? 
 			getName() : String.format("%s.%s", parentFieldName, getName());
@@ -1043,10 +1044,10 @@ public abstract class Encoder<T> {
 			Tuple result = ((Encoder<T>)threeFieldsTuple.get(1)).decode(fieldOutput, parentName);
 			
 			fieldsMap.putAll((Map<String, Tuple>)result.get(0));
-			fieldsOrder.addAll((List<String>)result.get(1));
+			fieldsOrder.addAll((Collection<? extends String>)result.get(1));
 		}
 		
-		return new Tuple(2, fieldsMap, fieldsOrder);
+		return new Tuple(fieldsMap, fieldsOrder);
 	}
 	
 	/**
@@ -1103,7 +1104,7 @@ public abstract class Encoder<T> {
 	@SuppressWarnings("unchecked")
 	public List<EncoderResult> getBucketInfo(int[] buckets) {
 		//Concatenate the results from bucketInfo on each child encoder
-		List<EncoderResult> retVals = new ArrayList<EncoderResult>();
+		List<EncoderResult> retVals = new ArrayList<>();
 		int bucketOffset = 0;
 		for(EncoderTuple encoderTuple : getEncoders(this)) {
 			int nextBucketOffset = -1;
@@ -1156,7 +1157,7 @@ public abstract class Encoder<T> {
 	 */
 	@SuppressWarnings("unchecked")
 	public List<EncoderResult> topDownCompute(int[] encoded) {
-		List<EncoderResult> retVals = new ArrayList<EncoderResult>();
+		List<EncoderResult> retVals = new ArrayList<>();
 		
 		List<EncoderTuple> encoders = getEncoders(this);
 		int len = encoders.size();
@@ -1195,7 +1196,7 @@ public abstract class Encoder<T> {
 					denom = 1.0;
 				}
 				
-				closeness = 1.0 - (double)err/denom;
+				closeness = 1.0 - err/denom;
 				if(closeness < 0) {
 					closeness = 0;
 				}
@@ -1230,7 +1231,7 @@ public abstract class Encoder<T> {
     public int[] rightVecProd(SparseObjectMatrix<int[]> matrix, int[] encoded) {
     	int[] retVal = new int[matrix.getMaxIndex() + 1];
     	for(int i = 0;i < retVal.length;i++) {
-    		int[] slice = (int[])matrix.getObject(i);
+    		int[] slice = matrix.getObject(i);
     		for(int j = 0;j < slice.length;j++) {
     			retVal[i] += (slice[j] * encoded[j]);
     		}

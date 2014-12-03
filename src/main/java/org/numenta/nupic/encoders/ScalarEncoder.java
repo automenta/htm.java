@@ -27,6 +27,7 @@ import gnu.trove.list.array.TDoubleArrayList;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -306,7 +307,7 @@ public class ScalarEncoder extends Encoder<Double> {
 		//Throws UnsupportedOperationException if you try to add to the list
 		//returned by Arrays.asList() ??? So we wrap it in yet another List?
 		String name = (name = getName()) == "None" ? "[" + (int)getMinVal() + ":" + (int)getMaxVal() + "]" : name;
-		return new ArrayList<Tuple>(Arrays.asList(new Tuple[] { new Tuple(2, name, 0) }));
+		return new ArrayList<>(Arrays.asList(new Tuple[] { new Tuple(name, 0) }));
 	}
 	
 	/**
@@ -358,9 +359,9 @@ public class ScalarEncoder extends Encoder<Double> {
 		
 		int centerbin;
 		if(isPeriodic()) {
-			centerbin = (int)((int)((input - getMinVal()) *  getNInternal() / getRange())) + getPadding();
+			centerbin = ((int)((input - getMinVal()) *  getNInternal() / getRange())) + getPadding();
 		}else{
-			centerbin = (int)((int)(((input - getMinVal()) + getResolution()/2) / getResolution())) + getPadding();
+			centerbin = ((int)(((input - getMinVal()) + getResolution()/2) / getResolution())) + getPadding();
 		}
 		
 		int minbin = centerbin - getHalfWidth();
@@ -528,7 +529,7 @@ public class ScalarEncoder extends Encoder<Double> {
 				return n > 0;
 			}
 		});
-		List<Tuple> runs = new ArrayList<Tuple>(); //will be tuples of (startIdx, runLength)
+		List<Tuple> runs = new ArrayList<>(); //will be tuples of (startIdx, runLength)
 		Arrays.sort(nz);
 		int[] run = new int[] { nz[0], 1 };
 		int i = 1;
@@ -536,20 +537,19 @@ public class ScalarEncoder extends Encoder<Double> {
 			if(nz[i] == run[0] + run[1]) {
 				run[1] += 1;
 			}else{
-				runs.add(new Tuple(2, run[0], run[1]));
+				runs.add(new Tuple(run[0], run[1]));
 				run = new int[] { nz[i], 1 };
 			}
 			i += 1;
 		}
-		runs.add(new Tuple(2, run[0], run[1]));
+		runs.add(new Tuple(run[0], run[1]));
 		
 		// If we have a periodic encoder, merge the first and last run if they
 	    // both go all the way to the edges
 		if(isPeriodic() && runs.size() > 1) {
 			int l = runs.size() - 1;
 			if(((Integer)runs.get(0).get(0)) == 0 && ((Integer)runs.get(l).get(0)) + ((Integer)runs.get(l).get(1)) == getN()) {
-				runs.set(l, new Tuple(2, 
-					(Integer)runs.get(l).get(0),  
+				runs.set(l, new Tuple(					runs.get(l).get(0),  
 						((Integer)runs.get(l).get(1)) + ((Integer)runs.get(0).get(1)) ));
 				runs = runs.subList(1, runs.size());
 			}
@@ -563,7 +563,7 @@ public class ScalarEncoder extends Encoder<Double> {
 	    // the center position of the group.
 		int left = 0;
 		int right = 0;
-		List<MinMax> ranges = new ArrayList<MinMax>();
+		List<MinMax> ranges = new ArrayList<>();
 		for(Tuple tupleRun : runs) {
 			int start = (Integer)tupleRun.get(0);
 			int runLen = (Integer)tupleRun.get(1);
@@ -625,7 +625,7 @@ public class ScalarEncoder extends Encoder<Double> {
 		}
 		
 		RangeList inner = new RangeList(ranges, desc);
-		Map<String, RangeList> fieldsDict = new HashMap<String, RangeList>();
+		Map<String, RangeList> fieldsDict = new HashMap<>();
 		fieldsDict.put(fieldName, inner);
 		
 		return new DecodeResult(fieldsDict, Arrays.asList(new String[] { fieldName }));
@@ -681,7 +681,7 @@ public class ScalarEncoder extends Encoder<Double> {
 		int numCategories = getTopDownValues().length;
 		SparseObjectMatrix<int[]> topDownMapping;
 		setTopDownMapping(
-			topDownMapping = new SparseObjectMatrix<int[]>(
+			topDownMapping = new SparseObjectMatrix<>(
 				new int[] { numCategories }));
 		
 		double[] topDownValues = getTopDownValues();
@@ -734,9 +734,9 @@ public class ScalarEncoder extends Encoder<Double> {
 		if(bucketValues == null) {
 			SparseObjectMatrix<int[]> topDownMapping = getTopDownMapping();
 			int numBuckets = topDownMapping.getMaxIndex() + 1;
-			bucketValues = new ArrayList<Double>();
+			bucketValues = new ArrayList<>();
 			for(int i = 0;i < numBuckets;i++) {
-				((List<Double>)bucketValues).add((Double)getBucketInfo(new int[] { i }).get(0).get(1));
+				((Collection<Double>)bucketValues).add((Double)getBucketInfo(new int[] { i }).get(0).get(1));
 			}
 		}
 		return (List<S>)bucketValues;
@@ -788,25 +788,25 @@ public class ScalarEncoder extends Encoder<Double> {
 	 * @return	a list of {@link Tuple}s
 	 */
 	public List<Tuple> dict() {
-		List<Tuple> l = new ArrayList<Tuple>();
-		l.add(new Tuple(2, "maxval", getMaxVal()));
-		l.add(new Tuple(2, "bucketValues", getBucketValues(Double.class)));
-		l.add(new Tuple(2, "nInternal", getNInternal()));
-		l.add(new Tuple(2, "name", getName()));
-		l.add(new Tuple(2, "minval", getMinVal()));
-		l.add(new Tuple(2, "topDownValues", Arrays.toString(getTopDownValues())));
-		l.add(new Tuple(2, "verbosity", getVerbosity()));
-		l.add(new Tuple(2, "clipInput", clipInput()));
-		l.add(new Tuple(2, "n", getN()));
-		l.add(new Tuple(2, "padding", getPadding()));
-		l.add(new Tuple(2, "range", getRange()));
-		l.add(new Tuple(2, "periodic", isPeriodic()));
-		l.add(new Tuple(2, "radius", getRadius()));
-		l.add(new Tuple(2, "w", getW()));
-		l.add(new Tuple(2, "topDownMappingM", getTopDownMapping()));
-		l.add(new Tuple(2, "halfwidth", getHalfWidth()));
-		l.add(new Tuple(2, "resolution", getResolution()));
-		l.add(new Tuple(2, "rangeInternal", getRangeInternal()));
+		List<Tuple> l = new ArrayList<>();
+		l.add(new Tuple("maxval", getMaxVal()));
+		l.add(new Tuple("bucketValues", getBucketValues(Double.class)));
+		l.add(new Tuple("nInternal", getNInternal()));
+		l.add(new Tuple("name", getName()));
+		l.add(new Tuple("minval", getMinVal()));
+		l.add(new Tuple("topDownValues", Arrays.toString(getTopDownValues())));
+		l.add(new Tuple("verbosity", getVerbosity()));
+		l.add(new Tuple("clipInput", clipInput()));
+		l.add(new Tuple("n", getN()));
+		l.add(new Tuple("padding", getPadding()));
+		l.add(new Tuple("range", getRange()));
+		l.add(new Tuple("periodic", isPeriodic()));
+		l.add(new Tuple("radius", getRadius()));
+		l.add(new Tuple("w", getW()));
+		l.add(new Tuple("topDownMappingM", getTopDownMapping()));
+		l.add(new Tuple("halfwidth", getHalfWidth()));
+		l.add(new Tuple("resolution", getResolution()));
+		l.add(new Tuple("rangeInternal", getRangeInternal()));
 		
 		return l;
 	}

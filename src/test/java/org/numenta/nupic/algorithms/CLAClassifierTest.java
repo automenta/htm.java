@@ -79,7 +79,7 @@ public class CLAClassifierTest {
 	@Test
 	public void testComputeResultTypes() {
 		classifier = new CLAClassifier(new TIntArrayList(new int[] { 1 }), 0.1, 0.1, 0);
-		Map<String, Object> classification = new LinkedHashMap<String, Object>();
+		Map<String, Object> classification = new LinkedHashMap<>();
 		classification.put("bucketIdx", 4);
 		classification.put("actValue", 34.7);
 		Classification<Double> result = classifier.compute(0, classification, new int[] { 1, 5, 9 }, true, true);
@@ -92,7 +92,7 @@ public class CLAClassifierTest {
 	@Test
 	public void testCompute1() {
 		classifier = new CLAClassifier(new TIntArrayList(new int[] { 1 }), 0.1, 0.1, 0);
-		Map<String, Object> classification = new LinkedHashMap<String, Object>();
+		Map<String, Object> classification = new LinkedHashMap<>();
 		classification.put("bucketIdx", 4);
 		classification.put("actValue", 34.7);
 		Classification<Double> result = classifier.compute(0, classification, new int[] { 1, 5, 9 }, true, true);
@@ -105,7 +105,7 @@ public class CLAClassifierTest {
 	@Test
 	public void testCompute2() {
 		classifier = new CLAClassifier(new TIntArrayList(new int[] { 1 }), 0.1, 0.1, 0);
-		Map<String, Object> classification = new LinkedHashMap<String, Object>();
+		Map<String, Object> classification = new LinkedHashMap<>();
 		classification.put("bucketIdx", 4);
 		classification.put("actValue", 34.7);
 		classifier.compute(0, classification, new int[] { 1, 5, 9 }, true, true);
@@ -121,7 +121,7 @@ public class CLAClassifierTest {
 	public void testComputeComplex() {
 		classifier = new CLAClassifier(new TIntArrayList(new int[] { 1 }), 0.1, 0.1, 0);
 		int recordNum = 0;
-		Map<String, Object> classification = new LinkedHashMap<String, Object>();
+		Map<String, Object> classification = new LinkedHashMap<>();
 		classification.put("bucketIdx", 4);
 		classification.put("actValue", 34.7);
 		Classification<Double> result = classifier.compute(recordNum, classification, new int[] { 1, 5, 9 }, true, true);
@@ -162,7 +162,7 @@ public class CLAClassifierTest {
 	@Test
 	public void testComputeWithMissingValue() {
 		classifier = new CLAClassifier(new TIntArrayList(new int[] { 1 }), 0.1, 0.1, 0);
-		Map<String, Object> classification = new LinkedHashMap<String, Object>();
+		Map<String, Object> classification = new LinkedHashMap<>();
 		classification.put("bucketIdx", null);
 		classification.put("actValue", null);
 		Classification<Double> result = classifier.compute(0, classification, new int[] { 1, 5, 9 }, true, true);
@@ -175,7 +175,7 @@ public class CLAClassifierTest {
 	@Test
 	public void testComputeCategory() {
 		classifier = new CLAClassifier(new TIntArrayList(new int[] { 1 }), 0.1, 0.1, 0);
-		Map<String, Object> classification = new LinkedHashMap<String, Object>();
+		Map<String, Object> classification = new LinkedHashMap<>();
 		classification.put("bucketIdx", 4);
 		classification.put("actValue", "D");
 		classifier.compute(0, classification, new int[] { 1, 5, 9 }, true, true);
@@ -188,7 +188,7 @@ public class CLAClassifierTest {
 	@Test
 	public void testComputeCategory2() {
 		classifier = new CLAClassifier(new TIntArrayList(new int[] { 1 }), 0.1, 0.1, 0);
-		Map<String, Object> classification = new LinkedHashMap<String, Object>();
+		Map<String, Object> classification = new LinkedHashMap<>();
 		classification.put("bucketIdx", 4);
 		classification.put("actValue", "D");
 		classifier.compute(0, classification, new int[] { 1, 5, 9 }, true, true);
@@ -203,7 +203,7 @@ public class CLAClassifierTest {
 	public void testSerialization() {
 		classifier = new CLAClassifier(new TIntArrayList(new int[] { 1 }), 0.1, 0.1, 0);
 		int recordNum = 0;
-		Map<String, Object> classification = new LinkedHashMap<String, Object>();
+		Map<String, Object> classification = new LinkedHashMap<>();
 		classification.put("bucketIdx", 4);
 		classification.put("actValue", 34.7);
 		Classification<Double> result = classifier.compute(recordNum, classification, new int[] { 1, 5, 9 }, true, true);
@@ -331,7 +331,7 @@ public class CLAClassifierTest {
 	public void testMissingRecords() {
 		classifier = new CLAClassifier(new TIntArrayList(new int[] { 1 }), 0.1, 0.1, 0);
 		int recordNum = 0;
-		Map<String, Object> classification = new LinkedHashMap<String, Object>();
+		Map<String, Object> classification = new LinkedHashMap<>();
 		classification.put("bucketIdx", 0);
 		classification.put("actValue", 0);
 		classifier.compute(recordNum, classification, new int[] { 1, 3, 5 }, true, true);
@@ -421,7 +421,7 @@ public class CLAClassifierTest {
 	public void testMissingRecordInitialization() {
 		classifier = new CLAClassifier(new TIntArrayList(new int[] { 2 }), 0.1, 0.1, 0);
 		int recordNum = 0;
-		Map<String, Object> classification = new LinkedHashMap<String, Object>();
+		Map<String, Object> classification = new LinkedHashMap<>();
 		classification.put("bucketIdx", 0);
 		classification.put("actValue", 34.7);
 		classifier.compute(recordNum, classification, new int[] { 1, 5, 9 }, true, true);
@@ -442,7 +442,7 @@ public class CLAClassifierTest {
 	public <T> Classification<T> compute(CLAClassifier classifier, int recordNum, int[] pattern,
 		int bucket, Object value) {
 		
-		Map<String, Object> classification = new LinkedHashMap<String, Object>();
+		Map<String, Object> classification = new LinkedHashMap<>();
 		classification.put("bucketIdx", bucket);
 		classification.put("actValue", value);
 		return classifier.compute(recordNum, classification, pattern, true, true);

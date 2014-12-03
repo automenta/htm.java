@@ -173,7 +173,7 @@ public class LogEncoderTest {
 			
 			// Verify out reconstructed value is the same as the bucket value
 			List<Double> bucketValues = le.getBucketValues(Double.class);
-			assertEquals((Double)topDown.getValue(), bucketValues.get(bucketIndices[0]));
+			assertEquals(topDown.getValue(), bucketValues.get(bucketIndices[0]));
 			
 			//Next value
 			scaledVal += le.getResolution() / 4.0;
@@ -236,7 +236,7 @@ public class LogEncoderTest {
 		// Build our expected values
 		double inc = 0.1;
 		double exp = 0;
-		List<Double> expected = new ArrayList<Double>();
+		List<Double> expected = new ArrayList<>();
 		// Incrementing to exactly 4.0 runs into fp issues
 		while (exp <= 4.0001) {
 			double val = Math.pow(10, exp);

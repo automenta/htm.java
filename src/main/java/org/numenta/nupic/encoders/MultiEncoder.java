@@ -50,13 +50,13 @@ import org.numenta.nupic.util.Tuple;
 public class MultiEncoder extends Encoder<Object> {
 	protected int ncategories;
 	
-	protected TObjectIntMap<String> categoryToIndex = new TObjectIntHashMap<String>();
-	protected TIntObjectMap<String> indexToCategory = new TIntObjectHashMap<String>();
+	protected TObjectIntMap<String> categoryToIndex = new TObjectIntHashMap<>();
+	protected TIntObjectMap<String> indexToCategory = new TIntObjectHashMap<>();
 	
 	protected List<Tuple> categoryList;
 	
 	protected int width;
-	protected List<Tuple> description = new ArrayList<Tuple>();
+	protected List<Tuple> description = new ArrayList<>();
 	
 	/**
 	 * Constructs a new {@code MultiEncoder}
@@ -74,7 +74,7 @@ public class MultiEncoder extends Encoder<Object> {
 	}
 
 	public void init() {
-		encoders = new LinkedHashMap<EncoderTuple, List<EncoderTuple>>();
+		encoders = new LinkedHashMap<>();
 		encoders.put(new EncoderTuple("", this, 0), new ArrayList<EncoderTuple>());
 	}
 	
@@ -102,9 +102,7 @@ public class MultiEncoder extends Encoder<Object> {
 			int[] tempArray = new int[encoder.getWidth()];
 			encoder.encodeIntoArray(getInputValue(input, name), tempArray);
 			
-			for (int i = 0; i < tempArray.length; i++) {
-				output[i + offset] = tempArray[i];
-			}
+                    System.arraycopy(tempArray, 0, output, offset, tempArray.length);
 		}
 	}
 	
@@ -123,7 +121,7 @@ public class MultiEncoder extends Encoder<Object> {
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public List<int[]> encodeEachField(Object input) {
-		List<int[]> encodings = new ArrayList<int[]>();
+		List<int[]> encodings = new ArrayList<>();
 		
 		for (EncoderTuple t : getEncoders(this)) {
 			String name = t.getName();
@@ -141,7 +139,7 @@ public class MultiEncoder extends Encoder<Object> {
 		
 		for (Object d : child.getDescription()) {
 			Tuple dT = (Tuple) d;
-			description.add(new Tuple(2, dT.get(0), (int)dT.get(1) + getWidth()));
+			description.add(new Tuple(dT.get(0), (int)dT.get(1) + getWidth()));
 		}
 		width += child.getWidth();
 	}
@@ -149,7 +147,7 @@ public class MultiEncoder extends Encoder<Object> {
 	@SuppressWarnings("rawtypes")
 	public void addMultipleEncoders(Map<String, Map<String, Object>> fieldEncodings) {
 		// Sort the encoders so that they end up in a controlled order
-		List<String> sortedFields = new ArrayList<String>(fieldEncodings.keySet());
+		List<String> sortedFields = new ArrayList<>(fieldEncodings.keySet());
 		Collections.sort(sortedFields);
 		
 		for (String field : sortedFields) {

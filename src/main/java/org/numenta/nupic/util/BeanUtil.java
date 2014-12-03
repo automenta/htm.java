@@ -37,9 +37,9 @@ import java.util.concurrent.ConcurrentHashMap;
 public class BeanUtil {
   //TODO introduce proper log in future
   //private static final Log LOG = LogFactory.getLog(BeanUtil.class);
-  private final Map<Class<?>, PropertyInfo[]> properties = new ConcurrentHashMap<Class<?>, PropertyInfo[]>();
+  private final Map<Class<?>, PropertyInfo[]> properties = new ConcurrentHashMap<>();
   private static final PropertyDescriptor[] EMPTY_PROPERTY_DESCRIPTOR = new PropertyDescriptor[0];
-  private static BeanUtil INSTANCE = new BeanUtil();
+  private static final BeanUtil INSTANCE = new BeanUtil();
 
   public static BeanUtil getInstance() {
     return INSTANCE;

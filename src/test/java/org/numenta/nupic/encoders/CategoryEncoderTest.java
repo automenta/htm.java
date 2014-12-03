@@ -72,7 +72,7 @@ public class CategoryEncoderTest {
 		// Test reverse lookup
 		DecodeResult decoded = ce.decode(output, "");
 		assertEquals(decoded.getFields().size(), 1, 0);
-		List<RangeList> rangeList = new ArrayList<RangeList>(decoded.getFields().values());
+		List<RangeList> rangeList = new ArrayList<>(decoded.getFields().values());
 		assertEquals(1, rangeList.get(0).size(), 0);
 		MinMax minMax = rangeList.get(0).getRanges().get(0);
 		assertEquals(minMax.min(), minMax.max(), 0);
@@ -84,13 +84,13 @@ public class CategoryEncoderTest {
 			output = ce.encode(v);
 			EncoderResult topDown = ce.topDownCompute(output).get(0);
 			assertEquals(v, topDown.getValue());
-			assertEquals((int)ce.getScalars(v).get(0), (int)topDown.getScalar().doubleValue());
+			assertEquals((long)ce.getScalars(v).get(0), (long)topDown.getScalar().doubleValue());
 			
 			int[] bucketIndices = ce.getBucketIndices(v);
 			System.out.println("bucket index => " + bucketIndices[0]);
 			topDown = ce.getBucketInfo(bucketIndices).get(0);
 			assertEquals(v, topDown.getValue());
-			assertEquals((int)ce.getScalars(v).get(0), (int)topDown.getScalar().doubleValue());
+			assertEquals((long)ce.getScalars(v).get(0), (long)topDown.getScalar().doubleValue());
 			assertEquals(topDown.getEncoding(), Arrays.toString(output));
 			assertEquals(topDown.getValue(), ce.getBucketValues(String.class).get(bucketIndices[0]));
 		}
@@ -103,7 +103,7 @@ public class CategoryEncoderTest {
 		// Test reverse lookup
 		decoded = ce.decode(output, "");
 		assertEquals(decoded.getFields().size(), 1, 0);
-		rangeList = new ArrayList<RangeList>(decoded.getFields().values());
+		rangeList = new ArrayList<>(decoded.getFields().values());
 		assertEquals(1, rangeList.get(0).size(), 0);
 		minMax = rangeList.get(0).getRanges().get(0);
 		assertEquals(minMax.min(), minMax.max(), 0);
@@ -126,7 +126,7 @@ public class CategoryEncoderTest {
 		// Test reverse lookup
 		decoded = ce.decode(output, "");
 		assertEquals(decoded.getFields().size(), 1, 0);
-		rangeList = new ArrayList<RangeList>(decoded.getFields().values());
+		rangeList = new ArrayList<>(decoded.getFields().values());
 		assertEquals(1, rangeList.get(0).size(), 0);
 		minMax = rangeList.get(0).getRanges().get(0);
 		assertEquals(minMax.min(), minMax.max(), 0);
@@ -145,7 +145,7 @@ public class CategoryEncoderTest {
 		// Test reverse lookup
 		decoded = ce.decode(output, "");
 		assertEquals(decoded.getFields().size(), 1, 0);
-		rangeList = new ArrayList<RangeList>(decoded.getFields().values());
+		rangeList = new ArrayList<>(decoded.getFields().values());
 		assertEquals(1, rangeList.get(0).size(), 0);
 		minMax = rangeList.get(0).getRanges().get(0);
 		assertTrue(minMax.min() != minMax.max());

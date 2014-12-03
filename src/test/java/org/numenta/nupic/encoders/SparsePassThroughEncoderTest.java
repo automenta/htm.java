@@ -26,6 +26,7 @@ import gnu.trove.list.TDoubleList;
 import gnu.trove.list.array.TDoubleArrayList;
 
 import java.util.HashMap;
+import java.util.Map;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertEquals;
 import org.junit.Ignore;
@@ -50,7 +51,7 @@ public class SparsePassThroughEncoderTest {
 		encoder.encodeIntoArray(bitmap, output);
 		assertEquals(bitmap.length,ArrayUtils.sum(output));
 		Tuple decode = encoder.decode(output, null);
-		assertTrue(((HashMap<String, RangeList>) decode.get(0)).containsKey(encoder.getName()));
+		assertTrue(((Map<String, RangeList>) decode.get(0)).containsKey(encoder.getName()));
 	}
 	 @Rule
 	  public ExpectedException exception = ExpectedException.none();

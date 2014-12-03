@@ -150,17 +150,17 @@ public class TemporalMemoryTest {
         int[] activeColumns = new int[] { 0, 1, 26 };
         int[] predictedColumns = new int[] {26};
         
-        Map<DistalDendrite, Set<Synapse>> activeSynapseSegments = new LinkedHashMap<DistalDendrite, Set<Synapse>>();
-        activeSynapseSegments.put(dd, new LinkedHashSet<Synapse>(Arrays.asList(new Synapse[] { s0, s1 })));
-        activeSynapseSegments.put(dd2, new LinkedHashSet<Synapse>(Arrays.asList(new Synapse[] { s2 })));
-        activeSynapseSegments.put(dd3, new LinkedHashSet<Synapse>(Arrays.asList(new Synapse[] { s3 })));
+        Map<DistalDendrite, Set<Synapse>> activeSynapseSegments = new LinkedHashMap<>();
+        activeSynapseSegments.put(dd, new LinkedHashSet<>(Arrays.asList(new Synapse[] { s0, s1 })));
+        activeSynapseSegments.put(dd2, new LinkedHashSet<>(Arrays.asList(new Synapse[] { s2 })));
+        activeSynapseSegments.put(dd3, new LinkedHashSet<>(Arrays.asList(new Synapse[] { s3 })));
         
         ComputeCycle cycle = new ComputeCycle();
         tm.burstColumns(cycle, cn, cn.getColumnSet(activeColumns), cn.getColumnSet(predictedColumns), activeSynapseSegments);
         
-        List<Cell> activeCells = new ArrayList<Cell>(cycle.activeCells());
-        List<Cell> winnerCells = new ArrayList<Cell>(cycle.winnerCells());
-        List<DistalDendrite> learningSegments = new ArrayList<DistalDendrite>(cycle.learningSegments());
+        List<Cell> activeCells = new ArrayList<>(cycle.activeCells());
+        List<Cell> winnerCells = new ArrayList<>(cycle.winnerCells());
+        List<DistalDendrite> learningSegments = new ArrayList<>(cycle.learningSegments());
         
         assertEquals(8, activeCells.size());
         for(int i = 0;i < 8;i++) {
@@ -192,14 +192,14 @@ public class TemporalMemoryTest {
         int[] activeColumns = new int[] {};
         int[] predictedColumns = new int[] {};
         
-        Map<DistalDendrite, Set<Synapse>> activeSynapseSegments = new LinkedHashMap<DistalDendrite, Set<Synapse>>();
+        Map<DistalDendrite, Set<Synapse>> activeSynapseSegments = new LinkedHashMap<>();
         
         ComputeCycle cycle = new ComputeCycle();
         tm.burstColumns(cycle, c, cn.getColumnSet(activeColumns), cn.getColumnSet(predictedColumns), activeSynapseSegments);
         
-        List<Cell> activeCells = new ArrayList<Cell>(c.getActiveCells());
-        List<Cell> winnerCells = new ArrayList<Cell>(c.getWinnerCells());
-        List<DistalDendrite> learningSegments = new ArrayList<DistalDendrite>(c.getLearningSegments());
+        List<Cell> activeCells = new ArrayList<>(c.getActiveCells());
+        List<Cell> winnerCells = new ArrayList<>(c.getWinnerCells());
+        List<DistalDendrite> learningSegments = new ArrayList<>(c.getLearningSegments());
         
         assertEquals(0, activeCells.size());
         assertEquals(0, winnerCells.size());
@@ -229,20 +229,20 @@ public class TemporalMemoryTest {
         
         DistalDendrite dd3 = cn.getCell(100).createSegment(cn, segmentCounter++);
         
-        Set<DistalDendrite> prevActiveSegments = new LinkedHashSet<DistalDendrite>();
+        Set<DistalDendrite> prevActiveSegments = new LinkedHashSet<>();
         prevActiveSegments.add(dd);
         prevActiveSegments.add(dd2);
         
-        Map<DistalDendrite, Set<Synapse>> prevActiveSynapsesForSegment = new LinkedHashMap<DistalDendrite, Set<Synapse>>();
-        prevActiveSynapsesForSegment.put(dd, new LinkedHashSet<Synapse>(Arrays.asList(new Synapse[] { s0, s1 })));
-        prevActiveSynapsesForSegment.put(dd1, new LinkedHashSet<Synapse>(Arrays.asList(new Synapse[] { s3 })));
+        Map<DistalDendrite, Set<Synapse>> prevActiveSynapsesForSegment = new LinkedHashMap<>();
+        prevActiveSynapsesForSegment.put(dd, new LinkedHashSet<>(Arrays.asList(new Synapse[] { s0, s1 })));
+        prevActiveSynapsesForSegment.put(dd1, new LinkedHashSet<>(Arrays.asList(new Synapse[] { s3 })));
         
-        Set<DistalDendrite> learningSegments = new LinkedHashSet<DistalDendrite>();
+        Set<DistalDendrite> learningSegments = new LinkedHashSet<>();
         learningSegments.add(dd1);
         learningSegments.add(dd3);
-        Set<Cell> winnerCells = new LinkedHashSet<Cell>();
+        Set<Cell> winnerCells = new LinkedHashSet<>();
         winnerCells.add(cn.getCell(0));
-        Set<Cell> prevWinnerCells = new LinkedHashSet<Cell>();
+        Set<Cell> prevWinnerCells = new LinkedHashSet<>();
         prevWinnerCells.add(cn.getCell(10));
         prevWinnerCells.add(cn.getCell(11));
         prevWinnerCells.add(cn.getCell(12));
@@ -319,10 +319,10 @@ public class TemporalMemoryTest {
         
         DistalDendrite dd4 = cn.getCell(100).createSegment(cn, segmentCounter++);
         
-        Map<DistalDendrite, Set<Synapse>> activeSynapseSegments = new LinkedHashMap<DistalDendrite, Set<Synapse>>();
-        activeSynapseSegments.put(dd, new LinkedHashSet<Synapse>(Arrays.asList(new Synapse[] { s0, s1 })));
-        activeSynapseSegments.put(dd2, new LinkedHashSet<Synapse>(Arrays.asList(new Synapse[] { s3, s4 })));
-        activeSynapseSegments.put(dd3, new LinkedHashSet<Synapse>(Arrays.asList(new Synapse[] { s5 })));
+        Map<DistalDendrite, Set<Synapse>> activeSynapseSegments = new LinkedHashMap<>();
+        activeSynapseSegments.put(dd, new LinkedHashSet<>(Arrays.asList(new Synapse[] { s0, s1 })));
+        activeSynapseSegments.put(dd2, new LinkedHashSet<>(Arrays.asList(new Synapse[] { s3, s4 })));
+        activeSynapseSegments.put(dd3, new LinkedHashSet<>(Arrays.asList(new Synapse[] { s5 })));
         
         ComputeCycle cycle = new ComputeCycle();
         tm.computePredictiveCells(cn, cycle, activeSynapseSegments);
@@ -352,7 +352,7 @@ public class TemporalMemoryTest {
         DistalDendrite dd2 = cn.getCell(8).createSegment(cn, segmentCounter++);
         Synapse s4 = dd2.createSynapse(cn, cn.getCell(486), 0.9, synapseCounter++);
         
-        Set<Cell> activeCells = new LinkedHashSet<Cell>(
+        Set<Cell> activeCells = new LinkedHashSet<>(
             Arrays.asList(
                 new Cell[] {
                 	cn.getCell(23), cn.getCell(37), cn.getCell(733), cn.getCell(4973) 
@@ -400,10 +400,10 @@ public class TemporalMemoryTest {
         DistalDendrite dd3 = cn.getCell(1).createSegment(cn, segmentCounter++);
         Synapse s6 = dd3.createSynapse(cn, cn.getCell(486), 0.9, synapseCounter++);
         
-        Map<DistalDendrite, Set<Synapse>> activeSegments = new LinkedHashMap<DistalDendrite, Set<Synapse>>();
-        activeSegments.put(dd, new LinkedHashSet<Synapse>(Arrays.asList(new Synapse[] { s0, s1 })));
-        activeSegments.put(dd1, new LinkedHashSet<Synapse>(Arrays.asList(new Synapse[] { s3 })));
-        activeSegments.put(dd2, new LinkedHashSet<Synapse>(Arrays.asList(new Synapse[] { s5 })));
+        Map<DistalDendrite, Set<Synapse>> activeSegments = new LinkedHashMap<>();
+        activeSegments.put(dd, new LinkedHashSet<>(Arrays.asList(new Synapse[] { s0, s1 })));
+        activeSegments.put(dd1, new LinkedHashSet<>(Arrays.asList(new Synapse[] { s3 })));
+        activeSegments.put(dd2, new LinkedHashSet<>(Arrays.asList(new Synapse[] { s5 })));
         
         Object[] result = tm.getBestMatchingCell(cn, cn.getColumn(0), activeSegments);
         assertEquals(dd, result[0]);
@@ -434,7 +434,7 @@ public class TemporalMemoryTest {
         DistalDendrite dd = cn.getCell(0).createSegment(cn, 0);
         Synapse s0 = dd.createSynapse(cn, cn.getCell(3), 0.3, 0);
         
-        Map<DistalDendrite, Set<Synapse>> activeSegments = new LinkedHashMap<DistalDendrite, Set<Synapse>>();
+        Map<DistalDendrite, Set<Synapse>> activeSegments = new LinkedHashMap<>();
         
         //Never pick cell 0, always pick cell 1
         for(int i = 0;i < 100;i++) {
@@ -470,19 +470,19 @@ public class TemporalMemoryTest {
         DistalDendrite dd3 = cn.getCell(8).createSegment(cn, segmentCounter++);
         Synapse s6 = dd3.createSynapse(cn, cn.getCell(486), 0.9, synapseCounter++);
         
-        Map<DistalDendrite, Set<Synapse>> activeSegments = new LinkedHashMap<DistalDendrite, Set<Synapse>>();
-        activeSegments.put(dd, new LinkedHashSet<Synapse>(Arrays.asList(new Synapse[] { s0, s1 })));
-        activeSegments.put(dd1, new LinkedHashSet<Synapse>(Arrays.asList(new Synapse[] { s3 })));
-        activeSegments.put(dd2, new LinkedHashSet<Synapse>(Arrays.asList(new Synapse[] { s5 })));
+        Map<DistalDendrite, Set<Synapse>> activeSegments = new LinkedHashMap<>();
+        activeSegments.put(dd, new LinkedHashSet<>(Arrays.asList(new Synapse[] { s0, s1 })));
+        activeSegments.put(dd1, new LinkedHashSet<>(Arrays.asList(new Synapse[] { s3 })));
+        activeSegments.put(dd2, new LinkedHashSet<>(Arrays.asList(new Synapse[] { s5 })));
         
         DistalDendrite result = tm.getBestMatchingSegment(cn, cn.getCell(0), activeSegments);
-        List<Synapse> resultSynapses = new ArrayList<Synapse>(result.getConnectedActiveSynapses(activeSegments, 0));
+        List<Synapse> resultSynapses = new ArrayList<>(result.getConnectedActiveSynapses(activeSegments, 0));
         assertEquals(dd, result);
         assertEquals(s0, resultSynapses.get(0));
         assertEquals(s1, resultSynapses.get(1));
         
         result = tm.getBestMatchingSegment(cn, cn.getCell(1), activeSegments);
-        resultSynapses = new ArrayList<Synapse>(result.getConnectedActiveSynapses(activeSegments, 0));
+        resultSynapses = new ArrayList<>(result.getConnectedActiveSynapses(activeSegments, 0));
         assertEquals(dd2, result);
         assertEquals(s5, resultSynapses.get(0));
         
@@ -561,15 +561,15 @@ public class TemporalMemoryTest {
         DistalDendrite dd2 = cn.getCell(8).createSegment(cn, segmentCounter++);
         Synapse s4 = dd2.createSynapse(cn, cn.getCell(486), 0.9, synapseCounter++);
         
-        Map<DistalDendrite, Set<Synapse>> activeSegments = new LinkedHashMap<DistalDendrite, Set<Synapse>>();
-        activeSegments.put(dd, new LinkedHashSet<Synapse>(Arrays.asList(new Synapse[] { s0, s1 })));
-        activeSegments.put(dd1, new LinkedHashSet<Synapse>(Arrays.asList(new Synapse[] { s3 })));
+        Map<DistalDendrite, Set<Synapse>> activeSegments = new LinkedHashMap<>();
+        activeSegments.put(dd, new LinkedHashSet<>(Arrays.asList(new Synapse[] { s0, s1 })));
+        activeSegments.put(dd1, new LinkedHashSet<>(Arrays.asList(new Synapse[] { s3 })));
         
-        List<Synapse> connectActive = new ArrayList<Synapse>(dd.getConnectedActiveSynapses(activeSegments, 0.5));
+        List<Synapse> connectActive = new ArrayList<>(dd.getConnectedActiveSynapses(activeSegments, 0.5));
         assertEquals(1, connectActive.size());
         assertEquals(s0, connectActive.get(0));
         
-        connectActive = new ArrayList<Synapse>(dd1.getConnectedActiveSynapses(activeSegments, 0.5));
+        connectActive = new ArrayList<>(dd1.getConnectedActiveSynapses(activeSegments, 0.5));
         assertEquals(1, connectActive.size());
         assertEquals(s3, connectActive.get(0));
     }
@@ -588,7 +588,7 @@ public class TemporalMemoryTest {
         Synapse s1 = dd.createSynapse(cn, cn.getCell(37), 0.4, synapseCounter++);
         Synapse s2 = dd.createSynapse(cn, cn.getCell(477), 0.9, synapseCounter++);
         
-        Set<Synapse> activeSynapses = new LinkedHashSet<Synapse>();
+        Set<Synapse> activeSynapses = new LinkedHashSet<>();
         activeSynapses.add(s0);
         activeSynapses.add(s1);
         dd.adaptSegment(cn, activeSynapses, cn.getPermanenceIncrement(), cn.getPermanenceDecrement());
@@ -607,7 +607,7 @@ public class TemporalMemoryTest {
         DistalDendrite dd = cn.getCell(0).createSegment(cn, 0);
         Synapse s0 = dd.createSynapse(cn, cn.getCell(23), 0.9, 0);
         
-        Set<Synapse> activeSynapses = new LinkedHashSet<Synapse>();
+        Set<Synapse> activeSynapses = new LinkedHashSet<>();
         activeSynapses.add(s0);
         
         dd.adaptSegment(cn, activeSynapses, cn.getPermanenceIncrement(), cn.getPermanenceDecrement());
@@ -626,7 +626,7 @@ public class TemporalMemoryTest {
         DistalDendrite dd = cn.getCell(0).createSegment(cn, 0);
         Synapse s0 = dd.createSynapse(cn, cn.getCell(23), 0.1, 0);
         
-        Set<Synapse> activeSynapses = new LinkedHashSet<Synapse>();
+        Set<Synapse> activeSynapses = new LinkedHashSet<>();
         
         dd.adaptSegment(cn, activeSynapses, cn.getPermanenceIncrement(), cn.getPermanenceDecrement());
         assertEquals(0.0, s0.getPermanence(), 0.01);
@@ -643,25 +643,25 @@ public class TemporalMemoryTest {
         
         DistalDendrite dd = cn.getCell(0).createSegment(cn, 0);
         
-        Set<Cell> winnerCells = new LinkedHashSet<Cell>();
+        Set<Cell> winnerCells = new LinkedHashSet<>();
         winnerCells.add(cn.getCell(4));
         winnerCells.add(cn.getCell(47));
         winnerCells.add(cn.getCell(58));
         winnerCells.add(cn.getCell(93));
         
-        List<Cell> learnCells = new ArrayList<Cell>(dd.pickCellsToLearnOn(cn, 2, winnerCells, cn.getRandom()));
+        List<Cell> learnCells = new ArrayList<>(dd.pickCellsToLearnOn(cn, 2, winnerCells, cn.getRandom()));
         assertEquals(2, learnCells.size());
         assertTrue(learnCells.contains(cn.getCell(47)));
         assertTrue(learnCells.contains(cn.getCell(93)));
         
-        learnCells = new ArrayList<Cell>(dd.pickCellsToLearnOn(cn, 100, winnerCells, cn.getRandom()));
+        learnCells = new ArrayList<>(dd.pickCellsToLearnOn(cn, 100, winnerCells, cn.getRandom()));
         assertEquals(4, learnCells.size());
         assertEquals(93, learnCells.get(0).getIndex());
         assertEquals(58, learnCells.get(1).getIndex());
         assertEquals(47, learnCells.get(2).getIndex());
         assertEquals(4, learnCells.get(3).getIndex());
         
-        learnCells = new ArrayList<Cell>(dd.pickCellsToLearnOn(cn, 0, winnerCells, cn.getRandom()));
+        learnCells = new ArrayList<>(dd.pickCellsToLearnOn(cn, 0, winnerCells, cn.getRandom()));
         assertEquals(0, learnCells.size());
     }
     
@@ -674,10 +674,10 @@ public class TemporalMemoryTest {
         DistalDendrite dd = cn.getCell(0).createSegment(cn, 0);
         dd.createSynapse(cn, cn.getCell(23), 0.6, 0);
         
-        Set<Cell> winnerCells = new LinkedHashSet<Cell>();
+        Set<Cell> winnerCells = new LinkedHashSet<>();
         winnerCells.add(cn.getCell(23));
         
-        List<Cell> learnCells = new ArrayList<Cell>(dd.pickCellsToLearnOn(cn, 2, winnerCells, cn.getRandom()));
+        List<Cell> learnCells = new ArrayList<>(dd.pickCellsToLearnOn(cn, 2, winnerCells, cn.getRandom()));
         assertTrue(learnCells.isEmpty());
     }
 }

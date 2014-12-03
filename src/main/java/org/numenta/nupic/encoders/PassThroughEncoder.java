@@ -95,7 +95,7 @@ public class PassThroughEncoder extends Encoder<int[]> {
 
 		int[] overlap = ArrayUtils.and(expectedInts, actualInts);
 
-		int overlapSum = ArrayUtils.sum(overlap);
+		long overlapSum = ArrayUtils.sum(overlap);
 		double r = 0.0;
 		if (expectedSum == 0)
 			r = 0.0;
@@ -144,10 +144,10 @@ public class PassThroughEncoder extends Encoder<int[]> {
 	    if (parentFieldName != null && parentFieldName.length() >0)
 	    	String.format("%s.%s", parentFieldName, this.name);
 
-		List<MinMax> ranges = new ArrayList<MinMax>();
+		List<MinMax> ranges = new ArrayList<>();
 		ranges.add(new MinMax(0,0));
 	    RangeList inner = new RangeList(ranges, "input");
-		Map<String, RangeList> fieldsDict = new HashMap<String, RangeList>();
+		Map<String, RangeList> fieldsDict = new HashMap<>();
 		fieldsDict.put(fieldName, inner);
 		
 	    //return ({fieldName: ([[0, 0]], "input")}, [fieldName])

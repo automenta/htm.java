@@ -35,7 +35,7 @@ import java.util.Set;
  * @author David Ray
  */
 public class SequenceMachine { 
-    private PatternMachine patternMachine;
+    private final PatternMachine patternMachine;
     
     /**
      * Represents the end of a pattern or sequence when inserted in
@@ -63,7 +63,7 @@ public class SequenceMachine {
      * @return
      */
     public List<Set<Integer>> generateFromNumbers(List<Integer> numbers) {
-        List<Set<Integer>> sequence = new ArrayList<Set<Integer>>();
+        List<Set<Integer>> sequence = new ArrayList<>();
         for(Integer i : numbers) {
             if(i == -1) {
                 sequence.add(NONE);

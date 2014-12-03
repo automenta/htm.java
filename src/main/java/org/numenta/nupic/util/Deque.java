@@ -42,7 +42,7 @@ import java.util.concurrent.LinkedBlockingDeque;
  */
 public class Deque<E> implements Iterable<E> {
 	/** Backing array list */
-	private LinkedBlockingDeque<E> backingList = new LinkedBlockingDeque<E>();
+	private final LinkedBlockingDeque<E> backingList = new LinkedBlockingDeque<>();
 	/** Originating size of this {@code Deque} */
 	private int capacity;
 	/** The internal size monitor */

@@ -11,8 +11,8 @@ package org.numenta.nupic.util;
  * @param <S>	the type of the second argument
  */
 public class SortablePair<F extends Comparable<F>, S> implements Comparable<F> {
-	private F first;
-	private S second;
+	private final F first;
+	private final S second;
 	/**
 	 * Constructs a new {@code Pair}
 	 * @param first		the first argument of type &lt;F&gt; which must be an 

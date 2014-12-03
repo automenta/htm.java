@@ -30,12 +30,12 @@ public class SparseObjectMatrixTest {
 
     @Test
     public void testGetDimensionMultiples() {
-        SparseMatrix<TestObject> sm = new SparseObjectMatrix<TestObject>(new int[] { 4 });
+        SparseMatrix<TestObject> sm = new SparseObjectMatrix<>(new int[] { 4 });
         int[] dm = sm.getDimensionMultiples();
         assertEquals(1, dm.length);
         assertEquals(1, dm[0]);
         
-        sm = new SparseObjectMatrix<TestObject>(new int[] { 1, 2, 3, 4, 5 });
+        sm = new SparseObjectMatrix<>(new int[] { 1, 2, 3, 4, 5 });
         dm = sm.getDimensionMultiples();
         assertEquals(ArrayUtils.print1DArray(dm), "[120, 60, 20, 5, 1]");
     }
@@ -46,7 +46,7 @@ public class SparseObjectMatrixTest {
      */
     @Test
     public void testGetSparseIndices() {
-        SparseObjectMatrix<TestObject> sm = new SparseObjectMatrix<TestObject>(new int[] { 32 });
+        SparseObjectMatrix<TestObject> sm = new SparseObjectMatrix<>(new int[] { 32 });
         sm.set(0, new TestObject(1, 1));
         sm.set(2, new TestObject(2, 2));
         sm.set(1, new TestObject(3, 3));
@@ -63,7 +63,7 @@ public class SparseObjectMatrixTest {
     @Test
     public void testGetMaxIndex() {
         SparseObjectMatrix<TestObject> sm = 
-            new SparseObjectMatrix<TestObject>(new int[] { 5, 5 });
+            new SparseObjectMatrix<>(new int[] { 5, 5 });
         
         int max = sm.getMaxIndex();
         assertEquals(24, max);
@@ -75,7 +75,7 @@ public class SparseObjectMatrixTest {
      */
     @Test
     public void testAsDense() {
-        SparseObjectMatrix<TestObject> sm = new SparseObjectMatrix<TestObject>(new int[] { 2, 32, 32 });//2048
+        SparseObjectMatrix<TestObject> sm = new SparseObjectMatrix<>(new int[] { 2, 32, 32 });//2048
         TypeFactory<TestObject> f = new TypeFactory<TestObject>() {
             int index = 0;
             @Override public TestObject make(int... args) {
@@ -99,7 +99,7 @@ public class SparseObjectMatrixTest {
      */
     @Test
     public void testComputeIndex() {
-        SparseMatrix<TestObject> l = new SparseObjectMatrix<TestObject>(new int[] { 2, 4, 4 });
+        SparseMatrix<TestObject> l = new SparseObjectMatrix<>(new int[] { 2, 4, 4 });
         
         int index = l.computeIndex(new int[] { 0, 2, 2 });
         assertEquals(10, index);
@@ -114,7 +114,7 @@ public class SparseObjectMatrixTest {
     @Test
     public void testComputeIndex_ColumnMajor() {
         // Column major
-        SparseMatrix<TestObject> l = new SparseObjectMatrix<TestObject>(new int[] { 4, 4, 2 }, true);
+        SparseMatrix<TestObject> l = new SparseObjectMatrix<>(new int[] { 4, 4, 2 }, true);
                 
         int index = l.computeIndex(new int[] { 2, 2, 0 });
         assertEquals(10, index);
@@ -128,7 +128,7 @@ public class SparseObjectMatrixTest {
      */
     @Test
     public void testComputeCoordinates() {
-        SparseMatrix<TestObject> l = new SparseObjectMatrix<TestObject>(new int[] { 2, 4, 4 });
+        SparseMatrix<TestObject> l = new SparseObjectMatrix<>(new int[] { 2, 4, 4 });
         int[] coordinates = l.computeCoordinates(27);
         assertEquals(1, coordinates[0]);
         assertEquals(2, coordinates[1]);
@@ -140,7 +140,7 @@ public class SparseObjectMatrixTest {
      */
     @Test
     public void testComputeCoordinates_ColumnMajor() {
-        SparseMatrix<TestObject> l = new SparseObjectMatrix<TestObject>(new int[] { 4, 4, 2 }, true);
+        SparseMatrix<TestObject> l = new SparseObjectMatrix<>(new int[] { 4, 4, 2 }, true);
         int[] coordinates = l.computeCoordinates(27);
         assertEquals(3, coordinates[0]);
         assertEquals(2, coordinates[1]);
@@ -151,8 +151,8 @@ public class SparseObjectMatrixTest {
      * Test object for instantiation tests
      */
     public class TestObject {
-        private int arg0;
-        private int arg1;
+        private final int arg0;
+        private final int arg1;
         public TestObject(int arg0, int arg1) {
             this.arg0 = arg0;
             this.arg1 = arg1;

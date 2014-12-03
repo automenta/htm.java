@@ -170,7 +170,7 @@ public class ScalarEncoderTest {
 			
 			Map<String, RangeList> fieldsMap = decoded.getFields();
 			assertEquals(1, fieldsMap.size());
-			RangeList ranges = (RangeList)new ArrayList<RangeList>(fieldsMap.values()).get(0);
+			RangeList ranges = new ArrayList<>(fieldsMap.values()).get(0);
 			assertEquals(1, ranges.size());
 			assertEquals(ranges.getRange(0).min(), ranges.getRange(0).max(), 0);
 			assertTrue(ranges.getRange(0).min() - v < se.getResolution());
@@ -266,9 +266,9 @@ public class ScalarEncoderTest {
 		TDoubleList actValues = new TDoubleArrayList(new double[] { 4, 2, 1 });
 		
 		TDoubleList scores = se.closenessScores(expValues, actValues, false);
-		for(Tuple t : ArrayUtils.zip(Arrays.asList(2, 2, 1), Arrays.asList(scores.get(0)))) {
-			double a = (int)t.get(0);
-			double b = (double)t.get(1);
+		for(Tuple<Double> t : ArrayUtils.zip(Arrays.asList(2d, 2d, 1d), Arrays.asList(scores.get(0)))) {
+			double a = t.get(0);
+			double b = t.get(1);
 			assertTrue(a == b);
 		}
 	}
@@ -311,7 +311,7 @@ public class ScalarEncoderTest {
 			System.out.println("decoding " + Arrays.toString(output) + String.format("(%f)=>", v) + se.decodedToStr(decoded));
 			
 			assertEquals(decoded.getFields().size(), 1, 0);
-			List<RangeList> rangeList = new ArrayList<RangeList>(decoded.getFields().values());
+			List<RangeList> rangeList = new ArrayList<>(decoded.getFields().values());
 			assertEquals(rangeList.get(0).size(), 1, 0);
 			MinMax minMax = rangeList.get(0).getRanges().get(0);
 			assertEquals(minMax.min(), minMax.max(), 0);
@@ -338,13 +338,13 @@ public class ScalarEncoderTest {
 		// Make sure we can fill in holes
 		DecodeResult decoded = se.decode(new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1 }, "");
 		assertEquals(decoded.getFields().size(), 1, 0);
-		List<RangeList> rangeList = new ArrayList<RangeList>(decoded.getFields().values());
+		List<RangeList> rangeList = new ArrayList<>(decoded.getFields().values());
 		assertEquals(1, rangeList.get(0).size(), 0);
 		System.out.println("decodedToStr of " + rangeList + " => " + se.decodedToStr(decoded));
 		
 		decoded = se.decode(new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1 }, "");
 		assertEquals(decoded.getFields().size(), 1, 0);
-		rangeList = new ArrayList<RangeList>(decoded.getFields().values());
+		rangeList = new ArrayList<>(decoded.getFields().values());
 		assertEquals(1, rangeList.get(0).size(), 0);
 		System.out.println("decodedToStr of " + rangeList + " => " + se.decodedToStr(decoded));
 		
@@ -375,7 +375,7 @@ public class ScalarEncoderTest {
 	        .forced(true);
 		initSE();
 		
-		List<int[]> iterlist = new ArrayList<int[]>();
+		List<int[]> iterlist = new ArrayList<>();
 		for(int i = 0;i < 137;i++) {
 			iterlist.add(new int[140]);
 			ArrayUtils.setRangeTo(iterlist.get(i), i, i+3, 1);
@@ -408,7 +408,7 @@ public class ScalarEncoderTest {
 			System.out.println(String.format("decoding (%f)=>", v) + " " + se.decodedToStr(decoded));
 			
 			assertEquals(decoded.getFields().size(), 1, 0);
-			rangeList = new ArrayList<RangeList>(decoded.getFields().values());
+			rangeList = new ArrayList<>(decoded.getFields().values());
 			assertEquals(rangeList.get(0).size(), 1, 0);
 			MinMax minMax = rangeList.get(0).getRanges().get(0);
 			assertEquals(minMax.min(), minMax.max(), 0);
@@ -441,7 +441,7 @@ public class ScalarEncoderTest {
 			System.out.println(String.format("decoding (%f)=>", v) + " " + se.decodedToStr(decoded));
 			
 			assertEquals(decoded.getFields().size(), 1, 0);
-			rangeList = new ArrayList<RangeList>(decoded.getFields().values());
+			rangeList = new ArrayList<>(decoded.getFields().values());
 			assertEquals(rangeList.get(0).size(), 1, 0);
 			MinMax minMax = rangeList.get(0).getRanges().get(0);
 			assertEquals(minMax.min(), minMax.max(), 0);

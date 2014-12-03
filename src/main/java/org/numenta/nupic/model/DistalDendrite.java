@@ -102,7 +102,7 @@ public class DistalDendrite extends Segment {
      * @return
      */
     public Set<Synapse> getConnectedActiveSynapses(Map<DistalDendrite, Set<Synapse>> activeSynapsesForSegment, double permanenceThreshold) {
-        Set<Synapse> connectedSynapses = new LinkedHashSet<Synapse>();
+        Set<Synapse> connectedSynapses = new LinkedHashSet<>();
         
         if(!activeSynapsesForSegment.containsKey(this)) {
             return connectedSynapses;
@@ -155,7 +155,7 @@ public class DistalDendrite extends Segment {
      */
     public Set<Cell> pickCellsToLearnOn(Connections c, int numPickCells, Set<Cell> prevWinners, Random random) {
         //Create a list of cells that aren't already synapsed to this segment
-        Set<Cell> candidates = new LinkedHashSet<Cell>(prevWinners);
+        Set<Cell> candidates = new LinkedHashSet<>(prevWinners);
         for(Synapse synapse : c.getSynapses(this)) {
             Cell sourceCell = synapse.getSourceCell();
             if(candidates.contains(sourceCell)) {
@@ -164,10 +164,10 @@ public class DistalDendrite extends Segment {
         }
         
         numPickCells = Math.min(numPickCells, candidates.size());
-        List<Cell> cands = new ArrayList<Cell>(candidates);
+        List<Cell> cands = new ArrayList<>(candidates);
         Collections.sort(cands);
         
-        Set<Cell> cells = new LinkedHashSet<Cell>();
+        Set<Cell> cells = new LinkedHashSet<>();
         for(int x = 0;x < numPickCells;x++) {
             int i = random.nextInt(cands.size());
             cells.add(cands.get(i));

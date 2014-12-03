@@ -43,13 +43,13 @@ import org.numenta.nupic.model.Synapse;
  * @author David Ray
  */
 public class ComputeCycle {
-    Set<Cell> activeCells = new LinkedHashSet<Cell>();
-    Set<Cell> winnerCells = new LinkedHashSet<Cell>();
-    Set<Cell> predictiveCells = new LinkedHashSet<Cell>();
-    Set<Column> predictedColumns = new LinkedHashSet<Column>();
-    Set<DistalDendrite> activeSegments = new LinkedHashSet<DistalDendrite>();
-    Set<DistalDendrite> learningSegments = new LinkedHashSet<DistalDendrite>();
-    Map<DistalDendrite, Set<Synapse>> activeSynapsesForSegment = new LinkedHashMap<DistalDendrite, Set<Synapse>>();
+    Set<Cell> activeCells = new LinkedHashSet<>();
+    Set<Cell> winnerCells = new LinkedHashSet<>();
+    Set<Cell> predictiveCells = new LinkedHashSet<>();
+    Set<Column> predictedColumns = new LinkedHashSet<>();
+    Set<DistalDendrite> activeSegments = new LinkedHashSet<>();
+    Set<DistalDendrite> learningSegments = new LinkedHashSet<>();
+    Map<DistalDendrite, Set<Synapse>> activeSynapsesForSegment = new LinkedHashMap<>();
     
     
     /**
@@ -65,13 +65,13 @@ public class ComputeCycle {
      * @param   c       the current connections state of the TemporalMemory
      */
     public ComputeCycle(Connections c) {
-        this.activeCells = new LinkedHashSet<Cell>(c.getActiveCells());
-        this.winnerCells = new LinkedHashSet<Cell>(c.getWinnerCells());
-        this.predictiveCells = new LinkedHashSet<Cell>(c.getPredictiveCells());
-        this.predictedColumns = new LinkedHashSet<Column>(c.getPredictedColumns());
-        this.activeSegments = new LinkedHashSet<DistalDendrite>(c.getActiveSegments());
-        this.learningSegments = new LinkedHashSet<DistalDendrite>(c.getLearningSegments());
-        this.activeSynapsesForSegment = new LinkedHashMap<DistalDendrite, Set<Synapse>>(c.getActiveSynapsesForSegment());
+        this.activeCells = new LinkedHashSet<>(c.getActiveCells());
+        this.winnerCells = new LinkedHashSet<>(c.getWinnerCells());
+        this.predictiveCells = new LinkedHashSet<>(c.getPredictiveCells());
+        this.predictedColumns = new LinkedHashSet<>(c.getPredictedColumns());
+        this.activeSegments = new LinkedHashSet<>(c.getActiveSegments());
+        this.learningSegments = new LinkedHashSet<>(c.getLearningSegments());
+        this.activeSynapsesForSegment = new LinkedHashMap<>(c.getActiveSynapsesForSegment());
     }
     
     /**

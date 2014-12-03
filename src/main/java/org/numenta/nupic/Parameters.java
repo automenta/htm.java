@@ -54,9 +54,9 @@ import org.numenta.nupic.util.MersenneTwister;
  * @see ComputeCycle
  */
 public class Parameters implements Serializable {
-    private static final Map<KEY, Object> DEFAULTS_ALL;
-    private static final Map<KEY, Object> DEFAULTS_TEMPORAL;
-    private static final Map<KEY, Object> DEFAULTS_SPATIAL;
+    private static Map<KEY, Object> DEFAULTS_ALL;
+    private static Map<KEY, Object> DEFAULTS_TEMPORAL;
+    private static Map<KEY, Object> DEFAULTS_SPATIAL;
     
 
     static {
@@ -65,7 +65,7 @@ public class Parameters implements Serializable {
         /////////// Universal Parameters ///////////
 
         defaultParams.put(KEY.SEED, 42);
-        defaultParams.put(KEY.RANDOM, new MersenneTwister((int)defaultParams.get(KEY.SEED)));
+        defaultParams.put(KEY.RANDOM, new MersenneTwister((long)((int)defaultParams.get(KEY.SEED))));
 
         /////////// Temporal Memory Parameters ///////////
         Map<KEY, Object> defaultTemporalParams = new ParametersMap();
@@ -109,160 +109,6 @@ public class Parameters implements Serializable {
         DEFAULTS_ALL = Collections.unmodifiableMap(defaultParams);
     }
 
-    /**
-     * Constant values representing configuration parameters for the {@link TemporalMemory}
-     */
-    public static enum KEY implements Serializable {
-        /////////// Universal Parameters ///////////
-        /**
-         * Total number of columns
-         */
-        COLUMN_DIMENSIONS("columnDimensions", int[].class),
-        /**
-         * Total number of cells per column
-         */
-        CELLS_PER_COLUMN("cellsPerColumn", Integer.class, 1, null),
-        /**
-         * Random Number Generator
-         */
-        RANDOM("random", Random.class),
-        /**
-         * Seed for random number generator
-         */
-        SEED("seed", Integer.class),
-
-        /////////// Temporal Memory Parameters ///////////
-        /**
-         * If the number of active connected synapses on a segment
-         * is at least this threshold, the segment is said to be active.
-         */
-        ACTIVATION_THRESHOLD("activationThreshold", Integer.class, 0, null),
-        /**
-         * Radius around cell from which it can
-         * sample to form distal {@link DistalDendrite} connections.
-         */
-        LEARNING_RADIUS("learningRadius", Integer.class, 0, null),
-        /**
-         * If the number of synapses active on a segment is at least this
-         * threshold, it is selected as the best matching
-         * cell in a bursting column.
-         */
-        MIN_THRESHOLD("minThreshold", Integer.class, 0, null),
-        /**
-         * The maximum number of synapses added to a segment during learning.
-         */
-        MAX_NEW_SYNAPSE_COUNT("maxNewSynapseCount", Integer.class),
-        /**
-         * Initial permanence of a new synapse
-         */
-        INITIAL_PERMANENCE("initialPermanence", Double.class, 0.0, 1.0),
-        /**
-         * If the permanence value for a synapse
-         * is greater than this value, it is said
-         * to be connected.
-         */
-        CONNECTED_PERMANENCE("connectedPermanence", Double.class, 0.0, 1.0),
-        /**
-         * Amount by which permanence of synapses
-         * are incremented during learning.
-         */
-        PERMANENCE_INCREMENT("permanenceIncrement", Double.class, 0.0, 1.0),
-        /**
-         * Amount by which permanences of synapses
-         * are decremented during learning.
-         */
-        PERMANENCE_DECREMENT("permanenceDecrement", Double.class, 0.0, 1.0),
-        TM_VERBOSITY("tmVerbosity", Integer.class, 0, 10),
-
-        /////////// Spatial Pooler Parameters ///////////
-        INPUT_DIMENSIONS("inputDimensions", int[].class),
-        POTENTIAL_RADIUS("potentialRadius", Integer.class),
-        POTENTIAL_PCT("potentialPct", Double.class), //TODO add range here?
-        GLOBAL_INHIBITIONS("globalInhibition", Boolean.class),
-        INHIBITION_RADIUS("inhibitionRadius", Integer.class, 0, null),
-        LOCAL_AREA_DENSITY("localAreaDensity", Double.class), //TODO add range here?
-        NUM_ACTIVE_COLUMNS_PER_INH_AREA("numActiveColumnsPerInhArea", Double.class),//TODO add range here?
-        STIMULUS_THRESHOLD("stimulusThreshold", Double.class), //TODO add range here?
-        SYN_PERM_INACTIVE_DEC("synPermInactiveDec", Double.class, 0.0, 1.0),
-        SYN_PERM_ACTIVE_INC("synPermActiveInc", Double.class, 0.0, 1.0),
-        SYN_PERM_CONNECTED("synPermConnected", Double.class, 0.0, 1.0),
-        SYN_PERM_BELOW_STIMULUS_INC("synPermBelowStimulusInc", Double.class, 0.0, 1.0),
-        SYN_PERM_TRIM_THRESHOLD("synPermTrimThreshold", Double.class, 0.0, 1.0),
-        MIN_PCT_OVERLAP_DUTY_CYCLE("minPctOverlapDutyCycles", Double.class),//TODO add range here?
-        MIN_PCT_ACTIVE_DUTY_CYCLE("minPctActiveDutyCycles", Double.class),//TODO add range here?
-        DUTY_CYCLE_PERIOD("dutyCyclePeriod", Integer.class),//TODO add range here?
-        MAX_BOOST("maxBoost", Double.class), //TODO add range here?
-        SP_VERBOSITY("spVerbosity", Integer.class, 0, 10);
-
-        private static Map<String, KEY> fieldMap = new HashMap<String, KEY>();
-
-        static {
-            for (KEY key : KEY.values()) {
-                fieldMap.put(key.getFieldName(), key);
-            }
-        }
-
-        public static KEY getKeyByFieldName(String fieldName) {
-            return fieldMap.get(fieldName);
-        }
-
-        final private String fieldName;
-        final private Class<?> fieldType;
-        final private Number min;
-        final private Number max;
-
-        /**
-         * Constructs a new KEY
-         *
-         * @param fieldName
-         * @param fieldType
-         */
-        private KEY(String fieldName, Class<?> fieldType) {
-            this(fieldName, fieldType, null, null);
-        }
-
-        /**
-         * Constructs a new KEY with range check
-         *
-         * @param fieldName
-         * @param fieldType
-         * @param min
-         * @param max
-         */
-        private KEY(String fieldName, Class<?> fieldType, Number min, Number max) {
-            this.fieldName = fieldName;
-            this.fieldType = fieldType;
-            this.min = min;
-            this.max = max;
-        }
-
-        public Class<?> getFieldType() {
-            return fieldType;
-        }
-
-        public String getFieldName() {
-            return fieldName;
-        }
-
-        public Number getMin() {
-            return min;
-        }
-
-        public Number getMax() {
-            return max;
-        }
-
-        public boolean checkRange(Number value) {
-            if (value == null) {
-                throw new IllegalArgumentException("checkRange argument can not be null");
-            }
-            return (min == null && max == null) ||
-                   (min != null && max == null && min.doubleValue() <= value.doubleValue()) ||
-                   (max != null && min == null && value.doubleValue() < value.doubleValue()) ||
-                   (min != null && min.doubleValue() <= value.doubleValue() && max != null && value.doubleValue() < max.doubleValue());
-        }
-
-    }
 
     /**
      * Save guard decorator around params map
@@ -272,7 +118,7 @@ public class Parameters implements Serializable {
 		private static final long serialVersionUID = 1L;
 
 		ParametersMap() {
-            super(Parameters.KEY.class);
+            super(KEY.class);
         }
 
         @Override public Object put(KEY key, Object value) {
@@ -293,7 +139,7 @@ public class Parameters implements Serializable {
     /**
      * Map of parameters to their values
      */
-    public final Map<Parameters.KEY, Object> paramMap = new ConcurrentHashMap();
+    public final Map<KEY, Object> paramMap = new ConcurrentHashMap();
     //TODO apply from container to parameters
 
     /**
@@ -330,11 +176,7 @@ public class Parameters implements Serializable {
      * @return {@link Parameters} object
      */
     private static Parameters getParameters(Map<KEY, Object> map) {
-        Parameters result = new Parameters();
-        for (KEY key : map.keySet()) {
-            result.set(key, map.get(key));
-        }
-        return result;
+        return new Parameters(map);
     }
 
 
@@ -343,9 +185,15 @@ public class Parameters implements Serializable {
      * It is private. Only allow instantiation with Factory methods.
      * This way we will never have erroneous Parameters with missing attributes
      */
-    private Parameters() {
+    protected Parameters() {
     }
 
+    protected Parameters(Map<KEY,Object> map) {
+        for (KEY key : map.keySet()) {
+            set(key, map.get(key));
+        }
+    }
+    
     /**
      * Sets the fields specified by this {@code Parameters} on the specified
      * {@link Connections} object.
@@ -415,7 +263,7 @@ public class Parameters implements Serializable {
         for (int i = 0; i < properties.length; i++) {
             BeanUtil.PropertyInfo property = properties[i];
             String fieldName = property.getName();
-            KEY propKey = KEY.getKeyByFieldName(property.getName());
+            KEY propKey = KEY.key(property.getName());
             if (propKey != null) {
                 Object paramValue = this.get(propKey);
                 Object cnValue = beanUtil.getSimpleProperty(cn, fieldName);

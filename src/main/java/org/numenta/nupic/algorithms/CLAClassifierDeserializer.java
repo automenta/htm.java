@@ -67,7 +67,7 @@ public class CLAClassifierDeserializer extends JsonDeserializer<CLAClassifier> {
         retVal.steps = t;
         
         String[] tupleStrs = node.get("patternNZHistory").asText().split(";");
-        Deque<Tuple> patterns = new Deque<Tuple>(tupleStrs.length);
+        Deque<Tuple> patterns = new Deque<>(tupleStrs.length);
         for(String tupleStr : tupleStrs) {
         	String[] tupleParts = tupleStr.split("-");
         	int iteration = Integer.parseInt(tupleParts[0]);
@@ -77,18 +77,18 @@ public class CLAClassifierDeserializer extends JsonDeserializer<CLAClassifier> {
         	for(int i = 0;i < indices.length;i++) {
         		indices[i] = Integer.parseInt(indexes[i].trim());
         	}
-        	Tuple tup = new Tuple(2, iteration, indices);
+        	Tuple tup = new Tuple(iteration, indices);
         	patterns.append(tup);
         }
         retVal.patternNZHistory = patterns;
         
-        Map<Tuple<Integer>, BitHistory> bitHistoryMap = new HashMap<Tuple<Integer>, BitHistory>();
+        Map<Tuple<Integer>, BitHistory> bitHistoryMap = new HashMap<>();
         String[] bithists = node.get("activeBitHistory").asText().split(";");
         for(String bh : bithists) {
         	String[] parts = bh.split("-");
         	
         	String[] left = parts[0].split(",");
-        	Tuple iteration = new Tuple(2, Integer.parseInt(left[0].trim()), Integer.parseInt(left[1].trim()));
+        	Tuple iteration = new Tuple(Integer.parseInt(left[0].trim()), Integer.parseInt(left[1].trim()));
         	
         	BitHistory bitHistory = new BitHistory();
         	String[] right = parts[1].split("=");
@@ -108,7 +108,7 @@ public class CLAClassifierDeserializer extends JsonDeserializer<CLAClassifier> {
         retVal.setActiveBitHistory(bitHistoryMap);
         
         ArrayNode jn = (ArrayNode)node.get("actualValues");
-        List<Object> l = new ArrayList<Object>();	
+        List<Object> l = new ArrayList<>();	
         for(int i = 0;i < jn.size();i++) {
         	JsonNode n = jn.get(i);
         	try {

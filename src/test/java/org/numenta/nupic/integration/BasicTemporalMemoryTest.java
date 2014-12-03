@@ -32,7 +32,7 @@ import java.util.Set;
 
 import org.junit.Test;
 import org.numenta.nupic.Parameters;
-import org.numenta.nupic.Parameters.KEY;
+import org.numenta.nupic.KEY;
 import org.numenta.nupic.integration.TemporalMemoryTestMachine.DetailedResults;
 import org.numenta.nupic.research.TemporalMemory;
 import org.numenta.nupic.util.ConsecutivePatternMachine;
@@ -276,7 +276,7 @@ public class BasicTemporalMemoryTest extends AbstractTemporalMemoryTest {
         
         finishSetUp(new ConsecutivePatternMachine(1, 1));
         
-        List<Set<Integer>> sequence = new ArrayList<Set<Integer>>();
+        List<Set<Integer>> sequence = new ArrayList<>();
         sequence.add(patternMachine.get(0));
         
         for(int i = 0;i < 4;i++) {

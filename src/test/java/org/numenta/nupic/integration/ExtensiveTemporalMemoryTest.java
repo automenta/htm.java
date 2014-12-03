@@ -30,8 +30,9 @@ import java.util.List;
 import java.util.Set;
 
 import org.junit.Test;
+import org.numenta.nupic.KEY;
 import org.numenta.nupic.Parameters;
-import org.numenta.nupic.Parameters.KEY;
+import org.numenta.nupic.KEY;
 import org.numenta.nupic.integration.TemporalMemoryTestMachine.DetailedResults;
 import org.numenta.nupic.util.PatternMachine;
 import org.numenta.nupic.util.SequenceMachine;
@@ -141,7 +142,7 @@ public class ExtensiveTemporalMemoryTest extends AbstractTemporalMemoryTest {
         
         int seed = 42;
         finishSetUp(new PatternMachine(
-            ((int[])parameters.get(Parameters.KEY.COLUMN_DIMENSIONS))[0], 23, seed));
+            ((int[])parameters.get(KEY.COLUMN_DIMENSIONS))[0], 23, seed));
         
         // Instead of implementing the Python "shuffle" method, just use the exact output
         Integer[] shuffledNums = new Integer[] { 

@@ -34,15 +34,17 @@ public class Tuple<T> {
 
     final private T[] container;
 
-    public Tuple(int size, T... objects) {
+
+    public Tuple(T[] objects, int size) {
+        //for creating a tuple with different size array than input
+        throw new RuntimeException("Not impl yet");
+    }
+    
+    public Tuple(T... objects) {        
         container = objects;
-        /*
-         container = new Object[size];
-         for(int i = 0;i < size;i++) container[i] = objects[i];
-         */
     }
 
-    public T get(int index) {
+    public T get(final int index) {
         return container[index];
     }
 

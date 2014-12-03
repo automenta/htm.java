@@ -52,8 +52,8 @@ import com.bethecoder.table.spec.AsciiTable;
  *
  */
 public class TemporalMemoryTestMachine {
-    private TemporalMemory temporalMemory;
-    private Connections connections;
+    private final TemporalMemory temporalMemory;
+    private final Connections connections;
     
     public TemporalMemoryTestMachine(TemporalMemory tm, Connections c) {
         this.temporalMemory = tm;
@@ -61,8 +61,8 @@ public class TemporalMemoryTestMachine {
     }
     
     public List<Set<Integer>> feedSequence(List<Set<Integer>> sequence, boolean learn) {
-        List<Set<Integer>> results = new ArrayList<Set<Integer>>();
-        List<Set<Cell>> interimResults = new ArrayList<Set<Cell>>();
+        List<Set<Integer>> results = new ArrayList<>();
+        List<Set<Cell>> interimResults = new ArrayList<>();
         ComputeCycle result = null;
         for(Set<Integer> pattern : sequence) {
             if(pattern == SequenceMachine.NONE) {
@@ -75,19 +75,19 @@ public class TemporalMemoryTestMachine {
         }
         for(Set<Cell> set : interimResults) {
             List<Integer> l = connections.asCellIndexes(set);
-            results.add(new LinkedHashSet<Integer>(l));
+            results.add(new LinkedHashSet<>(l));
         }
         return results;
     }
     
     public DetailedResults computeDetailedResults(List<Set<Integer>> results, List<Set<Integer>> sequence) {
-        List<Integer> predictedActiveCellsList = new ArrayList<Integer>(Arrays.asList(new Integer[] { 0 }));
-        List<Integer> predictedInactiveCellsList = new ArrayList<Integer>(Arrays.asList(new Integer[] { 0 }));
-        List<Set<Integer>> predictedActiveColumnsList = new ArrayList<Set<Integer>>();
+        List<Integer> predictedActiveCellsList = new ArrayList<>(Arrays.asList(new Integer[] { 0 }));
+        List<Integer> predictedInactiveCellsList = new ArrayList<>(Arrays.asList(new Integer[] { 0 }));
+        List<Set<Integer>> predictedActiveColumnsList = new ArrayList<>();
         predictedActiveColumnsList.add(new HashSet<Integer>());
-        List<Set<Integer>> predictedInactiveColumnsList = new ArrayList<Set<Integer>>();
+        List<Set<Integer>> predictedInactiveColumnsList = new ArrayList<>();
         predictedInactiveColumnsList.add(new HashSet<Integer>());
-        List<Set<Integer>> unpredictedActiveColumnsList = new ArrayList<Set<Integer>>();
+        List<Set<Integer>> unpredictedActiveColumnsList = new ArrayList<>();
         unpredictedActiveColumnsList.add(new HashSet<Integer>());
         
         Iterator<Set<Integer>> seqIter = sequence.iterator();
@@ -97,9 +97,9 @@ public class TemporalMemoryTestMachine {
             
             int predictedActiveCells = 0;
             int predictedInactiveCells = 0;
-            Set<Integer> predictedActiveColumns = new LinkedHashSet<Integer>();
-            Set<Integer> predictedInactiveColumns = new LinkedHashSet<Integer>();
-            Set<Integer> unpredictedActiveColumns = new LinkedHashSet<Integer>();
+            Set<Integer> predictedActiveColumns = new LinkedHashSet<>();
+            Set<Integer> predictedInactiveColumns = new LinkedHashSet<>();
+            Set<Integer> unpredictedActiveColumns = new LinkedHashSet<>();
             
             if(pattern != SequenceMachine.NONE) {
                 Set<Integer> prevPredictedCells = results.get(i-1);
@@ -117,7 +117,7 @@ public class TemporalMemoryTestMachine {
                 }
                 
                 unpredictedActiveColumns.addAll(ArrayUtils.subtract(
-                    new ArrayList<Integer>(predictedActiveColumns), new ArrayList<Integer>(pattern)));
+                    new ArrayList<>(predictedActiveColumns), new ArrayList<>(pattern)));
             }
             
             predictedActiveCellsList.add(predictedActiveCells);
@@ -180,9 +180,9 @@ public class TemporalMemoryTestMachine {
         for(int i = 0;i < len;i++) {
             List<Cell> cells = connections.getColumn(i).getCells();
             for(Cell cell : cells) {
-                Map<DistalDendrite, List<String>> segmentDict = new LinkedHashMap<DistalDendrite, List<String>>();
+                Map<DistalDendrite, List<String>> segmentDict = new LinkedHashMap<>();
                 for(DistalDendrite seg : cell.getSegments(connections)) {
-                    List<String> synapseList = new ArrayList<String>();
+                    List<String> synapseList = new ArrayList<>();
                     for(Synapse synapse : seg.getAllSynapses(connections)) {
                         synapseList.add("[" + synapse.getSourceCell() + ", " + synapse.getPermanence() + "]");
                     }

@@ -79,7 +79,7 @@ public class MultiEncoderTest {
 		
 		runScalarTests(me);
 		
-		List<String> categoryList = new ArrayList<String>();
+		List<String> categoryList = new ArrayList<>();
 		categoryList.add("run");
 		categoryList.add("pass");
 		categoryList.add("kick");
@@ -103,7 +103,7 @@ public class MultiEncoderTest {
 		setUp();
 		initME();
 		
-		Map<String, Map<String, Object>> fieldEncodings = new HashMap<String, Map<String, Object>>();
+		Map<String, Map<String, Object>> fieldEncodings = new HashMap<>();
 		fieldEncodings.put("dow", new HashMap<String, Object>());
 		fieldEncodings.get("dow").put("type", "ScalarEncoder");
 		fieldEncodings.get("dow").put("fieldname", "dow");
@@ -133,7 +133,7 @@ public class MultiEncoderTest {
 		setUp();
 		initME();
 		
-		List<String> categoryList = new ArrayList<String>();
+		List<String> categoryList = new ArrayList<>();
 		categoryList.add("run");
 		categoryList.add("pass");
 		categoryList.add("kick");
@@ -155,7 +155,7 @@ public class MultiEncoderTest {
 		// should be 7 bits wide
 		// use of forced=true is not recommended, but here for readability, see scalar.py
 		int[] expected = new int[]{0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1};
-		Map<String, Object> d = new HashMap<String, Object>();
+		Map<String, Object> d = new HashMap<>();
 		d.put("dow",  3.);
 		d.put("myval",  10.);
 		int[] output = me.encode(d);
@@ -164,7 +164,7 @@ public class MultiEncoderTest {
 		
 		// Check decoding
 		Tuple decoded = me.decode(output, "");
-		Map<String, RangeList> fields = (HashMap<String, RangeList>) decoded.get(0);
+		Map<String, RangeList> fields = (Map<String, RangeList>) decoded.get(0);
 		assertEquals(fields.keySet().size(), 2);
 		
 		MinMax minMax = fields.get("aux").getRange(0);
@@ -175,7 +175,7 @@ public class MultiEncoderTest {
 	}
 	
 	public void runMixedTests(MultiEncoder me) {
-		Map<String, Object> d = new HashMap<String, Object>();
+		Map<String, Object> d = new HashMap<>();
 		d.put("dow", 4.);
 		d.put("myval",  6.);
 		d.put("myCat", "pass");
@@ -192,16 +192,20 @@ public class MultiEncoderTest {
 		for (int i = 0; i < me.getEncoders(me).size(); i++) {
 			EncoderTuple t = me.getEncoders(me).get(i);
 			String name = t.getName();
-			if (name.equals("dow")) {
-				dow = (ScalarEncoder) t.getEncoder();
-				dowActual = topDownOut.get(i);
-			} else if (name.equals("myval")) {
-				myval = (ScalarEncoder) t.getEncoder();
-				myvalActual = topDownOut.get(i);
-			} else if (name.equals("myCat")) {
-				myCat = (CategoryEncoder) t.getEncoder();
-				myCatActual = topDownOut.get(i);
-			}
+                    switch (name) {
+                        case "dow":
+                            dow = (ScalarEncoder) t.getEncoder();
+                            dowActual = topDownOut.get(i);
+                            break;
+                        case "myval":
+                            myval = (ScalarEncoder) t.getEncoder();
+                            myvalActual = topDownOut.get(i);
+                            break;
+                        case "myCat":
+                            myCat = (CategoryEncoder) t.getEncoder();
+                            myCatActual = topDownOut.get(i);
+                            break;
+                    }
 		}
 		
 		EncoderResult dowExpected = dow.topDownCompute(dow.encode(4.)).get(0);

@@ -39,7 +39,7 @@ public enum FieldMetaType {
 	 * String representation to be used when a display
 	 * String is required.
 	 */
-	private String displayString;
+	private final String displayString;
 	
 	/** Private constructor */
 	private FieldMetaType(String s) {

@@ -86,7 +86,7 @@ public class SpatialPooler {
     public void initMatrices(final Connections c) {
     	SparseObjectMatrix<Column> mem = c.getMemory();
     	c.setMemory(mem == null ? 
-    		mem = new SparseObjectMatrix<Column>(c.getColumnDimensions()) : mem);
+    		mem = new SparseObjectMatrix<>(c.getColumnDimensions()) : mem);
         c.setInputMatrix(new SparseBinaryMatrix(c.getInputDimensions()));
         
         //Calculate numInputs and numColumns
@@ -641,7 +641,7 @@ public class SpatialPooler {
      * @return
      */
     public double[] initPermanence(Connections c, int[] potentialPool, int index, double connectedPct) {
-    	int count = (int)Math.round((double)potentialPool.length * connectedPct);
+    	int count = (int)Math.round(potentialPool.length * connectedPct);
         TIntHashSet pick = new TIntHashSet();
         Random random = c.getRandom();
         while(pick.size() < count) {
@@ -769,7 +769,7 @@ public class SpatialPooler {
     public TIntArrayList getNeighborsND(Connections c, int columnIndex, SparseMatrix<?> topology, int inhibitionRadius, boolean wrapAround) {
         final int[] dimensions = topology.getDimensions();
         int[] columnCoords = topology.computeCoordinates(columnIndex);
-        List<int[]> dimensionCoords = new ArrayList<int[]>();
+        List<int[]> dimensionCoords = new ArrayList<>();
         for(int i = 0;i < dimensions.length;i++) {
             int[] range = ArrayUtils.range(columnCoords[i] - inhibitionRadius, columnCoords[i] + inhibitionRadius + 1);
             int[] curRange = new int[range.length];
@@ -882,7 +882,7 @@ public class SpatialPooler {
     	if((density = c.getLocalAreaDensity()) <= 0) {
     		inhibitionArea = Math.pow(2 * c.getInhibitionRadius() + 1, c.getColumnDimensions().length);
     		inhibitionArea = Math.min(c.getNumColumns(), inhibitionArea);
-    		density = ((double)c.getNumActiveColumnsPerInhArea()) / inhibitionArea;
+    		density = c.getNumActiveColumnsPerInhArea() / inhibitionArea;
     		density = Math.min(density, 0.5);
     	}
     	

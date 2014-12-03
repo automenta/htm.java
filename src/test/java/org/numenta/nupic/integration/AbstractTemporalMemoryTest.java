@@ -114,7 +114,7 @@ public abstract class AbstractTemporalMemoryTest {
     protected DetailedResults feedTM(List<Set<Integer>> sequence, boolean learn, int num) {
         showInput(sequence, learn, num);
         
-        List<Set<Integer>> actual = new ArrayList<Set<Integer>>(sequence);
+        List<Set<Integer>> actual = new ArrayList<>(sequence);
         if(num > 1) {
             for(int i = 1;i < num;i++) {
                 actual.addAll(sequence);

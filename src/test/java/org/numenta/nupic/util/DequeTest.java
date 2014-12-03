@@ -34,13 +34,13 @@ public class DequeTest {
 
 	@Test
 	public void testConstruction() {
-		Deque<Integer> deque = new Deque<Integer>(2);
+		Deque<Integer> deque = new Deque<>(2);
 		assertEquals(2, deque.capacity());
 	}
 	
 	@Test
 	public void testCapacity() {
-		Deque<Integer> deque = new Deque<Integer>(2);
+		Deque<Integer> deque = new Deque<>(2);
 		assertEquals(2, deque.capacity());
 		
 		deque.append(1);
@@ -55,7 +55,7 @@ public class DequeTest {
 
 	@Test
 	public void testAppend() {
-		Deque<Integer> deque = new Deque<Integer>(2);
+		Deque<Integer> deque = new Deque<>(2);
 		assertEquals(2, deque.capacity());
 		
 		deque.append(1);
@@ -73,7 +73,7 @@ public class DequeTest {
 	
 	@Test
 	public void testInsert() {
-		Deque<Integer> deque = new Deque<Integer>(2);
+		Deque<Integer> deque = new Deque<>(2);
 		assertEquals(2, deque.capacity());
 		
 		deque.insert(1);
@@ -91,7 +91,7 @@ public class DequeTest {
 	
 	@Test
 	public void testPushLast() {
-		Deque<Integer> deque = new Deque<Integer>(2);
+		Deque<Integer> deque = new Deque<>(2);
 		assertEquals(2, deque.capacity());
 		
 		Integer pushResult = null;
@@ -115,7 +115,7 @@ public class DequeTest {
 	
 	@Test
 	public void testPushFirst() {
-		Deque<Integer> deque = new Deque<Integer>(2);
+		Deque<Integer> deque = new Deque<>(2);
 		assertEquals(2, deque.capacity());
 		
 		Integer pushResult = null;
@@ -139,7 +139,7 @@ public class DequeTest {
 	
 	@Test
 	public void testClear() {
-		Deque<Integer> deque = new Deque<Integer>(2);
+		Deque<Integer> deque = new Deque<>(2);
 		assertEquals(2, deque.capacity());
 		
 		deque.append(1);
@@ -157,7 +157,7 @@ public class DequeTest {
 	
 	@Test
 	public void takeFirst() {
-		Deque<Integer> deque = new Deque<Integer>(2);
+		Deque<Integer> deque = new Deque<>(2);
 		assertEquals(2, deque.capacity());
 		deque.append(1);
 		deque.append(2);
@@ -177,7 +177,7 @@ public class DequeTest {
 	
 	@Test
 	public void takeLast() {
-		Deque<Integer> deque = new Deque<Integer>(2);
+		Deque<Integer> deque = new Deque<>(2);
 		assertEquals(2, deque.capacity());
 		deque.append(1);
 		deque.append(2);
@@ -197,7 +197,7 @@ public class DequeTest {
 	
 	@Test
 	public void peekFirst() {
-		Deque<Integer> deque = new Deque<Integer>(2);
+		Deque<Integer> deque = new Deque<>(2);
 		assertEquals(2, deque.capacity());
 		deque.append(1);
 		deque.append(2);
@@ -209,7 +209,7 @@ public class DequeTest {
 	
 	@Test
 	public void peekLast() {
-		Deque<Integer> deque = new Deque<Integer>(2);
+		Deque<Integer> deque = new Deque<>(2);
 		assertEquals(2, deque.capacity());
 		deque.append(1);
 		deque.append(2);
@@ -221,7 +221,7 @@ public class DequeTest {
 	
 	@Test
 	public void testResize() {
-		Deque<Integer> deque = new Deque<Integer>(2);
+		Deque<Integer> deque = new Deque<>(2);
 		assertEquals(2, deque.capacity());
 		deque.append(1);
 		deque.append(2);
@@ -244,7 +244,7 @@ public class DequeTest {
 	
 	@Test
 	public void testIterator() {
-		Deque<Integer> deque = new Deque<Integer>(2);
+		Deque<Integer> deque = new Deque<>(2);
 		assertEquals(2, deque.capacity());
 		deque.append(1);
 		deque.append(2);

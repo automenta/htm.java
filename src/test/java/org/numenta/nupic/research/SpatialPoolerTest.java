@@ -32,7 +32,7 @@ import java.util.Arrays;
 import org.junit.Test;
 import org.numenta.nupic.Connections;
 import org.numenta.nupic.Parameters;
-import org.numenta.nupic.Parameters.KEY;
+import org.numenta.nupic.KEY;
 import org.numenta.nupic.model.Pool;
 import org.numenta.nupic.research.SpatialPooler;
 import org.numenta.nupic.util.ArrayUtils;
@@ -1495,7 +1495,7 @@ public class SpatialPoolerTest {
     	initSP();
     	
     	//We set the values on the Connections permanences here just for illustration
-    	SparseObjectMatrix<double[]> objMatrix = new SparseObjectMatrix<double[]>(new int[] { 5, 5 });
+    	SparseObjectMatrix<double[]> objMatrix = new SparseObjectMatrix<>(new int[] { 5, 5 });
     	objMatrix.set(0, new double[] { 0.0, 0.11, 0.095, 0.092, 0.01 });
     	objMatrix.set(1, new double[] { 0.12, 0.15, 0.02, 0.12, 0.09 });
     	objMatrix.set(2, new double[] { 0.51, 0.081, 0.025, 0.089, 0.31 });

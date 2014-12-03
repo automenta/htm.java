@@ -91,9 +91,9 @@ public class TemporalMemory {
      * @return                  {@link ComputeCycle} container for one cycle of inference values.
      */
     public ComputeCycle compute(Connections connections, int[] activeColumns, boolean learn) {
-        ComputeCycle result = computeFn(connections, connections.getColumnSet(activeColumns), new LinkedHashSet<Cell>(connections.getPredictiveCells()), 
-            new LinkedHashSet<DistalDendrite>(connections.getActiveSegments()), new LinkedHashMap<DistalDendrite, Set<Synapse>>(connections.getActiveSynapsesForSegment()), 
-                new LinkedHashSet<Cell>(connections.getWinnerCells()), learn);
+        ComputeCycle result = computeFn(connections, connections.getColumnSet(activeColumns), new LinkedHashSet<>(connections.getPredictiveCells()), 
+            new LinkedHashSet<>(connections.getActiveSegments()), new LinkedHashMap<>(connections.getActiveSynapsesForSegment()), 
+                new LinkedHashSet<>(connections.getWinnerCells()), learn);
         
         connections.setActiveCells(result.activeCells());
         connections.setWinnerCells(result.winnerCells());
@@ -189,7 +189,7 @@ public class TemporalMemory {
     public void burstColumns(ComputeCycle cycle, Connections c, Set<Column> activeColumns, Set<Column> predictedColumns, 
         Map<DistalDendrite, Set<Synapse>> prevActiveSynapsesForSegment) {
         
-        Set<Column> unpred = new LinkedHashSet<Column>(activeColumns);
+        Set<Column> unpred = new LinkedHashSet<>(activeColumns);
         
         unpred.removeAll(predictedColumns);
         for(Column column : unpred) {
@@ -240,14 +240,14 @@ public class TemporalMemory {
     	double permanenceIncrement = c.getPermanenceIncrement();
     	double permanenceDecrement = c.getPermanenceDecrement();
     		
-        List<DistalDendrite> prevAndLearning = new ArrayList<DistalDendrite>(prevActiveSegments);
+        List<DistalDendrite> prevAndLearning = new ArrayList<>(prevActiveSegments);
         prevAndLearning.addAll(learningSegments);
         
         for(DistalDendrite dd : prevAndLearning) {
             boolean isLearningSegment = learningSegments.contains(dd);
             boolean isFromWinnerCell = winnerCells.contains(dd.getParentCell());
             
-            Set<Synapse> activeSynapses = new LinkedHashSet<Synapse>(dd.getConnectedActiveSynapses(prevActiveSynapseSegments, 0));
+            Set<Synapse> activeSynapses = new LinkedHashSet<>(dd.getConnectedActiveSynapses(prevActiveSynapseSegments, 0));
             
             if(isLearningSegment || isFromWinnerCell) {
                 dd.adaptSegment(c, activeSynapses, permanenceIncrement, permanenceDecrement);
@@ -298,13 +298,13 @@ public class TemporalMemory {
      * @return 
      */
     public Map<DistalDendrite, Set<Synapse>> computeActiveSynapses(Connections c, Set<Cell> cellsActive) {
-        Map<DistalDendrite, Set<Synapse>> activesSynapses = new LinkedHashMap<DistalDendrite, Set<Synapse>>();
+        Map<DistalDendrite, Set<Synapse>> activesSynapses = new LinkedHashMap<>();
         
         for(Cell cell : cellsActive) {
             for(Synapse s : cell.getReceptorSynapses(c)) {
                 Set<Synapse> set = null;
                 if((set = activesSynapses.get(s.getSegment())) == null) {
-                    activesSynapses.put((DistalDendrite)s.getSegment(), set = new LinkedHashSet<Synapse>());
+                    activesSynapses.put((DistalDendrite)s.getSegment(), set = new LinkedHashSet<>());
                 }
                 set.add(s);
             }
@@ -417,7 +417,7 @@ public class TemporalMemory {
      * @return
      */
     public LinkedHashSet<Cell> getCells(Connections c, int[] cellIndexes) {
-    	LinkedHashSet<Cell> cellSet = new LinkedHashSet<Cell>();
+    	LinkedHashSet<Cell> cellSet = new LinkedHashSet<>();
         for(int cell : cellIndexes) {
             cellSet.add(getCell(c, cell));
         }

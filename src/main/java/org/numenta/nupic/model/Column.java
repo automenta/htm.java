@@ -111,7 +111,7 @@ public class Column {
      */
     public Cell getLeastUsedCell(Connections c, Random random) {
         List<Cell> cells = getCells();
-        List<Cell> leastUsedCells = new ArrayList<Cell>();
+        List<Cell> leastUsedCells = new ArrayList<>();
         int minNumSegments = Integer.MAX_VALUE;
         
         for(Cell cell : cells) {

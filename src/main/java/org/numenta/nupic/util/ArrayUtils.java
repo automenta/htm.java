@@ -169,13 +169,12 @@ public class ArrayUtils {
      * @param arg2 the first list to be the one'th entry in the returned tuple
      * @return a list of tuples
      */
-    public static List<Tuple> zip(List<?> arg1, List<?> arg2) {
-        List<Tuple> tuples = new ArrayList<Tuple>();
+    public static <T> List<Tuple<T>> zip(List<? extends T> arg1, List<? extends T> arg2) {
         int len = Math.min(arg1.size(), arg2.size());
+        List<Tuple<T>> tuples = new ArrayList<>(len);
         for (int i = 0; i < len; i++) {
-            tuples.add(new Tuple(2, arg1.get(i), arg2.get(i)));
+            tuples.add(new Tuple<T>(arg1.get(i), arg2.get(i)));
         }
-
         return tuples;
     }
 
@@ -194,6 +193,11 @@ public class ArrayUtils {
         return retVal;
     }
 
+    public static int modulo(int a, int b) {
+        if (a < 0) return moduloPython(a, b);
+        return a % b;
+    }
+    
     /**
      * Performs a modulus operation in Python style.
      *
@@ -201,7 +205,7 @@ public class ArrayUtils {
      * @param b
      * @return
      */
-    public static int modulo(int a, int b) {
+    public static int moduloPython(int a, int b) {
         if (b == 0) throw new IllegalArgumentException("Division by Zero!");
         if (a > 0 && b > 0 && b > a) return a;
         boolean isMinus = Math.abs(b - (a - b)) < Math.abs(b - (a + b));
@@ -411,7 +415,7 @@ public class ArrayUtils {
         double denom = 1;
         for (int i = 0; i < dividend.length; i++) {
             quotient[i] = (dividend[i]) /
-                          (double)((denom = divisor) == 0 ? 1 : denom); //Protect against division by 0
+                    ((denom = divisor) == 0 ? 1 : denom); //Protect against division by 0
         }
         return quotient;
     }
@@ -550,9 +554,9 @@ public class ArrayUtils {
      * @return
      */
     public static List<Integer> subtract(List<Integer> subtrahend, List<Integer> minuend) {
-        ArrayList<Integer> sList = new ArrayList<Integer>(minuend);
+        ArrayList<Integer> sList = new ArrayList<>(minuend);
         sList.removeAll(subtrahend);
-        return new ArrayList<Integer>(sList);
+        return new ArrayList<>(sList);
     }
 
     /**
@@ -578,7 +582,7 @@ public class ArrayUtils {
         for (int i = 0; i < arr.length; i++) {
             sum += arr[i];
         }
-        return sum / (double)arr.length;
+        return sum / arr.length;
     }
 
     /**
@@ -648,8 +652,8 @@ public class ArrayUtils {
      * @param array
      * @return
      */
-    public static int sum(int[] array) {
-        int sum = 0;
+    public static long sum(int[] array) {
+        long sum = 0;
         for (int i = 0; i < array.length; i++) {
             sum += array[i];
         }
@@ -775,7 +779,7 @@ public class ArrayUtils {
     private static class CoordinateAssembler {
         final private int[] position;
         final private List<int[]> dimensions;
-        final List<int[]> result = new ArrayList<int[]>();
+        final List<int[]> result = new ArrayList<>();
 
         public static List<int[]> assemble(List<int[]> dimensions) {
             CoordinateAssembler assembler = new CoordinateAssembler(dimensions);

@@ -31,6 +31,7 @@ import gnu.trove.map.hash.TObjectIntHashMap;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -78,8 +79,8 @@ import org.numenta.nupic.util.Tuple;
 public class CategoryEncoder extends Encoder<String> {
 	protected int ncategories;
 	
-	protected TObjectIntMap<String> categoryToIndex = new TObjectIntHashMap<String>();
-	protected TIntObjectMap<String> indexToCategory = new TIntObjectHashMap<String>();
+	protected TObjectIntMap<String> categoryToIndex = new TObjectIntHashMap<>();
+	protected TIntObjectMap<String> indexToCategory = new TIntObjectHashMap<>();
 	
 	protected List<String> categoryList;
 	
@@ -144,7 +145,7 @@ public class CategoryEncoder extends Encoder<String> {
 				"Width != w (num bits to represent output item) * #categories");
 		}
 		
-		description = new Tuple(2, name, 0);
+		description = new Tuple(name, 0);
 	}
 	
 	/**
@@ -194,7 +195,7 @@ public class CategoryEncoder extends Encoder<String> {
 		// Get the scalar values from the underlying scalar encoder
 		DecodeResult result = scalarEncoder.decode(encoded, parentFieldName);
 		
-		if(result.getFields().size() == 0) {
+		if(result.getFields().isEmpty()) {
 			return result;
 		}
 		
@@ -206,7 +207,7 @@ public class CategoryEncoder extends Encoder<String> {
 		//Get the list of categories the scalar values correspond to and
 	    //  generate the description from the category name(s).
 		Map<String, RangeList> fieldRanges = result.getFields();
-		List<MinMax> outRanges = new ArrayList<MinMax>();
+		List<MinMax> outRanges = new ArrayList<>();
 		StringBuilder desc = new StringBuilder();
 		for(String descripStr : fieldRanges.keySet()) {
 			MinMax minMax = fieldRanges.get(descripStr).getRange(0);
@@ -230,7 +231,7 @@ public class CategoryEncoder extends Encoder<String> {
 			fieldName = name;
 		}
 		
-		Map<String, RangeList> retVal = new HashMap<String, RangeList>();
+		Map<String, RangeList> retVal = new HashMap<>();
 		retVal.put(fieldName, new RangeList(outRanges, desc.toString()));
 		
 		return new DecodeResult(retVal, Arrays.asList(new String[] { fieldName }));
@@ -272,9 +273,9 @@ public class CategoryEncoder extends Encoder<String> {
 		if(bucketValues == null) {
 			SparseObjectMatrix<int[]> topDownMapping = scalarEncoder.getTopDownMapping();
 			int numBuckets = topDownMapping.getMaxIndex() + 1;
-			bucketValues = new ArrayList<String>();
+			bucketValues = new ArrayList<>();
 			for(int i = 0;i < numBuckets;i++) {
-				((List<String>)bucketValues).add((String)getBucketInfo(new int[] { i }).get(0).getValue());
+				((Collection<String>)bucketValues).add((String)getBucketInfo(new int[] { i }).get(0).getValue());
 			}
 		}
 		
@@ -386,7 +387,7 @@ public class CategoryEncoder extends Encoder<String> {
 
 	@Override
 	public List<Tuple> getDescription() {
-	ArrayList<Tuple> list = new ArrayList<Tuple>();
+	ArrayList<Tuple> list = new ArrayList<>();
 	 list.add(description);
 	 return list;
 	}

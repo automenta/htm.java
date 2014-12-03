@@ -40,7 +40,7 @@ public class ArrayUtilsTest {
         /*Create huge 5 dimensional matrix*/
         int dimSize = 14, dimNumber = 5;
         int[] dimCoordinates = new int[dimSize];
-        List<int[]> dimensions = new ArrayList<int[]>();
+        List<int[]> dimensions = new ArrayList<>();
         for (int i = 0; i < dimNumber; i++) {
             for (int j = 0; j < dimSize; j++) {
                 dimCoordinates[j] = j;
@@ -93,7 +93,7 @@ public class ArrayUtilsTest {
 			assertEquals(3, ArrayUtils.modulo(a, n));
 			fail();
 		}catch(Exception e) {
-			assertEquals("Division by Zero!", e.getMessage());
+			assertTrue(e.getMessage().contains("by zero"));
 		}
 
 		//Example F
