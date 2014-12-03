@@ -88,14 +88,16 @@ public class CoordinateEncoder extends Encoder<Tuple> implements CoordinateOrder
      * @param radius	Radius around `coordinate`
      * @return
      */
-    public List<int[]> neighbors(int[] coordinate, double radius) {
+    public int[][] neighbors(int[] coordinate, double radius) {
         int[][] ranges = new int[coordinate.length][];
         for (int i = 0; i < coordinate.length; i++) {
             ranges[i] = ArrayUtils.range(coordinate[i] - (int) radius, coordinate[i] + (int) radius + 1);
         }
 
         int len = ranges.length == 1 ? 1 : ranges[0].length;
-        List<int[]> retVal = new ArrayList<>(len);
+        int rows = ranges[0].length * len;
+        int[][] retVal = new int[rows][];
+        int r = 0;
         for (int k = 0; k < ranges[0].length; k++) {
             for (int j = 0; j < len; j++) {
                 int[] entry = new int[ranges.length];
@@ -103,7 +105,7 @@ public class CoordinateEncoder extends Encoder<Tuple> implements CoordinateOrder
                 for (int i = 1; i < ranges.length; i++) {
                     entry[i] = ranges[i][j];
                 }
-                retVal.add(entry);
+                retVal[r++] = entry;
             }
         }
         return retVal;
@@ -165,11 +167,7 @@ public class CoordinateEncoder extends Encoder<Tuple> implements CoordinateOrder
      */
     @Override
     public void encodeIntoArray(Tuple inputData, int[] output) {
-        List<int[]> neighs = neighbors((int[]) inputData.get(0), (double) inputData.get(1));
-        int[][] neighbors = new int[neighs.size()][];
-        for (int i = 0; i < neighs.size(); i++) {
-            neighbors[i] = neighs.get(i);
-        }
+        int[][] neighbors = neighbors((int[]) inputData.get(0), (double) inputData.get(1));
 
         int[][] winners = topWCoordinates(this, neighbors, w);
 

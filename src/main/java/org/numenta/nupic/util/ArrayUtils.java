@@ -90,6 +90,15 @@ public class ArrayUtils {
         }
         return false;
     }
+    public static boolean contains(int[] match, int[][] container) {
+        int len = container.length;
+        for (int i = 0; i < len; i++) {
+            if (Arrays.equals(match, container[i])) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     /**
      * Utility to compute a flat index from coordinates.

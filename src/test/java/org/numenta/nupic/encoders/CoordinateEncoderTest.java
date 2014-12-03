@@ -176,11 +176,11 @@ public class CoordinateEncoderTest {
 		
 		int[] coordinate = new int[] { 100 };
 		int radius = 5;
-		List<int[]> neighbors = ce.neighbors(coordinate, radius);
-		assertEquals(11, neighbors.size());
-		assertTrue(Arrays.equals(new int[] { 95 }, neighbors.get(0)));
-		assertTrue(Arrays.equals(new int[] { 100 }, neighbors.get(5)));
-		assertTrue(Arrays.equals(new int[] { 105 }, neighbors.get(10)));
+		int[][] neighbors = ce.neighbors(coordinate, radius);
+		assertEquals(11, neighbors.length);
+		assertTrue(Arrays.equals(new int[] { 95 }, neighbors[0]));
+		assertTrue(Arrays.equals(new int[] { 100 }, neighbors[5]));
+		assertTrue(Arrays.equals(new int[] { 105 }, neighbors[10]));
 	}
 	
 	@Test
@@ -189,8 +189,8 @@ public class CoordinateEncoderTest {
 		
 		int[] coordinate = new int[] { 100, 200 };
 		int radius = 5;
-		List<int[]> neighbors = ce.neighbors(coordinate, radius);
-		assertEquals(121, neighbors.size());
+		int[][] neighbors = ce.neighbors(coordinate, radius);
+		assertEquals(121, neighbors.length);
 		assertTrue(ArrayUtils.contains(new int[] { 95, 195 }, neighbors));
 		assertTrue(ArrayUtils.contains(new int[] { 95, 205 }, neighbors));
 		assertTrue(ArrayUtils.contains(new int[] { 100, 200 }, neighbors));
@@ -204,8 +204,8 @@ public class CoordinateEncoderTest {
 		
 		int[] coordinate = new int[] { 100, 200, 300 };
 		int radius = 0;
-		List<int[]> neighbors = ce.neighbors(coordinate, radius);
-		assertEquals(1, neighbors.size());
+		int[][] neighbors = ce.neighbors(coordinate, radius);
+		assertEquals(1, neighbors.length);
 		assertTrue(ArrayUtils.contains(new int[] { 100, 200, 300 }, neighbors));
 	}
 	

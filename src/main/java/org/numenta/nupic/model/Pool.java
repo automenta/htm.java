@@ -50,11 +50,11 @@ import org.numenta.nupic.Connections;
 public class Pool {
 	int size;
 	
-	TObjectDoubleMap<Synapse> synapsePermanences = new TObjectDoubleHashMap<>();
-	TIntArrayList synapseConnections = new TIntArrayList();
-	Set<Synapse> synapseOrdering = new LinkedHashSet<>();
+	final TObjectDoubleMap<Synapse> synapsePermanences = new TObjectDoubleHashMap<>();
+	final TIntArrayList synapseConnections = new TIntArrayList();
+	final Set<Synapse> synapseOrdering = new LinkedHashSet<>();
 	
-	TIntObjectMap<SynapsePair> connectionPerms = new TIntObjectHashMap<>();
+	final TIntObjectMap<SynapsePair> connectionPerms = new TIntObjectHashMap<>();
 	
 	public Pool(int size) {
 		this.size = size;

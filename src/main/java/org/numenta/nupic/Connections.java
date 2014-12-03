@@ -1253,17 +1253,27 @@ public class Connections {
      * @return          the mapping of {@link ProximalDendrite}s to their {@link Synapse}s.
      */
     public List<Synapse> getSynapses(ProximalDendrite segment) {
+        return getSynapses(segment, true);
+    }
+    
+    public List<Synapse> getSynapses(ProximalDendrite segment, boolean createIfNotExist) {
     	if(segment == null) {
             throw new IllegalArgumentException("Segment was null");
         }
     	
     	if(synapses == null) {
-            synapses = new LinkedHashMap<>();
+            if (createIfNotExist)
+                synapses = new LinkedHashMap<>();
+            else
+                return null;
         }
         
         List<Synapse> retVal = null;
         if((retVal = synapses.get(segment)) == null) {
-            synapses.put(segment, retVal = new ArrayList<>());
+            if (createIfNotExist)
+                synapses.put(segment, retVal = new ArrayList<>());
+            else
+                return null;
         }
         
         return retVal;

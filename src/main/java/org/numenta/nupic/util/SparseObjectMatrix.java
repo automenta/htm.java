@@ -100,7 +100,7 @@ public class SparseObjectMatrix<T> extends SparseMatrix<T> {
      * @return  the T at the specified index.
      */
     @Override
-    public T getObject(int index) {
+    public T getObject(final int index) {
         return sparseMap.get(index);
     }
     
@@ -110,7 +110,7 @@ public class SparseObjectMatrix<T> extends SparseMatrix<T> {
      * @return  the indexed object
      */
     @Override
-    public T get(int... coordinates) {
+    public T get(final int... coordinates) {
         return sparseMap.get(computeIndex(coordinates));
     }
     
