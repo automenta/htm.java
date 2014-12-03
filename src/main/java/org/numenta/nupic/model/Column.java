@@ -47,9 +47,9 @@ public class Column {
     /** Configuration of cell count */
     private final int numCells;
     /** Connects {@link SpatialPooler} input pools */
-    private ProximalDendrite proximalDendrite;
+    private final ProximalDendrite proximalDendrite;
     
-    private Cell[] cells;
+    private final Cell[] cells;
     
     /**
      * Constructs a new {@code Column}

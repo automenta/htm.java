@@ -38,6 +38,7 @@ import org.numenta.nupic.util.Tuple;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import java.io.Serializable;
 
 /**
  * A CLA classifier accepts a binary input from the level below (the
@@ -69,7 +70,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
  */
 @JsonSerialize(using=CLAClassifierSerializer.class)
 @JsonDeserialize(using=CLAClassifierDeserializer.class)
-public class CLAClassifier {
+public class CLAClassifier implements Serializable {
 	int verbosity = 0;
 	/**
 	 * The alpha used to compute running averages of the bucket duty
@@ -108,7 +109,7 @@ public class CLAClassifier {
      * bit in the activation pattern and nSteps is the number of steps of
      * prediction desired for that bit.
 	 */
-	Map<Tuple, BitHistory> activeBitHistory = new HashMap<Tuple, BitHistory>();
+	Map<Tuple<Integer>, BitHistory> activeBitHistory = new HashMap<Tuple<Integer>, BitHistory>();
 	/**
 	 * This keeps track of the actual value to use for each bucket index. We
      * start with 1 bucket, no actual value so that the first infer has something
@@ -178,8 +179,8 @@ public class CLAClassifier {
      *             				}
 	 */
 	@SuppressWarnings("unchecked")
-	public <T> ClassifierResult<T> compute(int recordNum, Map<String, Object> classification, int[] patternNZ, boolean learn, boolean infer) {
-		ClassifierResult<T> retVal = new ClassifierResult<T>();
+	public <T> Classification<T> compute(int recordNum, Map<String, Object> classification, int[] patternNZ, boolean learn, boolean infer) {
+		Classification<T> retVal = new Classification<T>();
 		List<T> actualValues = (List<T>)this.actualValues;
 		
 		// Save the offset between recordNum and learnIteration if this is the first
@@ -234,8 +235,8 @@ public class CLAClassifier {
 				double[] bitVotes = new double[maxBucketIdx + 1];
 				
 				for(int bit : patternNZ) {
-					Tuple key = new Tuple(2, bit, nSteps);
-					BitHistory history = activeBitHistory.get(key);
+					Tuple<Integer> key = new Tuple<Integer>(2, bit, nSteps);
+					BitHistory history = getActiveBitHistory().get(key);
 					if(history == null) continue;
 					
 					history.infer(learnIteration, bitVotes);
@@ -318,9 +319,9 @@ public class CLAClassifier {
 				for(int bit : learnPatternNZ) {
 					// Get the history structure for this bit and step
 					Tuple key = new Tuple(2, bit, nSteps);
-					BitHistory history = activeBitHistory.get(key);
+					BitHistory history = getActiveBitHistory().get(key);
 					if(history == null) {
-						activeBitHistory.put(key, history = new BitHistory(this, bit, nSteps));
+						getActiveBitHistory().put(key, history = new BitHistory(this, bit, nSteps));
 					}
 					history.store(learnIteration, bucketIdx);
 				}
@@ -383,4 +384,18 @@ public class CLAClassifier {
 		
 		return c;
 	}
+
+    /**
+     * @return the activeBitHistory
+     */
+    public Map<Tuple<Integer>, BitHistory> getActiveBitHistory() {
+        return activeBitHistory;
+    }
+
+    /**
+     * @param activeBitHistory the activeBitHistory to set
+     */
+    public void setActiveBitHistory(Map<Tuple<Integer>, BitHistory> activeBitHistory) {
+        this.activeBitHistory = activeBitHistory;
+    }
 }

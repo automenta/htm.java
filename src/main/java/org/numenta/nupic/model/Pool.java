@@ -169,9 +169,9 @@ public class Pool {
 	 * 
 	 * @author David Ray
 	 */
-	private class SynapsePair {
-		private Synapse synapse;
-		private double permanence;
+	private static class SynapsePair {
+		public final Synapse synapse;
+		double permanence;
 		
 		public SynapsePair(Synapse s, double p) {
 			this.synapse = s;

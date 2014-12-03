@@ -39,9 +39,9 @@ public class ParametersTest {
     public void testApply() {
         DummyContainer dc = new DummyContainer();
         Parameters params = Parameters.getAllDefaultParameters();
-        params.setParameterByKey(Parameters.KEY.COLUMN_DIMENSIONS, new int[] { 2048 });
-        params.setParameterByKey(Parameters.KEY.POTENTIAL_PCT, 20.0);
-        params.setParameterByKey(Parameters.KEY.CELLS_PER_COLUMN, null);
+        params.set(Parameters.KEY.COLUMN_DIMENSIONS, new int[] { 2048 });
+        params.set(Parameters.KEY.POTENTIAL_PCT, 20.0);
+        params.set(Parameters.KEY.CELLS_PER_COLUMN, null);
         params.apply(dc);
         assertTrue(Arrays.equals(new int[] { 2048 }, dc.getColumnDimensions()));
         assertEquals(20.0, dc.getPotentialPct(), 0);
@@ -50,9 +50,9 @@ public class ParametersTest {
     @Test
     public void testDefaults() {
         Parameters params = Parameters.getAllDefaultParameters();
-        assertEquals(params.getParameterByKey(Parameters.KEY.CELLS_PER_COLUMN), 32);
-        assertEquals(params.getParameterByKey(Parameters.KEY.SEED), 42);
-        assertEquals(true, ((Random)params.getParameterByKey(Parameters.KEY.RANDOM)).getClass().equals(MersenneTwister.class));
+        assertEquals(params.get(Parameters.KEY.CELLS_PER_COLUMN), 32);
+        assertEquals(params.get(Parameters.KEY.SEED), 42);
+        assertEquals(true, ((Random)params.get(Parameters.KEY.RANDOM)).getClass().equals(MersenneTwister.class));
     }
 
     public static class DummyContainerBase {

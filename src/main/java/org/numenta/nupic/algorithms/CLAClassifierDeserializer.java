@@ -82,7 +82,7 @@ public class CLAClassifierDeserializer extends JsonDeserializer<CLAClassifier> {
         }
         retVal.patternNZHistory = patterns;
         
-        Map<Tuple, BitHistory> bitHistoryMap = new HashMap<Tuple, BitHistory>();
+        Map<Tuple<Integer>, BitHistory> bitHistoryMap = new HashMap<Tuple<Integer>, BitHistory>();
         String[] bithists = node.get("activeBitHistory").asText().split(";");
         for(String bh : bithists) {
         	String[] parts = bh.split("-");
@@ -105,7 +105,7 @@ public class CLAClassifierDeserializer extends JsonDeserializer<CLAClassifier> {
         	
         	bitHistoryMap.put(iteration, bitHistory);
         }
-        retVal.activeBitHistory = bitHistoryMap;
+        retVal.setActiveBitHistory(bitHistoryMap);
         
         ArrayNode jn = (ArrayNode)node.get("actualValues");
         List<Object> l = new ArrayList<Object>();	

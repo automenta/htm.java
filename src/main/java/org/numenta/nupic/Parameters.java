@@ -22,12 +22,16 @@
 
 package org.numenta.nupic;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.numenta.nupic.model.Cell;
 import org.numenta.nupic.model.Column;
@@ -49,7 +53,7 @@ import org.numenta.nupic.util.MersenneTwister;
  * @see Connections
  * @see ComputeCycle
  */
-public class Parameters {
+public class Parameters implements Serializable {
     private static final Map<KEY, Object> DEFAULTS_ALL;
     private static final Map<KEY, Object> DEFAULTS_TEMPORAL;
     private static final Map<KEY, Object> DEFAULTS_SPATIAL;
@@ -108,7 +112,7 @@ public class Parameters {
     /**
      * Constant values representing configuration parameters for the {@link TemporalMemory}
      */
-    public static enum KEY {
+    public static enum KEY implements Serializable {
         /////////// Universal Parameters ///////////
         /**
          * Total number of columns
@@ -289,8 +293,7 @@ public class Parameters {
     /**
      * Map of parameters to their values
      */
-    private final Map<Parameters.KEY, Object> paramMap = Collections.synchronizedMap(new ParametersMap());
-
+    public final Map<Parameters.KEY, Object> paramMap = new ConcurrentHashMap();
     //TODO apply from container to parameters
 
     /**
@@ -329,7 +332,7 @@ public class Parameters {
     private static Parameters getParameters(Map<KEY, Object> map) {
         Parameters result = new Parameters();
         for (KEY key : map.keySet()) {
-            result.setParameterByKey(key, map.get(key));
+            result.set(key, map.get(key));
         }
         return result;
     }
@@ -354,20 +357,27 @@ public class Parameters {
         Set<KEY> presentKeys = paramMap.keySet();
         synchronized (paramMap) {
             for (KEY key : presentKeys) {
-                beanUtil.setSimpleProperty(cn, key.fieldName, getParameterByKey(key));
+                beanUtil.setSimpleProperty(cn, key.fieldName, get(key));
             }
         }
     }
 
 
+    public Object remove(KEY key) {
+        return paramMap.remove(key);
+    }
+    
     /**
      * Set parameter by Key{@link KEY}
      *
      * @param key
      * @param value
      */
-    public void setParameterByKey(KEY key, Object value) {
-        paramMap.put(key, value);
+    public void set(KEY key, Object value) {
+        if (value==null)
+            remove(key);
+        else
+            paramMap.put(key, value);
     }
 
     /**
@@ -376,7 +386,7 @@ public class Parameters {
      * @param key
      * @return
      */
-    public Object getParameterByKey(KEY key) {
+    public Object get(KEY key) {
         return paramMap.get(key);
     }
 
@@ -407,7 +417,7 @@ public class Parameters {
             String fieldName = property.getName();
             KEY propKey = KEY.getKeyByFieldName(property.getName());
             if (propKey != null) {
-                Object paramValue = this.getParameterByKey(propKey);
+                Object paramValue = this.get(propKey);
                 Object cnValue = beanUtil.getSimpleProperty(cn, fieldName);
                 if ((paramValue != null && !paramValue.equals(cnValue)) || (paramValue == null && cnValue != null)) {
                     result = true;
@@ -805,42 +815,55 @@ public class Parameters {
         paramMap.put(KEY.SP_VERBOSITY, spVerbosity);
     }
 
+    final static ObjectMapper mapper = new ObjectMapper();
+    
+    @Override
+    public String toString() {
+	
+        try {
+            return mapper.writeValueAsString(this);
+        } catch (JsonProcessingException ex) {
+            return ex.toString();
+        }
+    }
+    
+
+    
     /**
      * {@inheritDoc}
      */
-    @Override
-    public String toString() {
+    public String toString2() {
         StringBuilder sb = new StringBuilder();
         sb.append("{ Spatial\n")
-            .append("\t").append("inputDimensions :  ").append(getParameterByKey(KEY.INPUT_DIMENSIONS)).append("\n")
-            .append("\t").append("potentialRadius :  ").append(getParameterByKey(KEY.POTENTIAL_RADIUS)).append("\n")
-            .append("\t").append("potentialPct :  ").append(getParameterByKey(KEY.POTENTIAL_PCT)).append("\n")
-            .append("\t").append("globalInhibition :  ").append(getParameterByKey(KEY.GLOBAL_INHIBITIONS)).append("\n")
-            .append("\t").append("inhibitionRadius :  ").append(getParameterByKey(KEY.INHIBITION_RADIUS)).append("\n")
-            .append("\t").append("localAreaDensity :  ").append(getParameterByKey(KEY.LOCAL_AREA_DENSITY)).append("\n")
-            .append("\t").append("numActiveColumnsPerInhArea :  ").append(getParameterByKey(KEY.NUM_ACTIVE_COLUMNS_PER_INH_AREA)).append("\n")
-            .append("\t").append("stimulusThreshold :  ").append(getParameterByKey(KEY.STIMULUS_THRESHOLD)).append("\n")
-            .append("\t").append("synPermInactiveDec :  ").append(getParameterByKey(KEY.SYN_PERM_INACTIVE_DEC)).append("\n")
-            .append("\t").append("synPermActiveInc :  ").append(getParameterByKey(KEY.SYN_PERM_ACTIVE_INC)).append("\n")
-            .append("\t").append("synPermConnected :  ").append(getParameterByKey(KEY.SYN_PERM_CONNECTED)).append("\n")
-            .append("\t").append("synPermBelowStimulusInc :  ").append(getParameterByKey(KEY.SYN_PERM_BELOW_STIMULUS_INC)).append("\n")
-            .append("\t").append("minPctOverlapDutyCycles :  ").append(getParameterByKey(KEY.MIN_PCT_OVERLAP_DUTY_CYCLE)).append("\n")
-            .append("\t").append("minPctActiveDutyCycles :  ").append(getParameterByKey(KEY.MIN_PCT_ACTIVE_DUTY_CYCLE)).append("\n")
-            .append("\t").append("dutyCyclePeriod :  ").append(getParameterByKey(KEY.DUTY_CYCLE_PERIOD)).append("\n")
-            .append("\t").append("maxBoost :  ").append(getParameterByKey(KEY.MAX_BOOST)).append("\n")
-            .append("\t").append("spVerbosity :  ").append(getParameterByKey(KEY.SP_VERBOSITY)).append("\n")
+            .append("\t").append("inputDimensions :  ").append(get(KEY.INPUT_DIMENSIONS)).append("\n")
+            .append("\t").append("potentialRadius :  ").append(get(KEY.POTENTIAL_RADIUS)).append("\n")
+            .append("\t").append("potentialPct :  ").append(get(KEY.POTENTIAL_PCT)).append("\n")
+            .append("\t").append("globalInhibition :  ").append(get(KEY.GLOBAL_INHIBITIONS)).append("\n")
+            .append("\t").append("inhibitionRadius :  ").append(get(KEY.INHIBITION_RADIUS)).append("\n")
+            .append("\t").append("localAreaDensity :  ").append(get(KEY.LOCAL_AREA_DENSITY)).append("\n")
+            .append("\t").append("numActiveColumnsPerInhArea :  ").append(get(KEY.NUM_ACTIVE_COLUMNS_PER_INH_AREA)).append("\n")
+            .append("\t").append("stimulusThreshold :  ").append(get(KEY.STIMULUS_THRESHOLD)).append("\n")
+            .append("\t").append("synPermInactiveDec :  ").append(get(KEY.SYN_PERM_INACTIVE_DEC)).append("\n")
+            .append("\t").append("synPermActiveInc :  ").append(get(KEY.SYN_PERM_ACTIVE_INC)).append("\n")
+            .append("\t").append("synPermConnected :  ").append(get(KEY.SYN_PERM_CONNECTED)).append("\n")
+            .append("\t").append("synPermBelowStimulusInc :  ").append(get(KEY.SYN_PERM_BELOW_STIMULUS_INC)).append("\n")
+            .append("\t").append("minPctOverlapDutyCycles :  ").append(get(KEY.MIN_PCT_OVERLAP_DUTY_CYCLE)).append("\n")
+            .append("\t").append("minPctActiveDutyCycles :  ").append(get(KEY.MIN_PCT_ACTIVE_DUTY_CYCLE)).append("\n")
+            .append("\t").append("dutyCyclePeriod :  ").append(get(KEY.DUTY_CYCLE_PERIOD)).append("\n")
+            .append("\t").append("maxBoost :  ").append(get(KEY.MAX_BOOST)).append("\n")
+            .append("\t").append("spVerbosity :  ").append(get(KEY.SP_VERBOSITY)).append("\n")
             .append("}\n\n")
 
             .append("{ Temporal\n")
-            .append("\t").append("activationThreshold :  ").append(getParameterByKey(KEY.ACTIVATION_THRESHOLD)).append("\n")
-            .append("\t").append("cellsPerColumn :  ").append(getParameterByKey(KEY.CELLS_PER_COLUMN)).append("\n")
-            .append("\t").append("columnDimensions :  ").append(getParameterByKey(KEY.COLUMN_DIMENSIONS)).append("\n")
-            .append("\t").append("connectedPermanence :  ").append(getParameterByKey(KEY.CONNECTED_PERMANENCE)).append("\n")
-            .append("\t").append("initialPermanence :  ").append(getParameterByKey(KEY.INITIAL_PERMANENCE)).append("\n")
-            .append("\t").append("maxNewSynapseCount :  ").append(getParameterByKey(KEY.MAX_NEW_SYNAPSE_COUNT)).append("\n")
-            .append("\t").append("minThreshold :  ").append(getParameterByKey(KEY.MIN_THRESHOLD)).append("\n")
-            .append("\t").append("permanenceIncrement :  ").append(getParameterByKey(KEY.PERMANENCE_INCREMENT)).append("\n")
-            .append("\t").append("permanenceDecrement :  ").append(getParameterByKey(KEY.PERMANENCE_DECREMENT)).append("\n")
+            .append("\t").append("activationThreshold :  ").append(get(KEY.ACTIVATION_THRESHOLD)).append("\n")
+            .append("\t").append("cellsPerColumn :  ").append(get(KEY.CELLS_PER_COLUMN)).append("\n")
+            .append("\t").append("columnDimensions :  ").append(get(KEY.COLUMN_DIMENSIONS)).append("\n")
+            .append("\t").append("connectedPermanence :  ").append(get(KEY.CONNECTED_PERMANENCE)).append("\n")
+            .append("\t").append("initialPermanence :  ").append(get(KEY.INITIAL_PERMANENCE)).append("\n")
+            .append("\t").append("maxNewSynapseCount :  ").append(get(KEY.MAX_NEW_SYNAPSE_COUNT)).append("\n")
+            .append("\t").append("minThreshold :  ").append(get(KEY.MIN_THRESHOLD)).append("\n")
+            .append("\t").append("permanenceIncrement :  ").append(get(KEY.PERMANENCE_INCREMENT)).append("\n")
+            .append("\t").append("permanenceDecrement :  ").append(get(KEY.PERMANENCE_DECREMENT)).append("\n")
             .append("}\n\n");
 
         return sb.toString();

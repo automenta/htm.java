@@ -60,9 +60,9 @@ public class CLAClassifierSerializer extends JsonSerializer<CLAClassifier> {
 		jgen.writeStringField("patternNZHistory", sb.toString());
 		
 		sb = new StringBuilder();
-		for(Tuple t : cla.activeBitHistory.keySet()) {
+		for(Tuple t : cla.getActiveBitHistory().keySet()) {
 			sb.append(t.get(0)).append(",").append(t.get(1)).append("-");
-			BitHistory bh = cla.activeBitHistory.get(t);
+			BitHistory bh = cla.getActiveBitHistory().get(t);
 			sb.append(bh.id).append("=").append(bh.stats).append("=").append(bh.lastTotalUpdate)
 			.append(";");
 		}

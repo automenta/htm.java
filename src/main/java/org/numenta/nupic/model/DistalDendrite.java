@@ -42,8 +42,8 @@ import org.numenta.nupic.Connections;
  * @author David Ray
  */
 public class DistalDendrite extends Segment {
-    private Cell cell;
-    private int index;
+    private final Cell cell;
+    private final int index;
     
     /**
      * Constructs a new {@code Segment} object with the specified

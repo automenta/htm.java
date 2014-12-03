@@ -119,15 +119,15 @@ public class ExtensiveTemporalMemoryTest extends AbstractTemporalMemoryTest {
      */
     private void defaultSetup() {
         parameters = Parameters.getAllDefaultParameters();
-        parameters.setParameterByKey(KEY.COLUMN_DIMENSIONS, new int[] { 100 });
-        parameters.setParameterByKey(KEY.CELLS_PER_COLUMN, 1);
-        parameters.setParameterByKey(KEY.INITIAL_PERMANENCE, 0.8);
-        parameters.setParameterByKey(KEY.CONNECTED_PERMANENCE, 0.7);
-        parameters.setParameterByKey(KEY.MIN_THRESHOLD, 11);
-        parameters.setParameterByKey(KEY.MAX_NEW_SYNAPSE_COUNT, 11);
-        parameters.setParameterByKey(KEY.PERMANENCE_INCREMENT, 0.4);
-        parameters.setParameterByKey(KEY.PERMANENCE_DECREMENT, 0.0);
-        parameters.setParameterByKey(KEY.ACTIVATION_THRESHOLD, 8);
+        parameters.set(KEY.COLUMN_DIMENSIONS, new int[] { 100 });
+        parameters.set(KEY.CELLS_PER_COLUMN, 1);
+        parameters.set(KEY.INITIAL_PERMANENCE, 0.8);
+        parameters.set(KEY.CONNECTED_PERMANENCE, 0.7);
+        parameters.set(KEY.MIN_THRESHOLD, 11);
+        parameters.set(KEY.MAX_NEW_SYNAPSE_COUNT, 11);
+        parameters.set(KEY.PERMANENCE_INCREMENT, 0.4);
+        parameters.set(KEY.PERMANENCE_DECREMENT, 0.0);
+        parameters.set(KEY.ACTIVATION_THRESHOLD, 8);
     }
     
     /**
@@ -141,7 +141,7 @@ public class ExtensiveTemporalMemoryTest extends AbstractTemporalMemoryTest {
         
         int seed = 42;
         finishSetUp(new PatternMachine(
-            ((int[])parameters.getParameterByKey(Parameters.KEY.COLUMN_DIMENSIONS))[0], 23, seed));
+            ((int[])parameters.get(Parameters.KEY.COLUMN_DIMENSIONS))[0], 23, seed));
         
         // Instead of implementing the Python "shuffle" method, just use the exact output
         Integer[] shuffledNums = new Integer[] { 

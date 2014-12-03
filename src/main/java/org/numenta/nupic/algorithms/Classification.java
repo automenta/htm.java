@@ -11,12 +11,12 @@ import gnu.trove.map.hash.TIntObjectHashMap;
  *
  * @param <T>
  */
-public class ClassifierResult<T> {
+public class Classification<T> {
 	/** Array of actual values */
 	private T[] actualValues;
 	
 	/** Map of step count -to- probabilities */
-	TIntObjectMap<double[]> probabilities = new TIntObjectHashMap<double[]>();
+	final TIntObjectMap<double[]> probabilities = new TIntObjectHashMap<double[]>();
 	
 	
 	/**
