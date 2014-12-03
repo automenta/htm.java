@@ -1446,6 +1446,8 @@ public class ArrayUtils {
     public static void setValue(Object array, int value, int... indexes) {
         if (indexes.length == 1) {
             ((int[])array)[indexes[0]] = value;
+        } else if (indexes.length == 2) {
+            ((int[][])array)[indexes[0]][indexes[1]] = value;
         } else {
             setValue(Array.get(array, indexes[0]), value, tail(indexes));
         }

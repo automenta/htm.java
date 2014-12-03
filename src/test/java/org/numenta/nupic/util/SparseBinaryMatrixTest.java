@@ -162,12 +162,27 @@ public class SparseBinaryMatrixTest {
 
 
     public static void fillWithSomeRandomValues(Object array, Random r, int... sizes) {
-        for (int i = 0; i < sizes[0]; i++)
-            if (sizes.length == 1) {
-                ((int[])array)[i] = r.nextInt(2);
-            } else {
-                fillWithSomeRandomValues(Array.get(array, i), r, ArrayUtils.tail(sizes));
-            }
+        switch (sizes.length) {
+            case 1: 
+                int[] iarray = (int[])array;
+                for (int i = 0; i < sizes[0]; i++) {
+                    iarray[i] = r.nextInt(2);
+                }
+                break;
+            case 2: 
+                int[][] i2array = (int[][])array;
+                for (int i = 0; i < sizes[0]; i++) {
+                    for (int j = 0; j < sizes[1]; j++) {
+                        i2array[i][j] = r.nextInt(2);
+                    }
+                }
+                break;
+            default: 
+                for (int i = 0; i < sizes[0]; i++) {
+                    fillWithSomeRandomValues(Array.get(array, i), r, ArrayUtils.tail(sizes));
+                }
+                break;
+        }
     }
 
 
