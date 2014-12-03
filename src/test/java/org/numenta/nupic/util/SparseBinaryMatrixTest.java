@@ -178,10 +178,12 @@ public class SparseBinaryMatrixTest {
                 }
                 break;
             default: 
+                throw new RuntimeException("Dimensions must be <=2");               
+                /*                
                 for (int i = 0; i < sizes[0]; i++) {
                     fillWithSomeRandomValues(Array.get(array, i), r, ArrayUtils.tail(sizes));
                 }
-                break;
+                break;*/
         }
     }
 

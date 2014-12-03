@@ -36,6 +36,8 @@ import org.numenta.nupic.model.Column;
 import org.numenta.nupic.model.Pool;
 import org.numenta.nupic.util.ArrayUtils;
 import org.numenta.nupic.util.Condition;
+import static org.numenta.nupic.util.Condition.GreaterThanEqualToZero;
+import org.numenta.nupic.util.Condition.LessThan;
 import org.numenta.nupic.util.SparseBinaryMatrix;
 import org.numenta.nupic.util.SparseMatrix;
 import org.numenta.nupic.util.SparseObjectMatrix;
@@ -645,12 +647,13 @@ public class SpatialPooler {
         TIntHashSet pick = new TIntHashSet();
         Random random = c.getRandom();
         while(pick.size() < count) {
-        	int randIdx = random.nextInt(potentialPool.length);
-        	pick.add(potentialPool[randIdx]);
+            int randIdx = random.nextInt(potentialPool.length);
+            pick.add(potentialPool[randIdx]);
         }
         
         double[] perm = new double[c.getNumInputs()];
-        Arrays.fill(perm, 0);
+        //Arrays.fill(perm, 0); //already zero
+        
         for(int idx : potentialPool) {
         	if(pick.contains(idx)) {
                 perm[idx] = initPermConnected(c);
@@ -770,26 +773,28 @@ public class SpatialPooler {
         final int[] dimensions = topology.getDimensions();
         int[] columnCoords = topology.computeCoordinates(columnIndex);
         List<int[]> dimensionCoords = new ArrayList<>();
+        
+        Condition.Adapter<Integer> lessThanDimension1 = null;
+        
+        
+        int[] curRange = null;
+        int[] range = null;
         for(int i = 0;i < dimensions.length;i++) {
-            int[] range = ArrayUtils.range(columnCoords[i] - inhibitionRadius, columnCoords[i] + inhibitionRadius + 1);
-            int[] curRange = new int[range.length];
+            range = ArrayUtils.range(columnCoords[i] - inhibitionRadius, columnCoords[i] + inhibitionRadius + 1, range);
+            
+            if ((curRange == null) || (curRange.length!= range.length))
+                curRange = new int[range.length];
             
             if(wrapAround) {
                 for(int j = 0;j < curRange.length;j++) {
                     curRange[j] = (int)ArrayUtils.positiveRemainder(range[j], dimensions[i]);
                 }
             }else{
-                final int idx = i;
+                int limit = dimensions[i];
+
                 curRange = range;
                 curRange = ArrayUtils.retainLogicalAnd(range, 
-                    new Condition[] {
-                        new Condition.Adapter<Integer>() {
-                            @Override public boolean eval(int n) { return n >= 0; }
-                        },
-                        new Condition.Adapter<Integer>() {
-                            @Override public boolean eval(int n) { return n < dimensions[idx]; }
-                        }
-                    }
+                    new Condition[] { GreaterThanEqualToZero,  new LessThan(limit) }
                 );
             }
             dimensionCoords.add(ArrayUtils.unique(curRange));
@@ -799,13 +804,15 @@ public class SpatialPooler {
         TIntArrayList neighbors = new TIntArrayList(neighborList.size());
         int size = neighborList.size();
         for(int i = 0;i < size;i++) {
-        	int flatIndex = c.getInputMatrix().computeIndex(neighborList.get(i), false);
+            int flatIndex = c.getInputMatrix().computeIndex(neighborList.get(i), false);
             if(flatIndex == columnIndex) continue;
             neighbors.add(flatIndex);
         }
         return neighbors;
     }
+
     
+
     /**
      * Returns true if enough rounds have passed to warrant updates of
      * duty cycles
@@ -947,11 +954,7 @@ public class SpatialPooler {
     			overlaps[i] += addToWinners;
     		}
     	}
-    	return ArrayUtils.where(activeColumns, new Condition.Adapter<Integer>() {
-    		@Override public boolean eval(int n) {
-				return n > 0;
-			}
-    	});
+    	return ArrayUtils.where(activeColumns, Condition.GreaterThanZero);
     }
     
     /**

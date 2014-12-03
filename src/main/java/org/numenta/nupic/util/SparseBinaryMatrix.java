@@ -204,10 +204,11 @@ public class SparseBinaryMatrix extends SparseMatrix {
      * being set
      */
     public void clearStatistics(int row) {
-    	int[] slice = (int[])Array.get(backingArray, row);
+    	//int[] slice = (int[])Array.get(backingArray, row);
+        int[] slice = ((int[][])backingArray)[row];
     	Arrays.fill(slice, 0);
-		trueCounts.set(row, 0);
-		sparseMap.put(row, 0);
+        trueCounts.set(row, 0);
+        sparseMap.put(row, 0);
     }
     
     /**

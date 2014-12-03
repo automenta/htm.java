@@ -80,11 +80,11 @@ public class ProximalDendrite extends Segment {
 		pool.resetConnections();
 		c.getConnectedCounts().clearStatistics(index);
 		List<Synapse> synapses = c.getSynapses(this);
-		for(Synapse s : synapses) {
-			s.setPermanence(c, perms[s.getInputIndex()]);
-			if(perms[s.getInputIndex()] >= c.getSynPermConnected()) {
-				c.getConnectedCounts().set(1, index, s.getInputIndex());
-			}
+		for(final Synapse s : synapses) {
+                    s.setPermanence(c, perms[s.getInputIndex()]);
+                    if(perms[s.getInputIndex()] >= c.getSynPermConnected()) {
+                            c.getConnectedCounts().set(1, index, s.getInputIndex());
+                    }
 		}
 	}
 	

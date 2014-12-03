@@ -27,13 +27,13 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.numenta.nupic.util.ArrayUtils;
-import org.numenta.nupic.util.MersenneTwister;
+import org.numenta.nupic.util.MersenneTwisterFast;
 import org.numenta.nupic.util.SortablePair;
 import org.numenta.nupic.util.Tuple;
 
 public class CoordinateEncoder extends Encoder<Tuple> implements CoordinateOrder {
 
-    private static final MersenneTwister random = new MersenneTwister();
+    private static final MersenneTwisterFast random = new MersenneTwisterFast();
 
     /**
      * Package private to encourage construction using the Builder Pattern but

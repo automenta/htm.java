@@ -23,7 +23,6 @@
 package org.numenta.nupic.util;
 
 import gnu.trove.list.TDoubleList;
-import gnu.trove.list.TIntList;
 import gnu.trove.list.array.TDoubleArrayList;
 import gnu.trove.list.array.TIntArrayList;
 import gnu.trove.map.hash.TDoubleIntHashMap;
@@ -685,7 +684,7 @@ public class ArrayUtils {
     public static int[] sparseBinaryOr(int[] arg1, int[] arg2) {
         TIntArrayList t = new TIntArrayList(arg1);
         t.addAll(arg2);
-        return unique(t.toArray());
+        return unique(t);
     }
 
     /**
@@ -735,12 +734,17 @@ public class ArrayUtils {
      * @param upperBounds
      * @return
      */
-    public static int[] range(int lowerBounds, int upperBounds) {
-        TIntList ints = new TIntArrayList();
+    public static int[] range(int lowerBounds, int upperBounds) {                
+        return range(lowerBounds, upperBounds, null);
+    }
+    
+    public static int[] range(int lowerBounds, int upperBounds, int[] r) {        
+        if (r == null)
+            r = new int[upperBounds - lowerBounds];
         for (int i = lowerBounds; i < upperBounds; i++) {
-            ints.add(i);
+            r[i - lowerBounds] = i;
         }
-        return ints.toArray();
+        return r;
     }
 
     /**
@@ -766,13 +770,20 @@ public class ArrayUtils {
      * @param nums an unsorted array of integers with possible duplicates.
      * @return
      */
-    public static int[] unique(int[] nums) {
-        TIntHashSet set = new TIntHashSet(nums);
+    public static int[] unique(int[] nums) {        
+        return unique(new TIntHashSet(nums));
+    }
+    
+    public static int[] unique(TIntHashSet set) {    
         int[] result = set.toArray();
         Arrays.sort(result);
         return result;
     }
 
+    public static int[] unique(TIntArrayList nums) {        
+        return unique(new TIntHashSet(nums));
+    }
+    
     /**
      * Helper Class for recursive coordinate assembling
      */
@@ -915,7 +926,11 @@ public class ArrayUtils {
      */
     public static double[] clip(double[] values, double min, double max) {
         for (int i = 0; i < values.length; i++) {
-            values[i] = Math.min(1, Math.max(0, values[i]));
+            double v = values[i];
+            if (v < min) v = min;
+            else if (v > max) v = max;
+            values[i] = v;
+            //values[i] = Math.min(1, Math.max(0, values[i]));
         }
         return values;
     }
@@ -1432,7 +1447,7 @@ public class ArrayUtils {
      * @param original the array from which a tail is taken
      * @return a new array containing the tail from the original array
      */
-    public static int[] tail(int[] original) {
+    @Deprecated public static int[] tail(int[] original) {
         return Arrays.copyOfRange(original, 1, original.length);
     }
 
@@ -1448,7 +1463,9 @@ public class ArrayUtils {
             ((int[])array)[indexes[0]] = value;
         } else if (indexes.length == 2) {
             ((int[][])array)[indexes[0]][indexes[1]] = value;
-        } else {
+        } else {            
+            //throw new RuntimeException("Dimensions must be <=2");
+            //slow:
             setValue(Array.get(array, indexes[0]), value, tail(indexes));
         }
     }
