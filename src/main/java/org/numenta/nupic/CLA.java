@@ -792,6 +792,11 @@ public class CLA {
     public double getSynPermDisconnected() {
         return synPermDisconnected;
     }
+
+    public void setSynPermDisconnected(double synPermDisconnected) {
+        this.synPermDisconnected = synPermDisconnected;
+    }
+    
     
     /**
      * Sets the stimulus increment for synapse permanences below 
@@ -1363,7 +1368,7 @@ public class CLA {
      * 
      * @param inputDimensions
      */
-    public void setInputDimensions(int... inputDimensions) {
+    public void setInputDimensions(int[] inputDimensions) {
         this.inputDimensions = inputDimensions;
     }
     

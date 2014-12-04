@@ -24,6 +24,7 @@ package org.numenta.nupic;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import java.io.Serializable;
 import java.lang.reflect.ParameterizedType;
 import java.util.EnumMap;
@@ -499,6 +500,9 @@ public class Build<T> implements Serializable {
     public void setSynPermConnected(double synPermConnected) {
         paramMap.put(KEY.SYN_PERM_CONNECTED, synPermConnected);
     }
+    public void setSynPermDisconnected(double synPermDisconnected) {
+        paramMap.put(KEY.SYN_PERM_DISCONNECTED, synPermDisconnected);
+    }
 
     /**
      * Sets the increment of synapse permanences below the stimulus
@@ -600,6 +604,9 @@ public class Build<T> implements Serializable {
     }
 
     final static ObjectMapper mapper = new ObjectMapper();
+    static {
+        mapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
+    }
     
     @Override
     public String toString() {

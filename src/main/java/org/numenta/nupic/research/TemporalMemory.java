@@ -122,10 +122,10 @@ public class TemporalMemory {
      * @param recyclableCycle an existing ComputeCycle to re-use, or null to create a new
      * @return {@link ComputeCycle} container for one cycle of inference values.
      */
-    public ComputeCycle compute(CLA connections, int[] activeColumns, boolean learn, ComputeCycle recyclableCycle) {
+    public ComputeCycle compute(CLA connections, int[] activeColumns, boolean learn) {
         ComputeCycle result = computeFn(connections, connections.getColumnSet(activeColumns), new LinkedHashSet<>(connections.getPredictiveCells()),
                 new LinkedHashSet<>(connections.getActiveSegments()), new LinkedHashMap<>(connections.getActiveSynapsesForSegment()),
-                new LinkedHashSet<>(connections.getWinnerCells()), learn, recyclableCycle);
+                new LinkedHashSet<>(connections.getWinnerCells()), learn, null);
 
         connections.setActiveCells(result.activeCells());
         connections.setWinnerCells(result.winnerCells());

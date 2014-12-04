@@ -82,6 +82,7 @@ public class SpatialPooler {
             put(KEY.SYN_PERM_INACTIVE_DEC, 0.01);
             put(KEY.SYN_PERM_ACTIVE_INC, 0.1);
             put(KEY.SYN_PERM_CONNECTED, 0.10);
+            put(KEY.SYN_PERM_DISCONNECTED, -1); //disable            
             put(KEY.SYN_PERM_BELOW_STIMULUS_INC, 0.01);
             put(KEY.SYN_PERM_TRIM_THRESHOLD, 0.5);
             put(KEY.MIN_PCT_OVERLAP_DUTY_CYCLE, 0.001);
@@ -146,7 +147,7 @@ public class SpatialPooler {
      * 
      * @param c
      */
-    public void initMatrices(final CLA c) {
+    protected void initMatrices(final CLA c) {
     	SparseObjectMatrix<Column> mem = c.getMemory();
     	c.setMemory(mem == null ? 
     		mem = new SparseObjectMatrix<>(c.getColumnDimensions()) : mem);

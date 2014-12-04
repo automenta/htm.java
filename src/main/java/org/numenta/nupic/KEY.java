@@ -44,6 +44,7 @@ public enum KEY implements Serializable {
      * is at least this threshold, the segment is said to be active.
      */
     ACTIVATION_THRESHOLD("activationThreshold", Integer.class, 0, null),
+    
     /**
      * Radius around cell from which it can
      * sample to form distal {@link DistalDendrite} connections.
@@ -93,6 +94,7 @@ public enum KEY implements Serializable {
     SYN_PERM_INACTIVE_DEC("synPermInactiveDec", Double.class, 0.0, 1.0),
     SYN_PERM_ACTIVE_INC("synPermActiveInc", Double.class, 0.0, 1.0),
     SYN_PERM_CONNECTED("synPermConnected", Double.class, 0.0, 1.0),
+    SYN_PERM_DISCONNECTED("synPermDisconnected", Double.class, -1.0, 1.0),
     SYN_PERM_BELOW_STIMULUS_INC("synPermBelowStimulusInc", Double.class, 0.0, 1.0),
     SYN_PERM_TRIM_THRESHOLD("synPermTrimThreshold", Double.class, 0.0, 1.0),
     MIN_PCT_OVERLAP_DUTY_CYCLE("minPctOverlapDutyCycles", Double.class),//TODO add range here?

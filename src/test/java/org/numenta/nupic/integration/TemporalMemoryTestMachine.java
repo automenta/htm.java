@@ -53,29 +53,33 @@ import com.bethecoder.table.spec.AsciiTable;
  */
 public class TemporalMemoryTestMachine {
     private final TemporalMemory temporalMemory;
-    private final CLA connections;
+    private final CLA cla;
     
     public TemporalMemoryTestMachine(TemporalMemory tm, CLA c) {
         this.temporalMemory = tm;
-        this.connections = c;
+        this.cla = c;
     }
     
     public List<Set<Integer>> feedSequence(List<Set<Integer>> sequence, boolean learn) {
         List<Set<Integer>> results = new ArrayList<>();
         List<Set<Cell>> interimResults = new ArrayList<>();
+        
         ComputeCycle result = null;
         
         for(Set<Integer> pattern : sequence) {
+            
             if(pattern == SequenceMachine.NONE) {
-                temporalMemory.clear(connections);
+                temporalMemory.clear(cla);
             }else{
                 int[] patt = toIntArray(pattern);
-                result = temporalMemory.compute(connections, patt, learn, result);
+                result = temporalMemory.compute(cla, patt, learn);
             }
+            
             interimResults.add(result.predictiveCells());
+            
         }
         for(Set<Cell> set : interimResults) {
-            List<Integer> l = connections.getCellIndexes(set);
+            List<Integer> l = cla.getCellIndexes(set);
             results.add(new LinkedHashSet<>(l));
         }
         return results;
@@ -106,7 +110,7 @@ public class TemporalMemoryTestMachine {
                 Set<Integer> prevPredictedCells = results.get(i-1);
                 
                 for(Integer prevPredictedCell : prevPredictedCells) {
-                    Integer prevPredictedColumn = prevPredictedCell / connections.getCellsPerColumn();
+                    Integer prevPredictedColumn = prevPredictedCell / cla.getCellsPerColumn();
                     
                     if(pattern.contains(prevPredictedColumn)) {
                         predictedActiveCells++;
@@ -177,14 +181,14 @@ public class TemporalMemoryTestMachine {
         text += "Column # / Cell #:\t\t{segment=[[Source Cell: column#, index, permanence], ...]}\n";
         text += "------------------------------------\n";
         
-        int len = connections.getColumnDimensions()[0];
+        int len = cla.getColumnDimensions()[0];
         for(int i = 0;i < len;i++) {
-            List<Cell> cells = connections.getColumn(i).getCells();
+            List<Cell> cells = cla.getColumn(i).getCells();
             for(Cell cell : cells) {
                 Map<DistalDendrite, List<String>> segmentDict = new LinkedHashMap<>();
-                for(DistalDendrite seg : cell.getSegments(connections)) {
+                for(DistalDendrite seg : cell.getSegments(cla)) {
                     List<String> synapseList = new ArrayList<>();
-                    for(Synapse synapse : seg.getAllSynapses(connections)) {
+                    for(Synapse synapse : seg.getAllSynapses(cla)) {
                         synapseList.add("[" + synapse.getSourceCell() + ", " + synapse.getPermanence() + "]");
                     }
                     segmentDict.put(seg, synapseList);

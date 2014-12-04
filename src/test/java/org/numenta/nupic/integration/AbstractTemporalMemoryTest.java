@@ -124,9 +124,9 @@ public abstract class AbstractTemporalMemoryTest {
         
         String ppResults = tmTestMachine.prettyPrintDetailedResults(detailedResults, actual, patternMachine, 1);
         
-        System.out.println(ppResults);
+        //System.out.println(ppResults);
         
-        System.out.println("");
+        //System.out.println("");
         
         if(learn) {
             System.out.println(tmTestMachine.prettyPrintTemporalMemory());

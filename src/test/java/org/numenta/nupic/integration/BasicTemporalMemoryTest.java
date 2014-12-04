@@ -32,7 +32,7 @@ import java.util.Set;
 import org.junit.Before;
 
 import org.junit.Test;
-import org.numenta.nupic.Build;
+import org.numenta.nupic.CLA;
 import org.numenta.nupic.KEY;
 import org.numenta.nupic.integration.TemporalMemoryTestMachine.DetailedResults;
 import org.numenta.nupic.research.TemporalMemory;
@@ -53,7 +53,8 @@ public class BasicTemporalMemoryTest extends AbstractTemporalMemoryTest {
      */
     @Before
     public void start() {
-        param = new Build().
+        param = CLA.Default();
+        param.add(TemporalMemory.Default()).
             set(KEY.COLUMN_DIMENSIONS, new int[] { 6 }).
             set(KEY.CELLS_PER_COLUMN, 4).
             set(KEY.INITIAL_PERMANENCE, 0.3).
@@ -84,11 +85,15 @@ public class BasicTemporalMemoryTest extends AbstractTemporalMemoryTest {
         sequence = sequenceMachine.generateFromNumbers(input);
         
         DetailedResults detailedResults = feedTM(sequence, true, 1);
-        assertEquals(0, detailedResults.predictedActiveColumnsList.get(3).size(), 0);
+        assertEquals(0, detailedResults.predictedActiveColumnsList.get(3).size());
         
         feedTM(sequence, true, 2);
         
+                
         detailedResults = feedTM(sequence, true, 1);
+        System.out.println("--------------");
+        System.out.println(detailedResults.predictedActiveColumnsList);
+        System.out.println("--------------");
         assertEquals(1, detailedResults.predictedActiveColumnsList.get(3).size());
         
         feedTM(sequence, true, 4);

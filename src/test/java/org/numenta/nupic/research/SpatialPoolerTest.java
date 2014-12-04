@@ -47,12 +47,14 @@ public class SpatialPoolerTest {
     private SpatialPooler sp;
     private CLA cla;
     
+    
     public void setupParameters() {
         param = CLA.Default();
+        param.add(SpatialPooler.Default());
+
         param.set(KEY.INPUT_DIMENSIONS, new int[] { 5 });//5
         param.set(KEY.COLUMN_DIMENSIONS, new int[] { 5 });//5
         
-        param.add(SpatialPooler.Default());
         param.set(KEY.POTENTIAL_RADIUS, 3);//3
         param.set(KEY.POTENTIAL_PCT, 0.5);//0.5
         param.set(KEY.GLOBAL_INHIBITIONS, false);
@@ -63,11 +65,11 @@ public class SpatialPoolerTest {
         param.set(KEY.SYN_PERM_ACTIVE_INC, 0.1);
         param.set(KEY.SYN_PERM_TRIM_THRESHOLD, 0.05);
         param.set(KEY.SYN_PERM_CONNECTED, 0.1);
+        param.set(KEY.SYN_PERM_DISCONNECTED, -1);        
         param.set(KEY.MIN_PCT_OVERLAP_DUTY_CYCLE, 0.1);
         param.set(KEY.MIN_PCT_ACTIVE_DUTY_CYCLE, 0.1);
         param.set(KEY.DUTY_CYCLE_PERIOD, 10);
         param.set(KEY.MAX_BOOST, 10.0);
-        param.set(KEY.SEED, 42);
         param.set(KEY.SP_VERBOSITY, 0);
     }
     
@@ -78,13 +80,16 @@ public class SpatialPoolerTest {
     
     @Test
     public void confirmSPConstruction() {
-        setupParameters();
         
-        initSP();
+        setupParameters();
+                       
+        initSP();        
+        
+        assertTrue( Arrays.equals(cla.getInputDimensions(), (int[])param.get(KEY.INPUT_DIMENSIONS)));
         
         assertEquals(5, cla.getInputDimensions()[0]);
         assertEquals(5, cla.getColumnDimensions()[0]);
-        assertEquals(3, cla.getPotentialRadius());
+        assertEquals(3, cla.getPotentialRadius(), 0.01);
         assertEquals(0.5, cla.getPotentialPct(), 0);
         assertEquals(false, cla.getGlobalInhibition());
         assertEquals(-1.0, cla.getLocalAreaDensity(), 0);
@@ -361,7 +366,7 @@ public class SpatialPoolerTest {
         
         assertEquals(12, cla.getInputDimensions()[0]);
         assertEquals(4, cla.getColumnDimensions()[0]);
-        assertEquals(2, cla.getPotentialRadius());
+        assertEquals(2, cla.getPotentialRadius(), 0.01);
         
         // Test without wrapAround and potentialPct = 1
         int[] expected = new int[] { 0, 1, 2, 3 };
@@ -695,12 +700,19 @@ public class SpatialPoolerTest {
     
     @Test
     public void testAvgConnectedSpanForColumnND() {
-    	sp = new SpatialPooler();
-    	
+    	setupParameters();
+
+        initSP();
+
     	int[] inputDimensions = new int[] { 4, 4, 2, 5 };
-        cla.setInputDimensions(inputDimensions);
-        cla.setColumnDimensions(5);
-        sp.initMatrices(cla);
+        param.setInputDimensions(inputDimensions);
+        param.setColumnDimensions(new int[] { 5 });
+        
+        sp = new SpatialPooler(cla, param);
+        
+        System.out.println(param.toString());
+        
+        
         
         TIntArrayList connected = new TIntArrayList();
         connected.add(cla.getInputMatrix().computeIndex(new int[] { 1, 0, 1, 0 }, false));
