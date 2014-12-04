@@ -43,11 +43,16 @@ public class SparseBinaryMatrixTrueCount extends SparseBinaryMatrix {
     }
     
     @Override
-    protected void back(byte val, int... coordinates) {
+    protected void back(boolean val, int... coordinates) {
         super.back(val, coordinates);
         
+        //TODO see if there is a better way to do this than iterating
+        //ex: if the bit changed, do something like:
+        //rowCounts.addToEntry(coordinates[0], val ? +1 : -1);
+        
         //update true counts
-        rowCounts.setEntry(coordinates[0], ArrayUtils.aggregateArray(((Object[]) this.backingArray)[coordinates[0]]));
+        int e = coordinates[0];
+        rowCounts.setEntry(e, ArrayUtils.aggregateArray(((Object[]) this.backingArray)[e]));
     }    
 
     @Override

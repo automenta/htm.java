@@ -24,17 +24,16 @@ package org.numenta.nupic.util;
 import gnu.trove.TIntCollection;
 import gnu.trove.iterator.TIntIterator;
 import gnu.trove.list.TIntList;
-import gnu.trove.list.array.TIntArrayList;
-import gnu.trove.map.TIntByteMap;
-import gnu.trove.map.hash.TIntByteHashMap;
 
 import java.lang.reflect.Array;
 import java.util.Arrays;
+import java.util.BitSet;
 
 @SuppressWarnings("rawtypes")
 public class SparseBinaryMatrix extends SparseMatrix<Byte> {
 
-    private TIntByteMap sparseMap = new TIntByteHashMap();
+    BitSet sparseMap = new BitSet();
+    //private TIntByteMap sparseMap = new TIntByteHashMap();
     Object backingArray;
 
     public SparseBinaryMatrix(int[] dimensions) {
@@ -54,8 +53,8 @@ public class SparseBinaryMatrix extends SparseMatrix<Byte> {
      * @param val
      * @param coordinates
      */
-    protected void back(byte val, int... coordinates) {
-        ArrayUtils.setValue(this.backingArray, val, coordinates);
+    protected void back(boolean val, int... coordinates) {
+        ArrayUtils.setValue(this.backingArray, val ? (byte)1: (byte)0, coordinates);
     }
 
     /**
@@ -134,13 +133,13 @@ public class SparseBinaryMatrix extends SparseMatrix<Byte> {
      */
     @Override
     public void setIndex(Byte value, int index) {
-        int[] coordinates = computeCoordinates(index);
-        sparseMap.put(computeIndex(coordinates), value);
-        back(value, coordinates);
+        setIndex(value > 0 ? true : false, index);
     }
 
-    public void setIndex(boolean value, int index) {
-        setIndex(value ? (byte) 1 : (byte) 0, index);
+    public void setIndex(boolean value, int index) {        
+        int[] coordinates = computeCoordinates(index);
+        sparseMap.set(computeIndex(coordinates), value);
+        back(value, coordinates);
     }
 
     /**
@@ -189,7 +188,7 @@ public class SparseBinaryMatrix extends SparseMatrix<Byte> {
      * @param object the object to be indexed.
      */
     public SparseBinaryMatrix setForTest(int index, byte value) {
-        sparseMap.put(index, value);
+        sparseMap.set(index, value > 0 ? true : false);
         return this;
     }
 
@@ -219,12 +218,10 @@ public class SparseBinaryMatrix extends SparseMatrix<Byte> {
         //int[] slice = (int[])Array.get(backingArray, row);
         int[] slice = ((int[][]) backingArray)[row];
         Arrays.fill(slice, 0);
-        sparseMap.put(row, (byte) 0);
+        sparseMap.set(row, false);
     }
 
-    public byte[] values() {
-        return sparseMap.values();
-    }
+
 
     /**
      * Returns an outer array of T values.
@@ -243,8 +240,9 @@ public class SparseBinaryMatrix extends SparseMatrix<Byte> {
      * object
      * @return the indexed object
      */
+    @Override
     public int getIntValue(int... coordinates) {
-        return sparseMap.get(computeIndex(coordinates));
+        return sparseMap.get(computeIndex(coordinates)) ? 1 : 0;
     }
 
     /**
@@ -255,7 +253,7 @@ public class SparseBinaryMatrix extends SparseMatrix<Byte> {
      */
     @Override
     public int getIntValue(int index) {
-        return sparseMap.get(index);
+        return sparseMap.get(index) ? 1 : 0;
     }
 
     /**
@@ -265,8 +263,29 @@ public class SparseBinaryMatrix extends SparseMatrix<Byte> {
      */
     @Override
     public int[] getSparseIndices() {
-        return ArrayUtils.reverseIt(sparseMap.keys());
+        int[] s = new int[sparseMap.cardinality()];
+        int j = 0;
+        for (int i = sparseMap.nextSetBit(0); i >= 0; i = sparseMap.nextSetBit(i+1)) {          
+            s[j++] = i;
+        }
+        return s;
+        //return ArrayUtils.reverseIt(sparseMap.keys());
     }
+    
+    public byte[] byteArray() {
+        byte[] s = new byte[sparseMap.cardinality()];
+        for (int i = sparseMap.nextSetBit(0); i >= 0; i = sparseMap.nextSetBit(i+1)) {          
+            s[i] = 1;
+        }
+        return s;
+    }
+    public boolean[] booleanArray() {
+        boolean[] s = new boolean[sparseMap.cardinality()];
+        for (int i = sparseMap.nextSetBit(0); i >= 0; i = sparseMap.nextSetBit(i+1)) {          
+            s[i] = true;
+        }
+        return s;
+    }    
 
     /**
      * This {@code SparseBinaryMatrix} will contain the operation of or-ing the
@@ -310,24 +329,29 @@ public class SparseBinaryMatrix extends SparseMatrix<Byte> {
      * bits of this matrix. It is allowed that this matrix have more on bits
      * than the specified matrix.
      *
-     * @param matrix
+     * @param m
      * @return
      */
-    public boolean all(SparseBinaryMatrix matrix) {
-        return sparseMap.keySet().containsAll(matrix.sparseMap.keys());
+    public boolean all(SparseBinaryMatrix m) {
+        BitSet b = (BitSet) m.sparseMap.clone();
+        //Clears all of the bits in this BitSet whose corresponding bit is set in the specified BitSet.
+        b.andNot(sparseMap);
+        
+        //all of the bits will be cleared if every bit in m was cleared by a bit in sparseMap
+        return !(b.cardinality() > 0);
     }
 
-    /**
-     * Returns true if the on bits of the specified list are matched by the on
-     * bits of this matrix. It is allowed that this matrix have more on bits
-     * than the specified matrix.
-     *
-     * @param matrix
-     * @return
-     */
-    public boolean all(TIntCollection onBits) {
-        return sparseMap.keySet().containsAll(onBits);
-    }
+//    /**
+//     * Returns true if the on bits of the specified list are matched by the on
+//     * bits of this matrix. It is allowed that this matrix have more on bits
+//     * than the specified matrix.
+//     *
+//     * @param matrix
+//     * @return
+//     */
+//    public boolean all(TIntCollection onBits) {
+//        return sparseMap.keySet().containsAll(onBits);
+//    }
 
     /**
      * Returns true if the on bits of the specified array are matched by the on
@@ -338,7 +362,10 @@ public class SparseBinaryMatrix extends SparseMatrix<Byte> {
      * @return
      */
     public boolean all(int[] onBits) {
-        return sparseMap.keySet().containsAll(onBits);
+        for (int i : onBits)
+            if (!sparseMap.get(i))
+                return false;
+        return true;
     }
 
     /**
@@ -350,12 +377,8 @@ public class SparseBinaryMatrix extends SparseMatrix<Byte> {
      * @return
      */
     public boolean any(SparseBinaryMatrix matrix) {
-        for (int i : matrix.sparseMap.keys()) {
-            if (sparseMap.containsKey(i)) {
-                return true;
-            }
-        }
-        return false;
+        //TODO use bitvector boolean AND/OR operation
+        throw new RuntimeException("Not implemented");
     }
 
     /**
@@ -368,7 +391,7 @@ public class SparseBinaryMatrix extends SparseMatrix<Byte> {
      */
     public boolean any(TIntList onBits) {
         for (TIntIterator i = onBits.iterator(); i.hasNext();) {
-            if (sparseMap.containsKey(i.next())) {
+            if (sparseMap.get(i.next())) {
                 return true;
             }
         }
@@ -385,7 +408,7 @@ public class SparseBinaryMatrix extends SparseMatrix<Byte> {
      */
     public boolean any(int[] onBits) {
         for (int i : onBits) {
-            if (sparseMap.containsKey(i)) {
+            if (sparseMap.get(i)) {
                 return true;
             }
         }
