@@ -641,7 +641,7 @@ public abstract class Encoder<T> {
 		if(getEncoders() != null) {
 			List<EncoderTuple> encoders = getEncoders(this);
 			for(Tuple tuple : encoders) {
-				List<String> subNames = ((Encoder<T>)tuple.get(1)).getScalarNames(getName());
+				List<String> subNames = ((Encoder<T>)tuple.the(1)).getScalarNames(getName());
 				List<String> hierarchicalNames = new ArrayList<>();
 				if(parentFieldName != null) {
 					for(String name : subNames) {
@@ -654,7 +654,7 @@ public abstract class Encoder<T> {
 			if(parentFieldName != null) {
 				names.add(parentFieldName);
 			}else{
-				names.add((String)getEncoderTuple(this).get(0));
+				names.add((String)getEncoderTuple(this).the(0));
 			}
 		}
 		
@@ -675,7 +675,7 @@ public abstract class Encoder<T> {
 		
 		List<FieldMetaType> retVal = new ArrayList<>();
 		for(Tuple t : getEncoders(this)) {
-			List<FieldMetaType> subTypes = ((Encoder<T>)t.get(1)).getDecoderOutputFieldTypes();
+			List<FieldMetaType> subTypes = ((Encoder<T>)t.the(1)).getDecoderOutputFieldTypes();
 			retVal.addAll(subTypes);
 		}
 		setFlattenedFieldTypeList(retVal);
@@ -715,7 +715,7 @@ public abstract class Encoder<T> {
 		List<EncoderTuple> registeredList = getEncoders(this);
 		if(registeredList != null && !registeredList.isEmpty()) {
 			for(Tuple t : registeredList) {
-				List<Encoder<T>> subEncoders = ((Encoder<T>)t.get(1)).getEncoderList();
+				List<Encoder<T>> subEncoders = ((Encoder<T>)t.the(1)).getEncoderList();
 				encoders.addAll(subEncoders);
 			}
 		}else{
@@ -847,9 +847,9 @@ public abstract class Encoder<T> {
 		StringBuilder desc = new StringBuilder();
 		for(Tuple t : ArrayUtils.zip(scalarNames, scalarValues)) {
 			if(desc.length() > 0) {
-				desc.append(String.format(", %s:%.2f", t.get(0), t.get(1)));
+				desc.append(String.format(", %s:%.2f", t.the(0), t.the(1)));
 			}else{
-				desc.append(String.format("%s:%.2f", t.get(0), t.get(1)));
+				desc.append(String.format("%s:%.2f", t.the(0), t.the(1)));
 			}
 		}
 		return desc.toString();
@@ -886,7 +886,7 @@ public abstract class Encoder<T> {
 		for(int i = 0;i < len;i++) {
 			Tuple t = description.get(i);//(name, offset)
 			if(formatted) {
-				offset = ((int)t.get(1)) + 1;
+				offset = ((int)t.the(1)) + 1;
 				if(bitOffset == offset - 1) {
 					prevFieldName = "separator";
 					prevFieldOffset = bitOffset;
@@ -918,8 +918,8 @@ public abstract class Encoder<T> {
 		
 		int len = description.size() - 1;
 		for(int i = 0;i < len;i++) {
-			String name = (String)description.get(i).get(0);
-			int width = (int)description.get(i+1).get(1);
+			String name = (String)description.get(i).the(0);
+			int width = (int)description.get(i+1).the(1);
 			
 			String formatStr = String.format("%%-%ds |", width);
 			StringBuilder pname = new StringBuilder(name);
@@ -947,8 +947,8 @@ public abstract class Encoder<T> {
 		
 		int len = description.size() - 1;
 		for(int i = 0;i < len;i++) {
-			int offset = (int)description.get(i).get(1);
-			int nextOffset = (int)description.get(i + 1).get(1);
+			int offset = (int)description.get(i).the(1);
+			int nextOffset = (int)description.get(i + 1).the(1);
 			
 			System.out.println(
 				String.format("%s |", 
@@ -1034,17 +1034,17 @@ public abstract class Encoder<T> {
 			Tuple threeFieldsTuple = encoders.get(i);
 			int nextOffset = 0;
 			if(i < len - 1) {
-				nextOffset = (Integer)encoders.get(i + 1).get(2);
+				nextOffset = (Integer)encoders.get(i + 1).the(2);
 			}else{
 				nextOffset = getW();
 			}
 			
-			int[] fieldOutput = ArrayUtils.sub(encoded, ArrayUtils.range((Integer)threeFieldsTuple.get(2), nextOffset));
+			int[] fieldOutput = ArrayUtils.sub(encoded, ArrayUtils.range((Integer)threeFieldsTuple.the(2), nextOffset));
 			
-			Tuple result = ((Encoder<T>)threeFieldsTuple.get(1)).decode(fieldOutput, parentName);
+			Tuple result = ((Encoder<T>)threeFieldsTuple.the(1)).decode(fieldOutput, parentName);
 			
-			fieldsMap.putAll((Map<String, Tuple>)result.get(0));
-			fieldsOrder.addAll((Collection<? extends String>)result.get(1));
+			fieldsMap.putAll((Map<String, Tuple>)result.the(0));
+			fieldsOrder.addAll((Collection<? extends String>)result.the(1));
 		}
 		
 		return new Tuple(fieldsMap, fieldsOrder);
@@ -1059,8 +1059,8 @@ public abstract class Encoder<T> {
 	@SuppressWarnings("unchecked")
 	public String decodedToStr(Tuple decodeResults) {
 		StringBuilder desc = new StringBuilder();
-		Map<String, Tuple> fieldsDict = (Map<String, Tuple>)decodeResults.get(0);
-		List<String> fieldsOrder = (List<String>)decodeResults.get(1);
+		Map<String, Tuple> fieldsDict = (Map<String, Tuple>)decodeResults.the(0);
+		List<String> fieldsOrder = (List<String>)decodeResults.the(1);
 		for(String fieldName : fieldsOrder) {
 			Tuple ranges = fieldsDict.get(fieldName);
 			if(desc.length() > 0) {
@@ -1068,7 +1068,7 @@ public abstract class Encoder<T> {
 			}else{
 				desc.append(fieldName).append(":");
 			}
-			desc.append("[").append(ranges.get(1)).append("]");
+			desc.append("[").append(ranges.the(1)).append("]");
 		}
 		return desc.toString();
 	}
@@ -1162,13 +1162,13 @@ public abstract class Encoder<T> {
 		List<EncoderTuple> encoders = getEncoders(this);
 		int len = encoders.size();
 		for(int i = 0;i < len;i++) {
-			int offset = (int)encoders.get(i).get(2);
-			Encoder<T> encoder = (Encoder<T>)encoders.get(i).get(1);
+			int offset = (int)encoders.get(i).the(2);
+			Encoder<T> encoder = (Encoder<T>)encoders.get(i).the(1);
 			
 			int nextOffset;
 			if(i < len - 1) {
 				//Encoders = List<Encoder> : Encoder = EncoderTuple(name, encoder, offset)
-				nextOffset = (int)encoders.get(i + 1).get(2);
+				nextOffset = (int)encoders.get(i + 1).the(2);
 			}else{
 				nextOffset = getW();
 			}

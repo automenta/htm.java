@@ -43,6 +43,7 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import org.numenta.nupic.util.IntTuple;
 
 public class CLAClassifierDeserializer extends JsonDeserializer<CLAClassifier> {
 	@Override
@@ -82,13 +83,13 @@ public class CLAClassifierDeserializer extends JsonDeserializer<CLAClassifier> {
         }
         retVal.patternNZHistory = patterns;
         
-        Map<Tuple<Integer>, BitHistory> bitHistoryMap = new HashMap<>();
+        Map<IntTuple, BitHistory> bitHistoryMap = new HashMap<>();
         String[] bithists = node.get("activeBitHistory").asText().split(";");
         for(String bh : bithists) {
         	String[] parts = bh.split("-");
         	
         	String[] left = parts[0].split(",");
-        	Tuple iteration = new Tuple(Integer.parseInt(left[0].trim()), Integer.parseInt(left[1].trim()));
+        	IntTuple iteration = new IntTuple(Integer.parseInt(left[0].trim()), Integer.parseInt(left[1].trim()));
         	
         	BitHistory bitHistory = new BitHistory();
         	String[] right = parts[1].split("=");
@@ -121,7 +122,7 @@ public class CLAClassifierDeserializer extends JsonDeserializer<CLAClassifier> {
         retVal.actualValues = l;
         
         //Go back and set the classifier on the BitHistory objects
-        for(Tuple tuple : bitHistoryMap.keySet()) {
+        for(IntTuple tuple : bitHistoryMap.keySet()) {
         	bitHistoryMap.get(tuple).classifier = retVal;
         }
         

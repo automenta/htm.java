@@ -55,7 +55,7 @@ public class EncoderTuple extends Tuple {
 	 * @return
 	 */
 	public String getName() {
-		return (String)get(0);
+		return (String)the(0);
 	}
 	
 	/**
@@ -63,7 +63,7 @@ public class EncoderTuple extends Tuple {
 	 * @return
 	 */
 	public Encoder<?> getEncoder() {
-		return (Encoder<?>)get(1);
+		return (Encoder<?>)the(1);
 	}
 	
 	/**
@@ -72,6 +72,6 @@ public class EncoderTuple extends Tuple {
 	 * @return
 	 */
 	public int getOffset() {
-		return (Integer)get(2);
+		return (Integer)the(2);
 	}
 }

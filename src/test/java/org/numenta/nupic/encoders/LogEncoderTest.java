@@ -60,8 +60,8 @@ public class LogEncoderTest {
 		initLE();
 		
 		// Verify we're setting the description properly
-		assertTrue(le.getDescription().get(0).get(0).equals("amount"));
-		assertEquals(le.getDescription().get(0).get(1), 0);
+		assertTrue(le.getDescription().get(0).the(0).equals("amount"));
+		assertEquals(le.getDescription().get(0).the(1), 0);
 		
 		// Verify we're getting the correct field types
 		FieldMetaType fieldType = le.getDecoderOutputFieldTypes().get(0);

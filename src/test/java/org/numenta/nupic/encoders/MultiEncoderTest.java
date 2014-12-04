@@ -164,7 +164,7 @@ public class MultiEncoderTest {
 		
 		// Check decoding
 		Tuple decoded = me.decode(output, "");
-		Map<String, RangeList> fields = (Map<String, RangeList>) decoded.get(0);
+		Map<String, RangeList> fields = (Map<String, RangeList>) decoded.the(0);
 		assertEquals(fields.keySet().size(), 2);
 		
 		MinMax minMax = fields.get("aux").getRange(0);

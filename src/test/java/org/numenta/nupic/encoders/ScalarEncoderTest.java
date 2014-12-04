@@ -77,13 +77,13 @@ public class ScalarEncoderTest {
 		setUp();
 		initSE();
 		
-		assertEquals("[1:8]", se.getDescription().get(0).get(0));
+		assertEquals("[1:8]", se.getDescription().get(0).the(0));
 		
 		setUp();
 		builder.name("scalar");
 		initSE();
 		
-		assertEquals("scalar", se.getDescription().get(0).get(0));
+		assertEquals("scalar", se.getDescription().get(0).the(0));
 		int[] res = se.encode(3.0);
 		assertTrue(Arrays.equals(new int[] { 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0 }, res));
 		
@@ -177,17 +177,17 @@ public class ScalarEncoderTest {
 			
 			EncoderResult topDown = se.topDownCompute(output).get(0);
 			System.out.println("topdown => " + topDown);
-			assertTrue(topDown.get(3).equals(Arrays.toString(output)));
-			assertTrue(Math.abs(((double)topDown.get(1)) - v) <= se.getResolution() / 2);
+			assertTrue(topDown.the(3).equals(Arrays.toString(output)));
+			assertTrue(Math.abs(((double)topDown.the(1)) - v) <= se.getResolution() / 2);
 			
 			//Test bucket support
 			int[] bucketIndices = se.getBucketIndices(v);
 			System.out.println("bucket index => " + bucketIndices[0]);
 			topDown = se.getBucketInfo(bucketIndices).get(0);
-			assertTrue(Math.abs(((double)topDown.get(1)) - v) <= se.getResolution() / 2);
-			assertEquals(topDown.get(1), se.getBucketValues(Double.class).toArray()[bucketIndices[0]]);
-			assertEquals(topDown.get(2), topDown.get(1));
-			assertTrue(topDown.get(3).equals(Arrays.toString(output)));
+			assertTrue(Math.abs(((double)topDown.the(1)) - v) <= se.getResolution() / 2);
+			assertEquals(topDown.the(1), se.getBucketValues(Double.class).toArray()[bucketIndices[0]]);
+			assertEquals(topDown.the(2), topDown.the(1));
+			assertTrue(topDown.the(3).equals(Arrays.toString(output)));
 		}
 		
 		// -----------------------------------------------------------------------
@@ -267,8 +267,8 @@ public class ScalarEncoderTest {
 		
 		TDoubleList scores = se.closenessScores(expValues, actValues, false);
 		for(Tuple<Double> t : ArrayUtils.zip(Arrays.asList(2d, 2d, 1d), Arrays.asList(scores.get(0)))) {
-			double a = t.get(0);
-			double b = t.get(1);
+			double a = t.the(0);
+			double b = t.the(1);
 			assertTrue(a == b);
 		}
 	}

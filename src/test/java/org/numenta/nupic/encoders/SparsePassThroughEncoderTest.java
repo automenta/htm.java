@@ -51,7 +51,7 @@ public class SparsePassThroughEncoderTest {
 		encoder.encodeIntoArray(bitmap, output);
 		assertEquals(bitmap.length,ArrayUtils.sum(output));
 		Tuple decode = encoder.decode(output, null);
-		assertTrue(((Map<String, RangeList>) decode.get(0)).containsKey(encoder.getName()));
+		assertTrue(((Map<String, RangeList>) decode.the(0)).containsKey(encoder.getName()));
 	}
 	 @Rule
 	  public ExpectedException exception = ExpectedException.none();

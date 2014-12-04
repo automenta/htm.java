@@ -31,6 +31,7 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
+import org.numenta.nupic.util.IntTuple;
 
 public class CLAClassifierSerializer extends JsonSerializer<CLAClassifier> {
 
@@ -54,14 +55,14 @@ public class CLAClassifierSerializer extends JsonSerializer<CLAClassifier> {
 		
 		sb = new StringBuilder();
 		for(Tuple t : cla.patternNZHistory) {
-			sb.append(t.get(0)).append("-").append(Arrays.toString((int[])t.get(1))).append(";");
+			sb.append(t.the(0)).append("-").append(Arrays.toString((int[])t.the(1))).append(";");
 		}
 		sb.setLength(sb.length() - 1);
 		jgen.writeStringField("patternNZHistory", sb.toString());
 		
 		sb = new StringBuilder();
-		for(Tuple t : cla.getActiveBitHistory().keySet()) {
-			sb.append(t.get(0)).append(",").append(t.get(1)).append("-");
+		for(IntTuple t : cla.getActiveBitHistory().keySet()) {
+			sb.append(t.the(0)).append(",").append(t.the(1)).append("-");
 			BitHistory bh = cla.getActiveBitHistory().get(t);
 			sb.append(bh.id).append("=").append(bh.stats).append("=").append(bh.lastTotalUpdate)
 			.append(";");

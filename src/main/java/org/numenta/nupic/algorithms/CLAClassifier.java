@@ -39,6 +39,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import java.io.Serializable;
+import org.numenta.nupic.util.IntTuple;
 
 /**
  * A CLA classifier accepts a binary input from the level below (the
@@ -109,7 +110,7 @@ public class CLAClassifier implements Serializable {
      * bit in the activation pattern and nSteps is the number of steps of
      * prediction desired for that bit.
 	 */
-	Map<Tuple<Integer>, BitHistory> activeBitHistory = new HashMap<>();
+	Map<IntTuple, BitHistory> activeBitHistory = new HashMap<>();
 	/**
 	 * This keeps track of the actual value to use for each bucket index. We
      * start with 1 bucket, no actual value so that the first infer has something
@@ -235,7 +236,7 @@ public class CLAClassifier implements Serializable {
 				double[] bitVotes = new double[maxBucketIdx + 1];
 				
 				for(int bit : patternNZ) {
-					Tuple<Integer> key = new Tuple<>(bit, nSteps);
+					IntTuple key = new IntTuple(bit, nSteps);
 					BitHistory history = getActiveBitHistory().get(key);
 					if(history == null) continue;
 					
@@ -304,8 +305,8 @@ public class CLAClassifier implements Serializable {
 		        // in our pattern history? If not, skip it
 				boolean found = false;
 				for(Tuple t : patternNZHistory) {
-					iteration = (int)t.get(0);
-					learnPatternNZ = (int[]) t.get(1);
+					iteration = (int)t.the(0);
+					learnPatternNZ = (int[]) t.the(1);
 					if(iteration == learnIteration - nSteps) {
 						found = true;
 						break;
@@ -318,7 +319,7 @@ public class CLAClassifier implements Serializable {
 		        // that we got nSteps time steps ago.
 				for(int bit : learnPatternNZ) {
 					// Get the history structure for this bit and step
-					Tuple key = new Tuple(bit, nSteps);
+					IntTuple key = new IntTuple(bit, nSteps);
 					BitHistory history = getActiveBitHistory().get(key);
 					if(history == null) {
 						getActiveBitHistory().put(key, history = new BitHistory(this, bit, nSteps));
@@ -388,14 +389,14 @@ public class CLAClassifier implements Serializable {
     /**
      * @return the activeBitHistory
      */
-    public Map<Tuple<Integer>, BitHistory> getActiveBitHistory() {
+    public Map<IntTuple, BitHistory> getActiveBitHistory() {
         return activeBitHistory;
     }
 
     /**
      * @param activeBitHistory the activeBitHistory to set
      */
-    public void setActiveBitHistory(Map<Tuple<Integer>, BitHistory> activeBitHistory) {
+    public void setActiveBitHistory(Map<IntTuple, BitHistory> activeBitHistory) {
         this.activeBitHistory = activeBitHistory;
     }
 }

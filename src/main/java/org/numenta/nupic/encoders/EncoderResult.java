@@ -49,8 +49,8 @@ public class EncoderResult extends Tuple {
 	@Override
 	public String toString() {
 		return new StringBuilder("EncoderResult(value=").
-			append(get(1)).append(", scalar=").append(get(2)).
-			append(", encoding=").append(get(3)).toString();
+			append(the(1)).append(", scalar=").append(the(2)).
+			append(", encoding=").append(the(3)).toString();
 	}
 	
 	/**
@@ -59,7 +59,7 @@ public class EncoderResult extends Tuple {
 	 * @return	the encoded value
 	 */
 	public Object getValue() {
-		return get(1);
+		return the(1);
 	}
 	
 	/**
@@ -67,7 +67,7 @@ public class EncoderResult extends Tuple {
 	 * @return
 	 */
 	public Number getScalar() {
-		return (Number)get(2);
+		return (Number)the(2);
 	}
 	
 	/**
@@ -75,6 +75,6 @@ public class EncoderResult extends Tuple {
 	 * @return
 	 */
 	public String getEncoding() {
-		return (String)get(3);
+		return (String)the(3);
 	}
 }

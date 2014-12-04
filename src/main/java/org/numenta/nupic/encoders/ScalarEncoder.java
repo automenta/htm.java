@@ -548,9 +548,9 @@ public class ScalarEncoder extends Encoder<Double> {
 	    // both go all the way to the edges
 		if(isPeriodic() && runs.size() > 1) {
 			int l = runs.size() - 1;
-			if(((Integer)runs.get(0).get(0)) == 0 && ((Integer)runs.get(l).get(0)) + ((Integer)runs.get(l).get(1)) == getN()) {
-				runs.set(l, new Tuple(					runs.get(l).get(0),  
-						((Integer)runs.get(l).get(1)) + ((Integer)runs.get(0).get(1)) ));
+			if(((Integer)runs.get(0).the(0)) == 0 && ((Integer)runs.get(l).the(0)) + ((Integer)runs.get(l).the(1)) == getN()) {
+				runs.set(l, new Tuple(					runs.get(l).the(0),  
+						((Integer)runs.get(l).the(1)) + ((Integer)runs.get(0).the(1)) ));
 				runs = runs.subList(1, runs.size());
 			}
 		}
@@ -565,8 +565,8 @@ public class ScalarEncoder extends Encoder<Double> {
 		int right = 0;
 		List<MinMax> ranges = new ArrayList<>();
 		for(Tuple tupleRun : runs) {
-			int start = (Integer)tupleRun.get(0);
-			int runLen = (Integer)tupleRun.get(1);
+			int start = (Integer)tupleRun.the(0);
+			int runLen = (Integer)tupleRun.the(1);
 			if(runLen <= getW()) {
 				left = right = start + runLen / 2;
 			}else{
@@ -736,7 +736,7 @@ public class ScalarEncoder extends Encoder<Double> {
 			int numBuckets = topDownMapping.getMaxIndex() + 1;
 			bucketValues = new ArrayList<>();
 			for(int i = 0;i < numBuckets;i++) {
-				((Collection<Double>)bucketValues).add((Double)getBucketInfo(new int[] { i }).get(0).get(1));
+				((Collection<Double>)bucketValues).add((Double)getBucketInfo(new int[] { i }).get(0).the(1));
 			}
 		}
 		return (List<S>)bucketValues;

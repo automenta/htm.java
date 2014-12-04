@@ -167,7 +167,7 @@ public class CoordinateEncoder extends Encoder<Tuple> implements CoordinateOrder
      */
     @Override
     public void encodeIntoArray(Tuple inputData, int[] output) {
-        int[][] neighbors = neighbors((int[]) inputData.get(0), (double) inputData.get(1));
+        int[][] neighbors = neighbors((int[]) inputData.the(0), (double) inputData.the(1));
 
         int[][] winners = topWCoordinates(this, neighbors, w);
 

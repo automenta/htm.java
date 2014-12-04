@@ -71,9 +71,9 @@ public class GeospatialCoordinateEncoder extends CoordinateEncoder {
 	 */
 	@Override
 	public void encodeIntoArray(Tuple inputData, int[] output) {
-		double longitude = (double)inputData.get(0);
-		double lattitude = (double)inputData.get(1);
-		double speed = (double)inputData.get(2);
+		double longitude = (double)inputData.the(0);
+		double lattitude = (double)inputData.the(1);
+		double speed = (double)inputData.the(2);
 		int[] coordinate = coordinateForPosition(longitude, lattitude);
 		double radius = radiusForSpeed(speed);
 		

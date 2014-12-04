@@ -44,7 +44,7 @@ public class PassThroughEncoderTest {
 		encoder.encodeIntoArray(bitmap, output);
 		assertEquals(ArrayUtils.sum(bitmap), ArrayUtils.sum(output));
 		Tuple decode = encoder.decode(output, null);
-		assertTrue(((Map<String, RangeList>) decode.get(0)).containsKey(encoder.getName()));
+		assertTrue(((Map<String, RangeList>) decode.the(0)).containsKey(encoder.getName()));
 	}
 
 	@Test
