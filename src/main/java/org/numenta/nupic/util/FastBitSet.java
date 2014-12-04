@@ -375,6 +375,45 @@ public class FastBitSet {
             clear(bitIndex);
         }
     }
+    
+    /** returns 0 if the bit remained unchange, +1 if it went from false to true,
+     * and -1 if it went from true to false     */
+    public int setAndGetChange(int bitIndex, boolean value) {
+
+        boolean resized = false;
+        
+        int i = bitIndex >> 6;
+        if (i >= _length) {
+            if (value) {                
+                setLength(i + 1);
+                resized = true;
+            }
+            else {
+                return 0;
+            }                
+            
+        }
+        
+        
+        long existing = bits[i];
+        long mask = 1L << bitIndex;
+        
+        boolean e = (existing & mask) > 0;
+            
+        long nextValue;
+        if (value) {   
+            nextValue = existing | mask;
+        } else {
+            nextValue = existing & ~(mask);
+        }
+        
+        if ((nextValue!=existing) || (resized)) {
+            bits[i] = nextValue;
+            return value ? +1 : -1;
+        }
+        
+        return 0;
+    }
 
     /**
      * Sets the bits from the specified {@code fromIndex} (inclusive) to the

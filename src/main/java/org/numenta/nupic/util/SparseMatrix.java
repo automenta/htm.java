@@ -314,7 +314,7 @@ abstract public class SparseMatrix<T> implements IndexedMatrix<T> {
      * @return
      */
     @Override
-    public int computeIndex(int[] coordinates) {
+    public int computeIndex(int... coordinates) {
         return computeIndex(coordinates, true);
     }
 

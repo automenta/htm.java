@@ -54,7 +54,7 @@ public class SparseBinaryMatrix extends SparseMatrix<Byte> {
      * @param val
      * @param coordinates
      */
-    protected void back(boolean val, int... coordinates) {
+    protected void back(boolean val, int delta, int... coordinates) {
         ArrayUtils.setValue(this.backingArray, val ? (byte)1: (byte)0, coordinates);
     }
 
@@ -139,8 +139,8 @@ public class SparseBinaryMatrix extends SparseMatrix<Byte> {
 
     public void setIndex(boolean value, int index) {        
         int[] coordinates = computeCoordinates(index);
-        sparseMap.set(index, value);
-        back(value, coordinates);
+        int delta = sparseMap.setAndGetChange(index, value);
+        back(value, delta, coordinates);
     }
 
     /**
@@ -154,8 +154,8 @@ public class SparseBinaryMatrix extends SparseMatrix<Byte> {
     public void set(Byte value, int... coordinates) {
         int index = computeIndex(coordinates);
         boolean v = value > 0 ? true : false;
-        sparseMap.set(index, v);
-        back(v, coordinates);
+        int delta = sparseMap.setAndGetChange(index, v);
+        back(v, delta, coordinates);
     }
 
     /**
@@ -217,12 +217,19 @@ public class SparseBinaryMatrix extends SparseMatrix<Byte> {
 
     /**
      * Clears the true counts prior to a cycle where they're being set
+     * for 2D only
      */
     public void clearStatistics(int row) {
+        assert(getNumDimensions() == 2);
+        
         //int[] slice = (int[])Array.get(backingArray, row);
         int[] slice = ((int[][]) backingArray)[row];
         Arrays.fill(slice, 0);
-        sparseMap.set(row, false);
+        
+        int start = computeIndex(row, 0);
+        int end = start + getDimensions()[1];
+        for (int i = start; i < end; i++)
+            sparseMap.set(i, false);
     }
 
 

@@ -19,14 +19,14 @@ public class SparseBinaryMatrixTrueCount extends SparseBinaryMatrix {
 
     public static RealVector getDefaultRowCounter(int rows) {
         //TODO tune this threshold
-        if (rows < 256) {
+        //if (rows < 256) {
             //dense
             return new ArrayRealVector(rows);
-        }
+        /*}
         else {
             //sparse
             return new OpenMapRealVector(rows);
-        }
+        }*/
     }
     
     public SparseBinaryMatrixTrueCount(int[] dimensions) {
@@ -43,16 +43,27 @@ public class SparseBinaryMatrixTrueCount extends SparseBinaryMatrix {
     }
     
     @Override
-    protected void back(boolean val, int... coordinates) {
-        super.back(val, coordinates);
+    protected void back(boolean val, int delta, int... coordinates) {
+        super.back(val, delta, coordinates);
         
         //TODO see if there is a better way to do this than iterating
         //ex: if the bit changed, do something like:
-        //rowCounts.addToEntry(coordinates[0], val ? +1 : -1);
         
-        //update true counts
         int e = coordinates[0];
+        
+        if (delta!=0) {
+            
+            double v = rowCounts.getEntry(e);
+            if (Double.isNaN(v)) v = 0d;
+            v += delta;
+            rowCounts.setEntry(e, v);
+        }
+                
+        /*
+        //update true counts
+        
         rowCounts.setEntry(e, ArrayUtils.aggregateArray(((Object[]) this.backingArray)[e]));
+        */
     }    
 
     @Override
