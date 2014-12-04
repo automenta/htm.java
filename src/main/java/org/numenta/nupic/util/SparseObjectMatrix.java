@@ -120,7 +120,7 @@ public class SparseObjectMatrix<T> extends SparseMatrix<T> {
      */
     @Override
     public int[] getSparseIndices() {
-        return reverse(sparseMap.keys());
+        return ArrayUtils.reverseIt(sparseMap.keys());
     }
     
     /**

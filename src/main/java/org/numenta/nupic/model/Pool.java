@@ -34,6 +34,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.numenta.nupic.Connections;
+import org.numenta.nupic.util.ArrayUtils;
 
 /**
  * Convenience container for "bound" {@link Synapse} values
@@ -129,9 +130,10 @@ public class Pool {
 	 */
 	public double[] getDensePermanences(Connections c) {
 		double[] retVal = new double[c.getNumInputs()];
-		Arrays.fill(retVal, 0);
+		//Arrays.fill(retVal, 0); //already zero
+                
 		for(int inputIndex : connectionPerms.keys()) {
-			retVal[inputIndex] = connectionPerms.get(inputIndex).getPermanence();
+                    retVal[inputIndex] = connectionPerms.get(inputIndex).getPermanence();
 		}
 		return retVal;
 	}
@@ -141,9 +143,9 @@ public class Pool {
 	 * @return
 	 */
 	public int[] getSparseConnections() {
-		TIntList l = new TIntArrayList(connectionPerms.keys());
-		l.reverse();
-		return l.toArray();
+            int[] c = connectionPerms.keys();
+            ArrayUtils.reverse(c);
+            return c;
 	}
 	
 	/**
@@ -156,10 +158,11 @@ public class Pool {
 	 */
 	public int[] getDenseConnections(Connections c) {
 		int[] retVal = new int[c.getNumInputs()];
-		Arrays.fill(retVal, 0);
-		for(int inputIndex : synapseConnections.toArray()) {
-			retVal[inputIndex] = 1;
-		}
+		//Arrays.fill(retVal, 0); //already zero
+                int numSyn = synapseConnections.size();
+                for (int i = 0; i < numSyn; i++) {
+                    retVal[ synapseConnections.getQuick(i) ] = 1;
+                }
 		return retVal;
 	}
 	

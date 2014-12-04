@@ -43,19 +43,19 @@ public interface Condition<T> {
     public boolean eval(T t);
     
 
-    public static final Condition.Adapter<Integer> GreaterThanEqualToZero = new Condition.Adapter<Integer>() {
+    public static final Condition.Adapter GreaterThanEqualToZero = new Condition.Adapter() {
         @Override final public boolean eval(final int n) {
             return n >= 0;
         }
     };
-    public static final Condition.Adapter<Integer> GreaterThanZero = new Condition.Adapter<Integer>() {
+    public static final Condition.Adapter GreaterThanZero = new Condition.Adapter() {
         @Override final public boolean eval(final int n) {
             return n > 0;
         }
     };
     
 
-    static final class LessThan extends Condition.Adapter<Integer> {
+    static final class LessThan extends Condition.Adapter {
         private final int limit;
 
         public LessThan(int limit) {

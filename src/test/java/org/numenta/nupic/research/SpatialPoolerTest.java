@@ -34,7 +34,6 @@ import org.numenta.nupic.Connections;
 import org.numenta.nupic.Parameters;
 import org.numenta.nupic.KEY;
 import org.numenta.nupic.model.Pool;
-import org.numenta.nupic.research.SpatialPooler;
 import org.numenta.nupic.util.ArrayUtils;
 import org.numenta.nupic.util.Condition;
 import org.numenta.nupic.util.MersenneTwister;
@@ -813,10 +812,15 @@ public class SpatialPoolerTest {
     	
     	for(int i = 0;i < mem.getNumColumns();i++) {
     		double[] perms = mem.getPotentialPools().getObject(i).getDensePermanences(mem);
+                System.out.println(Arrays.toString(perms));
     		for(int j = 0;j < truePermanences[i].length;j++) {
     			assertEquals(truePermanences[i][j], perms[j], 0.01);
     		}
     	}
+    }
+    
+    @Test public void testArrayReversal() {
+        assertTrue( Arrays.equals( new int[] { 1, 2, 3 }, ArrayUtils.reverse( new int[] { 3, 2, 1 } ) ) );
     }
     
     @Test

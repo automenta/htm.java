@@ -62,7 +62,7 @@ public abstract class SparseMatrix<T> {
         this.dimensions = dimensions;
         this.numDimensions = dimensions.length;
         this.dimensionMultiples = initDimensionMultiples(
-                useColumnMajorOrdering ? reverse(dimensions) : dimensions);
+                useColumnMajorOrdering ? ArrayUtils.reverse(dimensions) : dimensions);
         isColumnMajor = useColumnMajorOrdering;
     }
 
@@ -356,21 +356,6 @@ public abstract class SparseMatrix<T> {
     }
 
     /**
-     * Reverses the specified array.
-     *
-     * @param input
-     * @return
-     */
-    public static int[] reverse(int[] input) {
-        
-        int[] retVal = new int[input.length];
-        for (int i = input.length - 1, j = 0; i >= 0; i--, j++) {
-            retVal[j] = input[i];
-        }
-        return retVal;
-    }
-
-    /**
      * Initializes internal helper array which is used for multidimensional
      * index computation.
      *
@@ -399,6 +384,7 @@ public abstract class SparseMatrix<T> {
         return computeIndex(coordinates, true);
     }
 
+
     /**
      * Assumes row-major ordering. For a 3 dimensional array, the indexing
      * expected is [depth, height, width] or [slice, row, column].
@@ -412,14 +398,15 @@ public abstract class SparseMatrix<T> {
             checkDims(coordinates);
         }
 
-        int[] localMults = isColumnMajor ? reverse(dimensionMultiples) : dimensionMultiples;
-        int base = 0;
-        for (int i = 0; i < coordinates.length; i++) {
-            base += (localMults[i] * coordinates[i]);
-        }
-        return base;
-    }
+            
+                int base = 0;
+                for (int i = 0; i < coordinates.length; i++) {
+                    int j = isColumnMajor ? (dimensionMultiples.length - i -1) : i;
+                    base += (dimensionMultiples[j] * coordinates[i]);
+                }
+                return base;
 
+    }
     /**
      * Returns an integer array representing the coordinates of the specified
      * index in terms of the configuration of this {@code SparseMatrix}.
@@ -435,7 +422,7 @@ public abstract class SparseMatrix<T> {
             base %= dimensionMultiples[i];
             returnVal[i] = quotient;
         }
-        return isColumnMajor ? reverse(returnVal) : returnVal;
+        return isColumnMajor ? ArrayUtils.reverseIt(returnVal) : returnVal;
     }
 
     /**

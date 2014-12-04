@@ -246,7 +246,7 @@ public class SparseBinaryMatrix extends SparseMatrix {
      */
     @Override
     public int[] getSparseIndices() {
-        return reverse(sparseMap.keys());
+        return ArrayUtils.reverseIt(sparseMap.keys());
     }
     
     /**

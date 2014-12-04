@@ -441,9 +441,7 @@ public class SpatialPooler {
      *              			survived inhibition.
      */
     public void adaptSynapses(Connections c, int[] inputVector, int[] activeColumns) {
-    	int[] inputIndices = ArrayUtils.where(inputVector, new Condition.Adapter<Object>() {
-    		public boolean eval(int i) { return i > 0; }
-    	});
+    	int[] inputIndices = ArrayUtils.where(inputVector, Condition.GreaterThanZero);
     	double[] permChanges = new double[c.getNumInputs()];
     	Arrays.fill(permChanges, -1 * c.getSynPermInactiveDec());
     	ArrayUtils.setIndexesTo(permChanges, inputIndices, c.getSynPermActiveInc());
@@ -451,7 +449,7 @@ public class SpatialPooler {
     		Pool pool = c.getPotentialPools().getObject(activeColumns[i]);
     		double[] perm = pool.getDensePermanences(c);
     		int[] indexes = pool.getSparseConnections();
-    		ArrayUtils.raiseValuesBy(permChanges, perm);
+    		ArrayUtils.addTo(permChanges, perm);
     		Column col = c.getColumn(activeColumns[i]);
     		updatePermanencesForColumn(c, perm, col, indexes, true);
     	}
@@ -475,7 +473,7 @@ public class SpatialPooler {
     	for(int i = 0;i < weakColumns.length;i++) {
     		Pool pool = c.getPotentialPools().getObject(weakColumns[i]);
     		double[] perm = pool.getSparsePermanences();
-    		ArrayUtils.raiseValuesBy(c.getSynPermBelowStimulusInc(), perm);
+    		ArrayUtils.addTo(c.getSynPermBelowStimulusInc(), perm);
     		int[] indexes = pool.getSparseConnections();
     		Column col = c.getColumn(weakColumns[i]);
     		updatePermanencesForColumnSparse(c, perm, col, indexes, true);
@@ -501,7 +499,7 @@ public class SpatialPooler {
             if(numConnected >= c.getStimulusThreshold()) return;
             //Skipping version of "raiseValuesBy" that uses the maskPotential until bug #1322 is fixed
             //in NuPIC - for now increment all bits until numConnected >= stimulusThreshold
-            ArrayUtils.raiseValuesBy(c.getSynPermBelowStimulusInc(), perm, maskPotential);
+            ArrayUtils.addTo(c.getSynPermBelowStimulusInc(), perm, maskPotential);
         }
     }
     
@@ -524,7 +522,7 @@ public class SpatialPooler {
         while(true) {
             int numConnected = ArrayUtils.valueGreaterCount(c.getSynPermConnected(), perm);
             if(numConnected >= c.getStimulusThreshold()) return;
-            ArrayUtils.raiseValuesBy(c.getSynPermBelowStimulusInc(), perm);
+            ArrayUtils.addTo(c.getSynPermBelowStimulusInc(), perm);
         }
     }
     

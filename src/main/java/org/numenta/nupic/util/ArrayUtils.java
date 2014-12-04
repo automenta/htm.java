@@ -935,14 +935,21 @@ public class ArrayUtils {
      */
     public static double[] clip(double[] values, double min, double max) {
         for (int i = 0; i < values.length; i++) {
-            double v = values[i];
-            if (v < min) v = min;
-            else if (v > max) v = max;
-            values[i] = v;
-            //values[i] = Math.min(1, Math.max(0, values[i]));
+            values[i] = clip( values[i], min, max );
         }
         return values;
     }
+    
+    public static final double clip(double v, double min, double max) {            
+        if (v < min) v = min;
+        else if (v > max) v = max;
+        return v;            
+    }
+    public static final int clip(int v, int min, int max) {            
+        if (v < min) v = min;
+        else if (v > max) v = max;
+        return v;            
+    }    
 
     /**
      * Ensures that each entry in the specified array has a min value
@@ -955,7 +962,7 @@ public class ArrayUtils {
      */
     public static int[] clip(int[] values, int[] min, int[] max) {
         for (int i = 0; i < values.length; i++) {
-            values[i] = Math.max(min[i], Math.min(max[i], values[i]));
+            values[i] = clip(values[i], min[i], max[i]);
         }
         return values;
     }
@@ -971,7 +978,7 @@ public class ArrayUtils {
      */
     public static int[] clip(int[] values, int[] max, int adj) {
         for (int i = 0; i < values.length; i++) {
-            values[i] = Math.max(0, Math.min(max[i] + adj, values[i]));
+            values[i] = clip(values[i], 0, max[i]+adj);            
         }
         return values;
     }
@@ -1044,23 +1051,23 @@ public class ArrayUtils {
 
     /**
      * Raises the values in the specified array by the amount specified
-     * @param amount the amount to raise the values
+     * @param increment the amount to raise the values
      * @param values the values to raise
      */
-    public static void raiseValuesBy(double amount, double[] values) {
+    public static void addTo(double increment, double[] values) {
         for (int i = 0; i < values.length; i++) {
-            values[i] += amount;
+            values[i] += increment;
         }
     }
 
     /**
      * Raises the values at the indexes specified by the amount specified.
-     * @param amount the amount to raise the values
+     * @param increment the amount to raise the values
      * @param values the values to raise
      */
-    public static void raiseValuesBy(double amount, double[] values, int[] indexesToRaise) {
+    public static void addTo(double increment, double[] values, int[] indexesToRaise) {
         for (int i = 0; i < indexesToRaise.length; i++) {
-            values[indexesToRaise[i]] += amount;
+            values[indexesToRaise[i]] += increment;
         }
     }
 
@@ -1069,9 +1076,9 @@ public class ArrayUtils {
      * @param amount the amount to raise the values
      * @param values the values to raise
      */
-    public static void raiseValuesBy(double[] amounts, double[] values) {
+    public static void addTo(double[] increment, double[] values) {
         for (int i = 0; i < values.length; i++) {
-            values[i] += amounts[i];
+            values[i] += increment[i];
         }
     }
 
@@ -1082,7 +1089,7 @@ public class ArrayUtils {
      * @param indexes
      * @param values
      */
-    public static void raiseValuesBy(int amount, int[] indexes, int[] values) {
+    public static void addTo(int amount, int[] indexes, int[] values) {
         for (int i = 0; i < indexes.length; i++) {
             values[indexes[i]] += amount;
         }
@@ -1396,27 +1403,44 @@ public class ArrayUtils {
      * @return
      */
     public static int[] reverse(int[] d) {
-        int[] ret = new int[d.length];
-        for (int i = 0, j = d.length - 1; j >= 0; i++, j--) {
-            ret[i] = d[j];
-        }
-        return ret;
+        int[] ret = Arrays.copyOf(d, d.length);
+        return reverseIt(ret);
     }
-
+    
     /**
      * Returns a copy of the specified double array in
      * reverse order
      *
      * @param d
      * @return
-     */
+     */    
     public static double[] reverse(double[] d) {
-        double[] ret = new double[d.length];
-        for (int i = 0, j = d.length - 1; j >= 0; i++, j--) {
-            ret[i] = d[j];
+        double[] ret = Arrays.copyOf(d, d.length);
+        return reverseIt(ret);
+    }    
+
+    
+    /** reverse, with modifying the input array itself */
+    public static int[] reverseIt(int[] a) {
+        for (int k = 0; k < a.length/2; k++) {
+            int i = a.length-(1+k);
+            int temp = a[k];
+            a[k] = a[i];
+            a[i] = temp;
         }
-        return ret;
+        return a;
     }
+        
+    /** reverse, with modifying the input array itself */
+    public static double[] reverseIt(double[] a) {
+        for (int k = 0; k < a.length/2; k++) {
+            int i = a.length-(1+k);
+            double temp = a[k];
+            a[k] = a[i];
+            a[i] = temp;
+        }
+        return a;
+    }    
 
     /**
      * Returns a new int array containing the or'd on bits of
