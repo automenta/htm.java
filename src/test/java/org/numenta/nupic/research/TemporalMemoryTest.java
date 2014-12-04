@@ -36,6 +36,7 @@ import java.util.Set;
 import org.junit.Before;
 
 import org.junit.Test;
+import org.numenta.nupic.Build;
 import org.numenta.nupic.CLA;
 import static org.numenta.nupic.CLA.Default;
 import org.numenta.nupic.model.Cell;
@@ -53,11 +54,13 @@ import org.numenta.nupic.model.Synapse;
 public class TemporalMemoryTest {
     private CLA cla;
     private TemporalMemory tm;
+    private Build p;
 
     @Before
-    public void start() {        
-        cla = new CLA(Default());
-        tm = new TemporalMemory(cla, TemporalMemory.Default());        
+    public void start() {
+        p = CLA.Default().add(TemporalMemory.Default());
+        cla = new CLA(p);
+        tm = new TemporalMemory(cla, p);
     }
     
     @Test
@@ -124,11 +127,14 @@ public class TemporalMemoryTest {
     
     @Test
     public void testBurstColumns() {
-        cla.setCellsPerColumn(4);
-        cla.setConnectedPermanence(0.50);
-        cla.setMinThreshold(1);
-        cla.setSeed(42);
-        tm.clear();
+        p = CLA.Default().add(TemporalMemory.Default());
+        p.setCellsPerColumn(4);
+        p.setConnectedPermanence(0.50);
+        p.setMinThreshold(1);
+        p.setSeed(42);
+
+        cla = new CLA(p);
+        tm = new TemporalMemory(cla, p);
         
         int segmentCounter = 0;
         int synapseCounter = 0;
@@ -412,13 +418,16 @@ public class TemporalMemoryTest {
     @SuppressWarnings("unused")
     @Test
     public void testGetBestMatchingCellFewestSegments() {
-        cla.setColumnDimensions(new int[] { 2 });
-        cla.setCellsPerColumn(2);
-        cla.setConnectedPermanence(0.50);
-        cla.setMinThreshold(1);
-        cla.setSeed(42);
-        cla.clear();
-        tm.clear();
+        
+        p = CLA.Default().add(TemporalMemory.Default());
+        p.setColumnDimensions(new int[] { 2 });
+        p.setCellsPerColumn(2);
+        p.setConnectedPermanence(0.50);
+        p.setMinThreshold(1);
+        p.setSeed(42);        
+        cla = new CLA(p);
+        tm = new TemporalMemory(cla, p);        
+        
         
         DistalDendrite dd = cla.getCell(0).createSegment(cla, 0);
         Synapse s0 = dd.createSynapse(cla, cla.getCell(3), 0.3, 0);
@@ -484,11 +493,13 @@ public class TemporalMemoryTest {
     @SuppressWarnings("unused")
     @Test
     public void testGetLeastUsedCell() {
-        cla.setColumnDimensions(new int[] { 2 });
-        cla.setCellsPerColumn(2);
-        cla.setSeed(42);
         
-        tm.clear();
+        p = CLA.Default().add(TemporalMemory.Default());
+        p.setColumnDimensions(new int[] { 2 });
+        p.setCellsPerColumn(2);
+        p.setSeed(42);
+        cla = new CLA(p);
+        tm = new TemporalMemory(cla, p);        
         
         DistalDendrite dd = cla.getCell(0).createSegment(cla, 0);
         Synapse s0 = dd.createSynapse(cla, cla.getCell(3), 0.3, 0);

@@ -490,7 +490,7 @@ public class CLA {
      */
     public void setPotentialRadius(ColumnRadius potentialRadius) {
         this.potentialRadius = potentialRadius;
-        this.potentialRadiusAbsolute = potentialRadius.getAbsoluteLength(this);
+        this.potentialRadiusAbsolute = -1;
     }
     
     public void setPotentialRadius(double absoluteRadius) {
@@ -503,6 +503,10 @@ public class CLA {
      * @see {@link #setPotentialRadius(int)}
      */
     public double getPotentialRadius() {
+        //cache this value
+        if (potentialRadiusAbsolute == -1)
+            potentialRadiusAbsolute = potentialRadius.getAbsoluteLength(this);
+        
         return Math.min(numInputs, potentialRadiusAbsolute);
     }
 

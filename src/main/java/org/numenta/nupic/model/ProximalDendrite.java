@@ -21,6 +21,7 @@
  */
 package org.numenta.nupic.model;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.numenta.nupic.CLA;
@@ -113,7 +114,14 @@ public class ProximalDendrite extends Segment {
         pool.resetConnections();
         c.getConnectedCounts().clearStatistics(index);
         for (int i = 0; i < inputIndexes.length; i++) {
-            pool.setPermanence(c, pool.getSynapse(inputIndexes[i]), perms[i]);
+            Synapse s = pool.getSynapse(inputIndexes[i]);
+            
+            if (s == null) {
+                System.err.println("Synapse " + i + " in " + Arrays.toString(inputIndexes) + " does not exist");
+                continue;
+            }
+            
+            pool.setPermanence(c, s, perms[i]);
             if (perms[i] >= c.getSynPermConnected()) {
                 c.getConnectedCounts().set(true, index, i);
             }

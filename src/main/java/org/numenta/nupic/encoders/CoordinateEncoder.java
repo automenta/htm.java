@@ -22,18 +22,17 @@
 package org.numenta.nupic.encoders;
 
 import com.google.common.collect.Lists;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import org.numenta.nupic.util.ArrayUtils;
-import org.numenta.nupic.util.MersenneTwisterFast;
+import org.numenta.nupic.util.MersenneTwister;
 import org.numenta.nupic.util.SortablePair;
 import org.numenta.nupic.util.Tuple;
 
 public class CoordinateEncoder extends Encoder<Tuple> implements CoordinateOrder {
 
-    private static final MersenneTwisterFast random = new MersenneTwisterFast();
+    private static final MersenneTwister random = new MersenneTwister();
 
     /**
      * Package private to encourage construction using the Builder Pattern but
