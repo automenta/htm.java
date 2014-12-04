@@ -56,11 +56,11 @@ public class BasicTemporalMemoryTest extends AbstractTemporalMemoryTest {
         parameters.set(KEY.CELLS_PER_COLUMN, 4);
         parameters.set(KEY.INITIAL_PERMANENCE, 0.3);
         parameters.set(KEY.CONNECTED_PERMANENCE, 0.5);
-        parameters.set(KEY.MIN_THRESHOLD, 1);
+        parameters.set(KEY.MIN_THRESHOLD, 1d);
         parameters.set(KEY.MAX_NEW_SYNAPSE_COUNT, 6);
         parameters.set(KEY.PERMANENCE_INCREMENT, 0.1);
         parameters.set(KEY.PERMANENCE_DECREMENT, 0.05);
-        parameters.set(KEY.ACTIVATION_THRESHOLD, 1);
+        parameters.set(KEY.ACTIVATION_THRESHOLD, 1d);
     }
     
     /**

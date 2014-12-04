@@ -62,14 +62,14 @@ public class HelloSP {
         }
         activeArray = new int[columnNumber];
         
-        parameters = Parameters.getSpatialDefaultParameters();
-        parameters.set(KEY.INPUT_DIMENSIONS, inputDimensions);
-        parameters.set(KEY.COLUMN_DIMENSIONS, columnDimensions);
-        parameters.set(KEY.POTENTIAL_RADIUS, inputSize);
-        parameters.set(KEY.GLOBAL_INHIBITIONS, true);
-        parameters.set(KEY.NUM_ACTIVE_COLUMNS_PER_INH_AREA, 0.02*columnNumber);
-        parameters.set(KEY.SYN_PERM_ACTIVE_INC, 0.01);
-        parameters.set(KEY.SYN_PERM_TRIM_THRESHOLD, 0.005);
+        parameters = Parameters.getSpatialDefaultParameters().
+            set(KEY.INPUT_DIMENSIONS, inputDimensions).
+            set(KEY.COLUMN_DIMENSIONS, columnDimensions).
+            set(KEY.POTENTIAL_RADIUS, inputSize).
+            set(KEY.GLOBAL_INHIBITIONS, true).
+            set(KEY.NUM_ACTIVE_COLUMNS_PER_INH_AREA, 0.02*columnNumber).
+            set(KEY.SYN_PERM_ACTIVE_INC, 0.01).
+            set(KEY.SYN_PERM_TRIM_THRESHOLD, 0.005);
 
         System.out.println(parameters);
         
@@ -100,7 +100,7 @@ public class HelloSP {
     /**
      * Run the spatial pooler with the input vector
      */
-    public void run() {
+    public int[] run() {
         for (int i = 0; i < 80; i++) System.out.print("-");
         System.out.print("Computing the SDR");
         for (int i = 0; i < 70; i++) System.out.print("-");
@@ -108,8 +108,11 @@ public class HelloSP {
         
         sp.compute(mem, inputArray, activeArray, true, true);
         
+        
+        System.out.println(Arrays.toString(activeArray));
         int[] res = ArrayUtils.where(activeArray, Condition.GreaterThanZero);
         System.out.println(Arrays.toString(res));
+        return res;
     }
 
     /**

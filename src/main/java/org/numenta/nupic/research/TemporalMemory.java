@@ -28,6 +28,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.apache.commons.math3.analysis.UnivariateFunction;
 
 import org.numenta.nupic.Connections;
 import org.numenta.nupic.model.Cell;
@@ -365,6 +366,13 @@ public class TemporalMemory {
         return retVal;
     }
     
+    public static final UnivariateFunction GreaterThanZero = new UnivariateFunction() {
+        @Override public double value(final double d) {
+            if (d > 0) return 1.0;
+            return 0.0;
+        }
+    };
+    
     /**
      * Gets the segment on a cell with the largest number of activate synapses,
      * including all synapses with non-zero permanences.
@@ -375,15 +383,21 @@ public class TemporalMemory {
      * @return	the best segment
      */
     public DistalDendrite getBestMatchingSegment(Connections c, Cell cell, Map<DistalDendrite, Set<Synapse>> activeSynapseSegments) {
-        int maxSynapses = c.getMinThreshold();
+        
+        
+        double maxSynapses = c.getMinThreshold();
+        
         DistalDendrite bestSegment = null;
         for(DistalDendrite dd : cell.getSegments(c)) {
-            Set<Synapse> activeSyns = dd.getConnectedActiveSynapses(activeSynapseSegments, 0);
-            if(activeSyns.size() >= maxSynapses) {
-                maxSynapses = activeSyns.size();
+            //Set<Synapse> activeSyns = dd.getConnectedActiveSynapses(activeSynapseSegments, 0);
+            double synActivation = dd.getConnectedSynapseActivation(activeSynapseSegments, GreaterThanZero);
+            
+            if (synActivation >= maxSynapses) {
+                maxSynapses = synActivation;
                 bestSegment = dd;
             }
         }
+        
         return bestSegment;
     }
     

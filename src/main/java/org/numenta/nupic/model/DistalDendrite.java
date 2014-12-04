@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+import org.apache.commons.math3.analysis.UnivariateFunction;
 
 import org.numenta.nupic.Connections;
 
@@ -97,6 +98,8 @@ public class DistalDendrite extends Segment {
      * Returns the synapses on a segment that are active due to lateral input
      * from active cells.
      * 
+     * Uses a threshold value activation function
+     * 
      * @param activeSynapsesForSegment
      * @param permanenceThreshold
      * @return
@@ -115,6 +118,27 @@ public class DistalDendrite extends Segment {
         }
         return connectedSynapses;
     }
+    
+    /**
+     * Returns the synapse activation quantity on a segment that are 
+     * active due to lateral input from active cells.
+     * 
+     * Activation function is a parameter
+     */
+    public double getConnectedSynapseActivation(Map<DistalDendrite, Set<Synapse>> activeSynapsesForSegment, UnivariateFunction activationFunction) {
+        
+        double activation = 0;
+        
+        if(!activeSynapsesForSegment.containsKey(this)) {
+            return 0;
+        }
+        
+        for(Synapse s : activeSynapsesForSegment.get(this)) {
+            activation += activationFunction.value(s.getPermanence());            
+        }
+        
+        return activation;
+    }    
     
     /**
      * Called for learning {@code Segment}s so that they may

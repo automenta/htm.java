@@ -71,9 +71,9 @@ public class Parameters implements Serializable {
         Map<KEY, Object> defaultTemporalParams = new ParametersMap();
         defaultTemporalParams.put(KEY.COLUMN_DIMENSIONS, new int[]{2048});
         defaultTemporalParams.put(KEY.CELLS_PER_COLUMN, 32);
-        defaultTemporalParams.put(KEY.ACTIVATION_THRESHOLD, 13);
+        defaultTemporalParams.put(KEY.ACTIVATION_THRESHOLD, 13d);
         defaultTemporalParams.put(KEY.LEARNING_RADIUS, 2048);
-        defaultTemporalParams.put(KEY.MIN_THRESHOLD, 10);
+        defaultTemporalParams.put(KEY.MIN_THRESHOLD, 10d);
         defaultTemporalParams.put(KEY.MAX_NEW_SYNAPSE_COUNT, 20);
         defaultTemporalParams.put(KEY.INITIAL_PERMANENCE, 0.21);
         defaultTemporalParams.put(KEY.CONNECTED_PERMANENCE, 0.5);
@@ -221,11 +221,12 @@ public class Parameters implements Serializable {
      * @param key
      * @param value
      */
-    public void set(KEY key, Object value) {
+    public Parameters set(KEY key, Object value) {
         if (value==null)
             remove(key);
         else
             paramMap.put(key, value);
+        return this;
     }
 
     /**
@@ -314,7 +315,7 @@ public class Parameters implements Serializable {
      *
      * @param activationThreshold
      */
-    public void setActivationThreshold(int activationThreshold) {
+    public void setActivationThreshold(double activationThreshold) {
         paramMap.put(KEY.ACTIVATION_THRESHOLD, activationThreshold);
     }
 
@@ -335,7 +336,7 @@ public class Parameters implements Serializable {
      *
      * @param minThreshold
      */
-    public void setMinThreshold(int minThreshold) {
+    public void setMinThreshold(double minThreshold) {
         paramMap.put(KEY.MIN_THRESHOLD, minThreshold);
     }
 

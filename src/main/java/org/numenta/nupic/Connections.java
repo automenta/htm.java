@@ -152,7 +152,7 @@ public class Connections {
      * If the number of active connected synapses on a segment 
      * is at least this threshold, the segment is said to be active.
      */
-    private int activationThreshold = 13;
+    private double activationThreshold = 13;
     /**
      * Radius around cell from which it can
      * sample to form distal {@link DistalDendrite} connections.
@@ -163,7 +163,8 @@ public class Connections {
      * threshold, it is selected as the best matching
      * cell in a bursting column.
      */
-    private int minThreshold = 10;
+    private double minThreshold = 10;
+    
     /** The maximum number of synapses added to a segment during learning. */
     private int maxNewSynapseCount = 20;
     /** Initial permanence of a new synapse */
@@ -1355,7 +1356,7 @@ public class Connections {
      * 
      * @param activationThreshold
      */
-    public void setActivationThreshold(int activationThreshold) {
+    public void setActivationThreshold(double activationThreshold) {
         this.activationThreshold = activationThreshold;
     }
     
@@ -1363,7 +1364,7 @@ public class Connections {
      * Returns the activation threshold.
      * @return
      */
-    public int getActivationThreshold() {
+    public double getActivationThreshold() {
     	return activationThreshold;
     }
 
@@ -1392,7 +1393,7 @@ public class Connections {
      * 
      * @param   minThreshold
      */
-    public void setMinThreshold(int minThreshold) {
+    public void setMinThreshold(double minThreshold) {
         this.minThreshold = minThreshold;
     }
     
@@ -1400,7 +1401,7 @@ public class Connections {
      * Returns the minimum threshold of active synapses to be picked as best.
      * @return
      */
-    public int getMinThreshold() {
+    public double getMinThreshold() {
     	return minThreshold;
     }
 
