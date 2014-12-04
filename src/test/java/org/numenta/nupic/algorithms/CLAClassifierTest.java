@@ -31,7 +31,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.junit.Test;
-import org.numenta.nupic.algorithms.CLAClassifier.Classify;
+import org.numenta.nupic.algorithms.Classify;
 
 public class CLAClassifierTest {
 	private CLAClassifier classifier;
@@ -79,11 +79,8 @@ public class CLAClassifierTest {
 	 */
 	@Test
 	public void testComputeResultTypes() {
-		classifier = new CLAClassifier(new TIntArrayList(new int[] { 1 }), 0.1, 0.1, 0);
-		Map<String, Object> classification = new LinkedHashMap<>();
-		classification.put("bucketIdx", 4);
-		classification.put("actValue", 34.7);
-		Classification<Double> result = classifier.compute(0, classification, new int[] { 1, 5, 9 }, true, true);
+		classifier = new CLAClassifier(new TIntArrayList(new int[] { 1 }), 0.1, 0.1, 0);		
+		Classification<Double> result = classifier.compute(0, 4, 34.7, new int[] { 1, 5, 9 }, true, true);
 		
 		assertTrue(Arrays.equals(new int[] { 1 }, result.stepSet()));
 		assertEquals(1, result.getActualValueCount());

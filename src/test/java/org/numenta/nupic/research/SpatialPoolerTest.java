@@ -39,6 +39,7 @@ import org.numenta.nupic.util.Condition;
 import org.numenta.nupic.util.IndexedMatrix;
 import org.numenta.nupic.util.MersenneTwister;
 import org.numenta.nupic.util.SparseBinaryMatrix;
+import org.numenta.nupic.util.SparseBinaryMatrixTrueCount;
 import org.numenta.nupic.util.SparseMatrix;
 import org.numenta.nupic.util.SparseObjectMatrix;
 
@@ -1572,7 +1573,7 @@ public class SpatialPoolerTest {
     		{ 0, 1, 4 }
     	};
     	
-    	int[] trueConnectedCounts = new int[] {2, 2, 2, 2, 3};
+    	double[] trueConnectedCounts = new double[] {2, 2, 2, 2, 3};
     
     	for(int i = 0;i < mem.getNumColumns();i++) {
     		mem.getColumn(i).setProximalPermanences(mem, permanences[i]);
@@ -1598,7 +1599,7 @@ public class SpatialPoolerTest {
 		    {0, 0, 0, 0, 1, 1, 1, 1, 1, 1},
 		    {0, 0, 0, 0, 0, 0, 1, 1, 1, 1},
 		    {0, 0, 0, 0, 0, 0, 0, 0, 1, 1}};
-    	SparseBinaryMatrix sm = new SparseBinaryMatrix(dimensions);
+    	SparseBinaryMatrixTrueCount sm = new SparseBinaryMatrixTrueCount(dimensions);
 		for(int i = 0;i < sm.getDimensions()[0];i++) {
 			for(int j = 0;j < sm.getDimensions()[1];j++) {
 				sm.set(connectedSynapses[i][j], i, j);
@@ -1630,7 +1631,7 @@ public class SpatialPoolerTest {
 		    {0, 0, 0, 0, 1, 1, 1, 1, 1, 1},
 		    {0, 0, 0, 0, 0, 0, 1, 1, 1, 1},
 		    {0, 0, 0, 0, 0, 0, 0, 0, 1, 1}};
-    	sm = new SparseBinaryMatrix(dimensions);
+    	sm = new SparseBinaryMatrixTrueCount(dimensions);
 		for(int i = 0;i < sm.getDimensions()[0];i++) {
 			for(int j = 0;j < sm.getDimensions()[1];j++) {
 				sm.set(connectedSynapses[i][j], i, j);
@@ -1662,7 +1663,7 @@ public class SpatialPoolerTest {
 		    {0, 0, 0, 0, 1, 1, 1, 1, 1, 1},
 		    {0, 0, 0, 0, 0, 0, 1, 1, 1, 1},
 		    {0, 0, 0, 0, 0, 0, 0, 0, 1, 1}};
-		sm = new SparseBinaryMatrix(dimensions);
+		sm = new SparseBinaryMatrixTrueCount(dimensions);
 		for(int i = 0;i < sm.getDimensions()[0];i++) {
 			for(int j = 0;j < sm.getDimensions()[1];j++) {
 				sm.set(connectedSynapses[i][j], i, j);
@@ -1694,7 +1695,7 @@ public class SpatialPoolerTest {
 		    {0, 0, 1, 0, 0, 0, 0, 1, 0, 0},
 		    {0, 0, 0, 1, 0, 0, 0, 0, 1, 0},
 		    {0, 0, 0, 0, 1, 0, 0, 0, 0, 1}};
-		sm = new SparseBinaryMatrix(dimensions);
+		sm = new SparseBinaryMatrixTrueCount(dimensions);
 		for(int i = 0;i < sm.getDimensions()[0];i++) {
 			for(int j = 0;j < sm.getDimensions()[1];j++) {
 				sm.set(connectedSynapses[i][j], i, j);

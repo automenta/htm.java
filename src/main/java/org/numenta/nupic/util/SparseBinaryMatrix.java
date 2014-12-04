@@ -19,7 +19,6 @@
  * http://numenta.org/licenses/
  * ---------------------------------------------------------------------
  */
-
 package org.numenta.nupic.util;
 
 import gnu.trove.TIntCollection;
@@ -34,381 +33,363 @@ import java.util.Arrays;
 
 @SuppressWarnings("rawtypes")
 public class SparseBinaryMatrix extends SparseMatrix<Byte> {
-    
+
     private TIntByteMap sparseMap = new TIntByteHashMap();
-    private TIntList trueCounts;
-    private Object backingArray;
-    
+    Object backingArray;
+
     public SparseBinaryMatrix(int[] dimensions) {
         this(dimensions, false);
     }
-    
+
     public SparseBinaryMatrix(int[] dimensions, boolean useColumnMajorOrdering) {
         super(dimensions, useColumnMajorOrdering);
         this.backingArray = Array.newInstance(int.class, dimensions);
-        this.trueCounts = new TIntArrayList(dimensions[0]);
-        for(int i = 0;i < dimensions[0];i++) {
-        	trueCounts.add(0);
-        }
+
     }
-    
+
     /**
-     * Called during mutation operations to simultaneously set the value
-     * on the backing array dynamically.
+     * Called during mutation operations to simultaneously set the value on the
+     * backing array dynamically.
+     *
      * @param val
      * @param coordinates
      */
-    private void back(byte val, int... coordinates) {
-		ArrayUtils.setValue(this.backingArray, val, coordinates);
-        //update true counts
-        trueCounts.set(coordinates[0], ArrayUtils.aggregateArray(((Object[])this.backingArray)[coordinates[0]]));
-	}
-    
+    protected void back(byte val, int... coordinates) {
+        ArrayUtils.setValue(this.backingArray, val, coordinates);
+    }
+
     /**
-     * Returns the slice specified by the passed in coordinates.
-     * The array is returned as an object, therefore it is the caller's
-     * responsibility to cast the array to the appropriate dimensions.
-     * 
+     * Returns the slice specified by the passed in coordinates. The array is
+     * returned as an object, therefore it is the caller's responsibility to
+     * cast the array to the appropriate dimensions.
+     *
      * @param coordinates	the coordinates which specify the returned array
      * @return	the array specified
-     * @throws	IllegalArgumentException if the specified coordinates address
-     * 			an actual value instead of the array holding it.
+     * @throws	IllegalArgumentException if the specified coordinates address an
+     * actual value instead of the array holding it.
      */
-     public Object getSlice(int... coordinates) {
-		Object slice = backingArray;
-		for(int i = 0;i < coordinates.length;i++) {
-			Object s = Array.get(slice, coordinates[i]);
-			slice = s.getClass().isArray() ? s : s;
-		}
-		//Ensure return value is of type Array
-		if(!slice.getClass().isArray()) {
-			throw new IllegalArgumentException(
-				"This method only returns the array holding the specified index: " + 
-					Arrays.toString(coordinates));
-		}
-		
-		return slice;
-	}
-    
+    public Object getSlice(int... coordinates) {
+        Object slice = backingArray;
+        for (int i = 0; i < coordinates.length; i++) {
+            Object s = Array.get(slice, coordinates[i]);
+            slice = s.getClass().isArray() ? s : s;
+        }
+        //Ensure return value is of type Array
+        if (!slice.getClass().isArray()) {
+            throw new IllegalArgumentException(
+                    "This method only returns the array holding the specified index: "
+                    + Arrays.toString(coordinates));
+        }
+
+        return slice;
+    }
+
     /**
-     * Fills the specified results array with the result of the 
-     * matrix vector multiplication.
-     * 
-     * @param inputVector		the right side vector
-     * @param results			the results array
+     * Fills the specified results array with the result of the matrix vector
+     * multiplication.
+     *
+     * @param inputVector	the right side vector
+     * @param results	the results array
      */
     public void rightVecSumAtNZ(int[] inputVector, int[] results) {
-    	for(int i = 0;i < dimensions[0];i++) {
-    		int[] slice = (int[])(dimensions.length > 1 ? getSlice(i) : backingArray);
-    		for(int j = 0;j < slice.length;j++) {
-    			results[i] += (inputVector[j] * slice[j]);
-    		}
-    	}
+        for (int i = 0; i < dimensions[0]; i++) {
+            int[] slice = (int[]) (dimensions.length > 1 ? getSlice(i) : backingArray);
+            for (int j = 0; j < slice.length; j++) {
+                results[i] += (inputVector[j] * slice[j]);
+            }
+        }
     }
+
     public void rightVecSumAtNZ(int[] inputVector, double[] results) {
-    	for(int i = 0;i < dimensions[0];i++) {
-    		int[] slice = (int[])(dimensions.length > 1 ? getSlice(i) : backingArray);
-    		for(int j = 0;j < slice.length;j++) {
-    			results[i] += (inputVector[j] * slice[j]);
-    		}
-    	}
-    }    
+        for (int i = 0; i < dimensions[0]; i++) {
+            int[] slice = (int[]) (dimensions.length > 1 ? getSlice(i) : backingArray);
+            for (int j = 0; j < slice.length; j++) {
+                results[i] += (inputVector[j] * slice[j]);
+            }
+        }
+    }
+
     public void rightVecSumAtNZ(int[] inputVector, double[] results, double stimulusThreshold, double[] factor) {
-    	for(int i = 0;i < dimensions[0];i++) {
-    		int[] slice = (int[])(dimensions.length > 1 ? getSlice(i) : backingArray);
-    		for(int j = 0;j < slice.length;j++) {
-    			results[i] += (inputVector[j] * slice[j]);
-    		}
-    	}
-        
+        for (int i = 0; i < dimensions[0]; i++) {
+            int[] slice = (int[]) (dimensions.length > 1 ? getSlice(i) : backingArray);
+            for (int j = 0; j < slice.length; j++) {
+                results[i] += (inputVector[j] * slice[j]);
+            }
+        }
+
         for (int i = 0; i < results.length; i++) {
-            if (results[i] < stimulusThreshold)
+            if (results[i] < stimulusThreshold) {
                 results[i] = 0;
-            else
+            } else {
                 results[i] *= factor[i];
-        }       
-    }     
-    
-    
+            }
+        }
+    }
+
     /**
      * Sets the value at the specified index.
-     * 
-     * @param index     the index the object will occupy
-     * @param object    the object to be indexed.
+     *
+     * @param index the index the object will occupy
+     * @param object the object to be indexed.
      */
     @Override
     public void setIndex(Byte value, int index) {
-    	int[] coordinates = computeCoordinates(index);
+        int[] coordinates = computeCoordinates(index);
         sparseMap.put(computeIndex(coordinates), value);
         back(value, coordinates);
     }
-    
+
     public void setIndex(boolean value, int index) {
-        setIndex( value ? (byte)1 : (byte)0, index);
+        setIndex(value ? (byte) 1 : (byte) 0, index);
     }
-    
+
     /**
-     * Sets the value to be indexed at the index
-     * computed from the specified coordinates.
-     * @param coordinates   the row major coordinates [outer --> ,...,..., inner]
-     * @param object        the object to be indexed.
+     * Sets the value to be indexed at the index computed from the specified
+     * coordinates.
+     *
+     * @param coordinates the row major coordinates [outer --> ,...,..., inner]
+     * @param object the object to be indexed.
      */
     @Override
     public void set(Byte value, int... coordinates) {
         setIndex(value, computeIndex(coordinates));
     }
-    
+
     /**
      * Sets the specified values at the specified indexes.
-     * 
-     * @param indexes   indexes of the values to be set
-     * @param values    the values to be indexed.
-     * 
+     *
+     * @param indexes indexes of the values to be set
+     * @param values the values to be indexed.
+     *
      * @return this {@code SparseMatrix} implementation
      */
-    public SparseBinaryMatrix set(int[] indexes, byte[] values) { 
-        for(int i = 0;i < indexes.length;i++) {
+    public SparseBinaryMatrix set(int[] indexes, byte[] values) {
+        for (int i = 0; i < indexes.length; i++) {
             set(values[i], indexes[i]);
         }
         return this;
     }
-    public SparseBinaryMatrix set(int[] indexes, byte value) { 
-        for(int i = 0;i < indexes.length;i++) {
+
+    public SparseBinaryMatrix set(int[] indexes, byte value) {
+        for (int i = 0; i < indexes.length; i++) {
             setIndex(value, indexes[i]);
         }
         return this;
     }
+
     public void set(boolean value, int... coord) {
-        set( value ? (byte)1 : (byte)0, coord);
+        set(value ? (byte) 1 : (byte) 0, coord);
     }
-    
+
     /**
-     * Sets the value at the specified index skipping the automatic
-     * truth statistic tallying of the real method.
-     * 
-     * @param index     the index the object will occupy
-     * @param object    the object to be indexed.
+     * Sets the value at the specified index skipping the automatic truth
+     * statistic tallying of the real method.
+     *
+     * @param index the index the object will occupy
+     * @param object the object to be indexed.
      */
     public SparseBinaryMatrix setForTest(int index, byte value) {
-        sparseMap.put(index, value);         
+        sparseMap.put(index, value);
         return this;
     }
-    
+
     /**
      * Sets the specified values at the specified indexes.
-     * 
-     * @param indexes   indexes of the values to be set
-     * @param values    the values to be indexed.
-     * 
+     *
+     * @param indexes indexes of the values to be set
+     * @param values the values to be indexed.
+     *
      * @return this {@code SparseMatrix} implementation
      */
-    public SparseBinaryMatrix set(int[] indexes, byte[] values, boolean isTest) { 
-        for(int i = 0;i < indexes.length;i++) {
-        	if(isTest) setForTest(indexes[i], values[i]);
-        	else set(values[i], indexes[i]);
+    public SparseBinaryMatrix set(int[] indexes, byte[] values, boolean isTest) {
+        for (int i = 0; i < indexes.length; i++) {
+            if (isTest) {
+                setForTest(indexes[i], values[i]);
+            } else {
+                set(values[i], indexes[i]);
+            }
         }
         return this;
     }
-    
+
     /**
-     * Returns the count of 1's set on the specified row.
-     * @param index
-     * @return
-     */
-    public int getTrueCount(int index) {
-    	return trueCounts.get(index);
-    }
-    
-    /**
-     * Sets the count of 1's on the specified row.
-     * @param index
-     * @param count
-     */
-    public void setTrueCount(int index, int count) {
-    	this.trueCounts.set(index, count);
-    }
-    
-    /**
-     * Get the true counts for all outer indexes.
-     * @return
-     */
-    public int[] getTrueCounts() {
-    	return trueCounts.toArray();
-    }
-    
-    /**
-     * Clears the true counts prior to a cycle where they're
-     * being set
+     * Clears the true counts prior to a cycle where they're being set
      */
     public void clearStatistics(int row) {
-    	//int[] slice = (int[])Array.get(backingArray, row);
-        int[] slice = ((int[][])backingArray)[row];
-    	Arrays.fill(slice, 0);
-        trueCounts.set(row, 0);
-        sparseMap.put(row, (byte)0);
+        //int[] slice = (int[])Array.get(backingArray, row);
+        int[] slice = ((int[][]) backingArray)[row];
+        Arrays.fill(slice, 0);
+        sparseMap.put(row, (byte) 0);
     }
 
-    
     public byte[] values() {
         return sparseMap.values();
     }
-    
+
     /**
      * Returns an outer array of T values.
+     *
      * @return
      */
 //    @Override
 //    public int[] values() {
 //    	return sparseMap.values();
 //    }
-    
-    
     /**
-     * Returns the int value at the index computed from the specified coordinates
-     * @param coordinates   the coordinates from which to retrieve the indexed object
-     * @return  the indexed object
+     * Returns the int value at the index computed from the specified
+     * coordinates
+     *
+     * @param coordinates the coordinates from which to retrieve the indexed
+     * object
+     * @return the indexed object
      */
     public int getIntValue(int... coordinates) {
-    	return sparseMap.get(computeIndex(coordinates));
+        return sparseMap.get(computeIndex(coordinates));
     }
-    
+
     /**
      * Returns the T at the specified index.
-     * 
-     * @param index     the index of the T to return
-     * @return  the T at the specified index.
+     *
+     * @param index the index of the T to return
+     * @return the T at the specified index.
      */
     @Override
     public int getIntValue(int index) {
         return sparseMap.get(index);
     }
-    
+
     /**
      * Returns a sorted array of occupied indexes.
-     * @return  a sorted array of occupied indexes.
+     *
+     * @return a sorted array of occupied indexes.
      */
     @Override
     public int[] getSparseIndices() {
         return ArrayUtils.reverseIt(sparseMap.keys());
     }
-    
+
     /**
-     * This {@code SparseBinaryMatrix} will contain the operation of or-ing
-     * the inputMatrix with the contents of this matrix; returning this matrix
-     * as the result.
-     * 
-     * @param inputMatrix   the matrix containing the "on" bits to or
-     * @return  this matrix
+     * This {@code SparseBinaryMatrix} will contain the operation of or-ing the
+     * inputMatrix with the contents of this matrix; returning this matrix as
+     * the result.
+     *
+     * @param inputMatrix the matrix containing the "on" bits to or
+     * @return this matrix
      */
     public SparseBinaryMatrix or(SparseBinaryMatrix inputMatrix) {
         int[] mask = inputMatrix.getSparseIndices();
-        return set(mask, (byte)1);
+        return set(mask, (byte) 1);
     }
-    
+
     /**
-     * This {@code SparseBinaryMatrix} will contain the operation of or-ing
-     * the sparse list with the contents of this matrix; returning this matrix
-     * as the result.
-     * 
-     * @param onBitIndexes  the matrix containing the "on" bits to or
-     * @return  this matrix
+     * This {@code SparseBinaryMatrix} will contain the operation of or-ing the
+     * sparse list with the contents of this matrix; returning this matrix as
+     * the result.
+     *
+     * @param onBitIndexes the matrix containing the "on" bits to or
+     * @return this matrix
      */
     public SparseBinaryMatrix or(TIntCollection onBitIndexes) {
-        return set(onBitIndexes.toArray(), (byte)1);
+        return set(onBitIndexes.toArray(), (byte) 1);
     }
-    
+
     /**
-     * This {@code SparseBinaryMatrix} will contain the operation of or-ing
-     * the sparse array with the contents of this matrix; returning this matrix
-     * as the result.
-     * 
-     * @param onBitIndexes  the int array containing the "on" bits to or
-     * @return  this matrix
+     * This {@code SparseBinaryMatrix} will contain the operation of or-ing the
+     * sparse array with the contents of this matrix; returning this matrix as
+     * the result.
+     *
+     * @param onBitIndexes the int array containing the "on" bits to or
+     * @return this matrix
      */
     public SparseBinaryMatrix or(int[] onBitIndexes) {
-        return set(onBitIndexes, (byte)1);
+        return set(onBitIndexes, (byte) 1);
     }
-    
+
     /**
-     * Returns true if the on bits of the specified matrix are
-     * matched by the on bits of this matrix. It is allowed that 
-     * this matrix have more on bits than the specified matrix.
-     * 
+     * Returns true if the on bits of the specified matrix are matched by the on
+     * bits of this matrix. It is allowed that this matrix have more on bits
+     * than the specified matrix.
+     *
      * @param matrix
      * @return
      */
     public boolean all(SparseBinaryMatrix matrix) {
         return sparseMap.keySet().containsAll(matrix.sparseMap.keys());
     }
-    
+
     /**
-     * Returns true if the on bits of the specified list are
-     * matched by the on bits of this matrix. It is allowed that 
-     * this matrix have more on bits than the specified matrix.
-     * 
+     * Returns true if the on bits of the specified list are matched by the on
+     * bits of this matrix. It is allowed that this matrix have more on bits
+     * than the specified matrix.
+     *
      * @param matrix
      * @return
      */
     public boolean all(TIntCollection onBits) {
         return sparseMap.keySet().containsAll(onBits);
     }
-    
+
     /**
-     * Returns true if the on bits of the specified array are
-     * matched by the on bits of this matrix. It is allowed that 
-     * this matrix have more on bits than the specified matrix.
-     * 
+     * Returns true if the on bits of the specified array are matched by the on
+     * bits of this matrix. It is allowed that this matrix have more on bits
+     * than the specified matrix.
+     *
      * @param matrix
      * @return
      */
     public boolean all(int[] onBits) {
         return sparseMap.keySet().containsAll(onBits);
     }
-    
+
     /**
-     * Returns true if any of the on bits of the specified matrix are
-     * matched by the on bits of this matrix. It is allowed that 
-     * this matrix have more on bits than the specified matrix.
-     * 
+     * Returns true if any of the on bits of the specified matrix are matched by
+     * the on bits of this matrix. It is allowed that this matrix have more on
+     * bits than the specified matrix.
+     *
      * @param matrix
      * @return
      */
     public boolean any(SparseBinaryMatrix matrix) {
-        for(int i : matrix.sparseMap.keys()) {
-            if(sparseMap.containsKey(i)) return true;
+        for (int i : matrix.sparseMap.keys()) {
+            if (sparseMap.containsKey(i)) {
+                return true;
+            }
         }
         return false;
     }
-    
+
     /**
      * Returns true if any of the on bit indexes of the specified collection are
-     * matched by the on bits of this matrix. It is allowed that 
-     * this matrix have more on bits than the specified matrix.
-     * 
+     * matched by the on bits of this matrix. It is allowed that this matrix
+     * have more on bits than the specified matrix.
+     *
      * @param matrix
      * @return
      */
     public boolean any(TIntList onBits) {
-        for(TIntIterator i = onBits.iterator();i.hasNext();) {
-            if(sparseMap.containsKey(i.next())) return true;
+        for (TIntIterator i = onBits.iterator(); i.hasNext();) {
+            if (sparseMap.containsKey(i.next())) {
+                return true;
+            }
         }
         return false;
     }
-    
+
     /**
      * Returns true if any of the on bit indexes of the specified matrix are
-     * matched by the on bits of this matrix. It is allowed that 
-     * this matrix have more on bits than the specified matrix.
-     * 
+     * matched by the on bits of this matrix. It is allowed that this matrix
+     * have more on bits than the specified matrix.
+     *
      * @param matrix
      * @return
      */
     public boolean any(int[] onBits) {
-        for(int i : onBits) {
-            if(sparseMap.containsKey(i)) return true;
+        for (int i : onBits) {
+            if (sparseMap.containsKey(i)) {
+                return true;
+            }
         }
         return false;
     }
-    
-    
+
 }

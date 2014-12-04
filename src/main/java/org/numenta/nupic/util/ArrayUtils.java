@@ -34,8 +34,12 @@ import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Random;
+import org.apache.commons.math3.linear.OpenMapRealVector;
+import org.apache.commons.math3.linear.RealVector;
 
 /**
  * Utilities to match some of the functionality found in Python's Numpy.
@@ -392,11 +396,8 @@ public class ArrayUtils {
      * @throws IllegalArgumentException if the two argument arrays are not the same length
      */
     public static double[] divide(int[] dividend, int[] divisor) {
+        ensureEqualArrays(dividend.length, divisor.length);
 
-        if (dividend.length != divisor.length) {
-            throw new IllegalArgumentException(
-                    "The dividend array and the divisor array must be the same length");
-        }
         double[] quotient = new double[dividend.length];
         double denom = 1;
         for (int i = 0; i < dividend.length; i++) {
@@ -404,6 +405,23 @@ public class ArrayUtils {
                           (double)((denom = divisor[i]) == 0 ? 1 : denom); //Protect against division by 0
         }
         return quotient;
+    }
+    public static double[] divide(int[] dividend, double[] divisor) {
+        ensureEqualArrays(dividend.length, divisor.length);
+        
+        double[] quotient = new double[dividend.length];
+        double denom = 1;
+        for (int i = 0; i < dividend.length; i++) {
+            quotient[i] = (dividend[i]) /
+                          ((denom = divisor[i]) == 0 ? 1 : denom); //Protect against division by 0
+        }
+        return quotient;
+    }
+    
+    public static void ensureEqualArrays(int x, int y) {        
+        if (x!=y)
+            throw new IllegalArgumentException(
+                    "The array operands must be equal length");
     }
 
     /**
@@ -787,6 +805,17 @@ public class ArrayUtils {
 
     public static int[] unique(TIntArrayList nums) {        
         return unique(new TIntHashSet(nums));
+    }
+    
+
+    /** this may be slow if called with a sparse RealVector; use
+     its toArray() method if possible, although it is double[] */
+    static int[] realVectorToIntArray(final RealVector v) {
+        int[] n = new int[v.getDimension()];        
+        for (int i = 0; i < n.length; i++) {
+            n[i] = (int)v.getEntry(i);
+        }
+        return n;
     }
     
     /**

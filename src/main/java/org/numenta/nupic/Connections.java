@@ -42,6 +42,7 @@ import org.numenta.nupic.research.SpatialPooler;
 import org.numenta.nupic.research.TemporalMemory;
 import org.numenta.nupic.util.MersenneTwister;
 import org.numenta.nupic.util.SparseBinaryMatrix;
+import org.numenta.nupic.util.SparseBinaryMatrixTrueCount;
 import org.numenta.nupic.util.SparseMatrix;
 import org.numenta.nupic.util.SparseObjectMatrix;
 
@@ -113,7 +114,7 @@ public class Connections {
      * information is readily available from 'connectedSynapses', it is
      * stored separately for efficiency purposes.
      */
-    private SparseBinaryMatrix connectedCounts;
+    private SparseBinaryMatrixTrueCount connectedCounts;
     /**
      * The inhibition radius determines the size of a column's local
      * neighborhood. of a column. A cortical column must overcome the overlap
@@ -529,7 +530,7 @@ public class Connections {
      * Returns the indexed count of connected synapses per column.
      * @return
      */
-    public SparseBinaryMatrix getConnectedCounts() {
+    public SparseBinaryMatrixTrueCount getConnectedCounts() {
         return connectedCounts;
     }
     
@@ -557,7 +558,7 @@ public class Connections {
      * @param columnIndex
      * @param count
      */
-    public void setConnectedMatrix(SparseBinaryMatrix matrix) {
+    public void setConnectedMatrix(SparseBinaryMatrixTrueCount matrix) {
     	this.connectedCounts = matrix;
     }
     

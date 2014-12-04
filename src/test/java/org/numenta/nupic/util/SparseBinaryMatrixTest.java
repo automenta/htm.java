@@ -142,7 +142,7 @@ public class SparseBinaryMatrixTest {
                 {0, 0, 1, 0, 0, 0, 0, 1, 0, 0},
                 {0, 0, 0, 1, 0, 0, 0, 0, 1, 0},
                 {0, 0, 0, 0, 1, 0, 0, 0, 0, 1}};
-        SparseBinaryMatrix sm = new SparseBinaryMatrix(dimensions);
+        SparseBinaryMatrixTrueCount sm = new SparseBinaryMatrixTrueCount(dimensions);
         for (int i = 0; i < sm.getDimensions()[0]; i++) {
             for (int j = 0; j < sm.getDimensions()[1]; j++) {
                 sm.set(connectedSynapses[i][j], i, j);
@@ -192,7 +192,7 @@ public class SparseBinaryMatrixTest {
     public void testBackingStoreAndSliceAccessManyDimensions() {
           /*Create 3 dimensional matrix*/
         int[] dimensions = {5, 5, 5};
-        SparseBinaryMatrix sm = new SparseBinaryMatrix(dimensions);
+        SparseBinaryMatrixTrueCount sm = new SparseBinaryMatrixTrueCount(dimensions);
          /*set diagonal element to true*/
         sm.set(true, 0, 0, 0);
         sm.set(true, 1, 1, 1);
@@ -226,8 +226,8 @@ public class SparseBinaryMatrixTest {
                        }
                    }
                }
-        assertEquals(25, sm.getTrueCounts()[0]);
-        assertEquals(0, sm.getTrueCounts()[1]);
+        assertEquals(25d, sm.getTrueCounts()[0], 0.0001);
+        assertEquals(0d, sm.getTrueCounts()[1], 0.0001);
 
     }
 

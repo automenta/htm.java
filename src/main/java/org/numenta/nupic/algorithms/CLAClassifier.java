@@ -70,7 +70,7 @@ import org.numenta.nupic.util.IntTuple;
  */
 @JsonSerialize(using = CLAClassifierSerializer.class)
 @JsonDeserialize(using = CLAClassifierDeserializer.class)
-public class CLAClassifier implements Serializable {
+public class CLAClassifier implements Serializable, SDRClassifier {
 
     int verbosity = 0;
     /**
@@ -148,22 +148,6 @@ public class CLAClassifier implements Serializable {
         patternNZHistory = new Deque<>(steps.size() + 1);
     }
 
-    /** input to the classifier compute */
-    public static class Classify<O> {
-        
-        public final int bucketIdx;
-        public final O value;
-
-        public Classify(int bucketIndex, O value) {
-            this.bucketIdx = bucketIndex;
-            this.value = value;
-        }
-        
-        public Classify(O value) {
-            this(-1, value);
-        }
-        
-    }
     
     @Deprecated public <T> Classification<T> compute(int recordNum, Map<String, Object> classification, int[] patternNZ, boolean learn, boolean infer) {
         
@@ -179,6 +163,15 @@ public class CLAClassifier implements Serializable {
         return compute(recordNum, c, patternNZ, learn, infer);
         
     }
+    
+    public <T> Classification<T> compute(int time, Object actualValue, int[] patternNZ, boolean learn, boolean infer) {
+        return compute(time, new Classify(actualValue), patternNZ, learn, infer);
+    }
+    
+    public <T> Classification<T> compute(int time, int bucketIdx, Object actualValue, int[] patternNZ, boolean learn, boolean infer) {
+        return compute(time, new Classify(bucketIdx, actualValue), patternNZ, learn, infer);
+    }
+    
     /**
      * Process one input sample. This method is called by outer loop code
      * outside the nupic-engine. We use this instead of the nupic engine
@@ -189,9 +182,7 @@ public class CLAClassifier implements Serializable {
      * should normally increase sequentially by 1 each time unless there are
      * missing records in the dataset. Knowing this information insures that we
      * don't get confused by missing records.
-     * @param classify	{@link Map} of the classification information:
-     * @param bucketIdx: index of the encoder bucket 
-     * @param actValue: actual value going into
+     * @param classify	{@link Classify} of the classification information     
      * the encoder
      * @param patternNZ	list of the active indices from the output below
      * @param learn	if true, learn this sample
@@ -209,6 +200,7 @@ public class CLAClassifier implements Serializable {
      * 'actualValues': [1.5, 3,5, 5,5, 7.6], }
      */
     @SuppressWarnings("unchecked")
+    @Override
     public <T> Classification<T> compute(int time, Classify classify, int[] patternNZ, boolean learn, boolean infer) {
         Classification<T> retVal = new Classification<>();
         List<T> actualValues = (List<T>) this.actualValues;

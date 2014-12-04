@@ -41,6 +41,7 @@ import org.numenta.nupic.util.Condition.LessThan;
 import org.numenta.nupic.util.IMatrix;
 import org.numenta.nupic.util.IndexedMatrix;
 import org.numenta.nupic.util.SparseBinaryMatrix;
+import org.numenta.nupic.util.SparseBinaryMatrixTrueCount;
 import org.numenta.nupic.util.SparseMatrix;
 import org.numenta.nupic.util.SparseObjectMatrix;
 import org.numenta.nupic.util.TypeFactory;
@@ -111,7 +112,7 @@ public class SpatialPooler {
         
         c.setPotentialPools(new SparseObjectMatrix<Pool>(c.getMemory().getDimensions()));
         
-        c.setConnectedMatrix(new SparseBinaryMatrix(new int[] { numColumns, numInputs }));
+        c.setConnectedMatrix(new SparseBinaryMatrixTrueCount(new int[] { numColumns, numInputs }));
         
         double[] tieBreaker = new double[numColumns];
         for(int i = 0;i < numColumns;i++) {
