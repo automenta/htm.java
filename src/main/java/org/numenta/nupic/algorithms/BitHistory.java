@@ -170,7 +170,7 @@ public class BitHistory {
 		
 		// Experiment... try normalizing the votes from each bit
 		if(total > 0) {
-			double[] temp = ArrayUtils.divide(votes, total);
+                    double[] temp = ArrayUtils.divide(votes, total);
                     System.arraycopy(temp, 0, votes, 0, temp.length);
 		}
 		
