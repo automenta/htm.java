@@ -66,15 +66,15 @@ public class TemporalMemory {
         Cell[] cells = new Cell[numColumns * cellsPerColumn];
         
         //Used as flag to determine if Column objects have been created.
-        Column colZero = matrix.getObject(0);
+        Column colZero = matrix.getIndex(0);
         for(int i = 0;i < numColumns;i++) {
             Column column = colZero == null ? 
-            	new Column(cellsPerColumn, i) : matrix.getObject(i);
+            	new Column(cellsPerColumn, i) : matrix.getIndex(i);
             for(int j = 0;j < cellsPerColumn;j++) {
                 cells[i * cellsPerColumn + j] = column.getCell(j);
             }
             //If columns have not been previously configured
-            if(colZero == null) matrix.set(i, column);
+            if(colZero == null) matrix.set(column, i);
         }
         //Only the TemporalMemory initializes cells so no need to test 
         c.setCells(cells);

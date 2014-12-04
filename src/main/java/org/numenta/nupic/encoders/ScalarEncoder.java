@@ -693,7 +693,7 @@ public class ScalarEncoder extends Encoder<Double> {
 			value = Math.max(value, minVal);
 			value = Math.min(value, maxVal);
 			encodeIntoArray(value, outputSpace);
-			topDownMapping.set(i, Arrays.copyOf(outputSpace, outputSpace.length));
+			topDownMapping.set(Arrays.copyOf(outputSpace, outputSpace.length), i);
 		}
 		
 		return topDownMapping;
@@ -751,7 +751,7 @@ public class ScalarEncoder extends Encoder<Double> {
 		
 		//The "category" is simply the bucket index
 		int category = buckets[0];
-		int[] encoding = topDownMapping.getObject(category);
+		int[] encoding = topDownMapping.getIndex(category);
 		
 		//Which input value does this correspond to?
 		double inputVal;

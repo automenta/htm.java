@@ -92,7 +92,7 @@ public class ProximalDendrite extends Segment {
         for (final Synapse s : synapses) {
             s.setPermanence(c, perms[s.getInputIndex()]);
             if (perms[s.getInputIndex()] >= c.getSynPermConnected()) {
-                c.getConnectedCounts().set(1, index, s.getInputIndex());
+                c.getConnectedCounts().set(true, index, s.getInputIndex());
             }
         }
     }
@@ -115,7 +115,7 @@ public class ProximalDendrite extends Segment {
         for (int i = 0; i < inputIndexes.length; i++) {
             pool.setPermanence(c, pool.getSynapseWithInput(inputIndexes[i]), perms[i]);
             if (perms[i] >= c.getSynPermConnected()) {
-                c.getConnectedCounts().set(1, index, i);
+                c.getConnectedCounts().set(true, index, i);
             }
         }
     }
@@ -129,7 +129,7 @@ public class ProximalDendrite extends Segment {
      */
     public void setConnectedSynapsesForTest(Connections c, int[] connectedIndexes) {
         Pool pool = createPool(c, connectedIndexes);
-        c.getPotentialPools().set(index, pool);
+        c.getPotentialPools().setIndex(pool, index);
     }
 
     /**
@@ -139,7 +139,7 @@ public class ProximalDendrite extends Segment {
      * @return
      */
     public int[] getConnectedSynapsesDense(Connections c) {
-        return c.getPotentialPools().getObject(index).getDenseConnections(c);
+        return c.getPotentialPools().getIndex(index).getDenseConnections(c);
     }
 
     /**
@@ -150,6 +150,6 @@ public class ProximalDendrite extends Segment {
      * @return
      */
     public int[] getConnectedSynapsesSparse(Connections c) {
-        return c.getPotentialPools().getObject(index).getSparseConnections();
+        return c.getPotentialPools().getIndex(index).getSparseConnections();
     }
 }

@@ -38,6 +38,8 @@ import org.numenta.nupic.util.ArrayUtils;
 import org.numenta.nupic.util.Condition;
 import static org.numenta.nupic.util.Condition.GreaterThanEqualToZero;
 import org.numenta.nupic.util.Condition.LessThan;
+import org.numenta.nupic.util.IMatrix;
+import org.numenta.nupic.util.IndexedMatrix;
 import org.numenta.nupic.util.SparseBinaryMatrix;
 import org.numenta.nupic.util.SparseMatrix;
 import org.numenta.nupic.util.SparseObjectMatrix;
@@ -104,8 +106,8 @@ public class SpatialPooler {
         	@Override public Class<Column> typeClass() { return Column.class; }
         };
         Column[] columns = new SparseObjectMatrix<Column>(
-        	new int[] { numColumns }).asDense(factory);
-        for(int i = 0;i < numColumns;i++) { mem.set(i, columns[i]); }
+        	new int[] { numColumns }).toArray(factory);
+        for(int i = 0;i < numColumns;i++) { mem.setIndex(columns[i], i); }
         
         c.setPotentialPools(new SparseObjectMatrix<Pool>(c.getMemory().getDimensions()));
         
@@ -145,7 +147,7 @@ public class SpatialPooler {
         for(int i = 0;i < numColumns;i++) {
             int[] potential = mapPotential(c, i, true);
             Column column = c.getColumn(i);
-            c.getPotentialPools().set(i, column.createPotentialPool(c, potential));
+            c.getPotentialPools().setIndex(column.createPotentialPool(c, potential), i);
             double[] perm = initPermanence(c, potential, i, c.getInitConnectedPct());
             updatePermanencesForColumn(c, perm, column, potential, true);
         }
@@ -446,7 +448,7 @@ public class SpatialPooler {
     	Arrays.fill(permChanges, -1 * c.getSynPermInactiveDec());
     	ArrayUtils.setIndexesTo(permChanges, inputIndices, c.getSynPermActiveInc());
     	for(int i = 0;i < activeColumns.length;i++) {
-    		Pool pool = c.getPotentialPools().getObject(activeColumns[i]);
+    		Pool pool = c.getPotentialPools().getIndex(activeColumns[i]);
     		double[] perm = pool.getDensePermanences(c);
     		int[] indexes = pool.getSparseConnections();
     		ArrayUtils.addTo(permChanges, perm);
@@ -471,7 +473,7 @@ public class SpatialPooler {
     	});
     	
     	for(int i = 0;i < weakColumns.length;i++) {
-    		Pool pool = c.getPotentialPools().getObject(weakColumns[i]);
+    		Pool pool = c.getPotentialPools().getIndex(weakColumns[i]);
     		double[] perm = pool.getSparsePermanences();
     		ArrayUtils.addTo(c.getSynPermBelowStimulusInc(), perm);
     		int[] indexes = pool.getSparseConnections();
@@ -767,7 +769,7 @@ public class SpatialPooler {
      *               
      * @return              a list of the flat indices of these columns
      */
-    public TIntArrayList getNeighborsND(Connections c, int columnIndex, SparseMatrix<?> topology, int inhibitionRadius, boolean wrapAround) {
+    public TIntArrayList getNeighborsND(Connections c, int columnIndex, IndexedMatrix<?> topology, int inhibitionRadius, boolean wrapAround) {
         final int[] dimensions = topology.getDimensions();
         int[] columnCoords = topology.computeCoordinates(columnIndex);
         List<int[]> dimensionCoords = new ArrayList<>();

@@ -47,15 +47,15 @@ public class ScalarEncoderTest {
 	private ScalarEncoder.Builder builder;
 	
 	private void setUp() {
-        builder =  ScalarEncoder.builder()
-	        .n(14)
-	        .w(3)
-	        .radius(0.0)
-	        .minVal(1.0)
-	        .maxVal(8.0)
-	        .periodic(true)
-	        .forced(true);
-    }
+            builder =  ScalarEncoder.builder()
+                    .n(14)
+                    .w(3)
+                    .radius(0.0)
+                    .minVal(1.0)
+                    .maxVal(8.0)
+                    .periodic(true)
+                    .forced(true);
+        }
 	
 	private void initSE() {
 		se = builder.build();

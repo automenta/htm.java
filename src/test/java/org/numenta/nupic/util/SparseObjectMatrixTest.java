@@ -30,7 +30,7 @@ public class SparseObjectMatrixTest {
 
     @Test
     public void testGetDimensionMultiples() {
-        SparseMatrix<TestObject> sm = new SparseObjectMatrix<>(new int[] { 4 });
+        SparseObjectMatrix<TestObject> sm = new SparseObjectMatrix<>(new int[] { 4 });
         int[] dm = sm.getDimensionMultiples();
         assertEquals(1, dm.length);
         assertEquals(1, dm[0]);
@@ -47,11 +47,11 @@ public class SparseObjectMatrixTest {
     @Test
     public void testGetSparseIndices() {
         SparseObjectMatrix<TestObject> sm = new SparseObjectMatrix<>(new int[] { 32 });
-        sm.set(0, new TestObject(1, 1));
-        sm.set(2, new TestObject(2, 2));
-        sm.set(1, new TestObject(3, 3));
-        sm.set(1, new TestObject(4, 4));
-        sm.set(3, new TestObject(5, 5));
+        sm.set(new TestObject(1, 1), 0);
+        sm.set(new TestObject(2, 2), 2);
+        sm.set(new TestObject(3, 3), 1);
+        sm.set(new TestObject(4, 4), 1);
+        sm.set(new TestObject(5, 5), 3);
         int[] indices = sm.getSparseIndices();
         assertEquals(4, indices.length);
         assertEquals(indices[0], 0);
@@ -86,7 +86,7 @@ public class SparseObjectMatrixTest {
             }
         };
         
-        Object o = sm.asDense(f);
+        Object o = sm.toArray(f);
         TestObject[][][] cast = (TestObject[][][])o;
         
         assertEquals(cast.length, 2);

@@ -37,7 +37,7 @@ import java.util.Arrays;
  *
  * @param <T>
  */
-public abstract class SparseMatrix<T> {
+abstract public class SparseMatrix<T> implements IndexedMatrix<T> {
 
     protected int[] dimensionMultiples;
     protected int[] dimensions;
@@ -72,6 +72,7 @@ public abstract class SparseMatrix<T> {
      *
      * @return the utility multiples array.
      */
+    @Override
     public int[] getDimensionMultiples() {
         return dimensionMultiples;
     }
@@ -81,6 +82,7 @@ public abstract class SparseMatrix<T> {
      *
      * @return the array describing the dimensionality of the configured array.
      */
+    @Override
     public int[] getDimensions() {
         return dimensions;
     }
@@ -90,83 +92,9 @@ public abstract class SparseMatrix<T> {
      *
      * @return the configured number of dimensions.
      */
+    @Override
     public int getNumDimensions() {
         return numDimensions;
-    }
-
-    /**
-     * Sets the object to occupy the specified index.
-     *
-     * @param index the index the object will occupy
-     * @param object the object to be indexed.
-     *
-     * @return this {@code SparseMatrix} implementation
-     */
-    protected <S extends SparseMatrix<T>> S set(int index, T object) {
-        return null;
-    }
-
-    /**
-     * Sets the object to occupy the specified index.
-     *
-     * @param index the index the object will occupy
-     * @param value the value to be indexed.
-     *
-     * @return this {@code SparseMatrix} implementation
-     */
-    protected <S extends SparseMatrix<T>> S set(int index, int value) {
-        return null;
-    }
-
-    /**
-     * Sets the object to occupy the specified index.
-     *
-     * @param index the index the object will occupy
-     * @param value the value to be indexed.
-     *
-     * @return this {@code SparseMatrix} implementation
-     */
-    protected <S extends SparseMatrix<T>> S set(int index, double value) {
-        return null;
-    }
-
-    /**
-     * Sets the specified object to be indexed at the index computed from the
-     * specified coordinates.
-     *
-     * @param object the object to be indexed.
-     * @param coordinates the row major coordinates [outer --> ,...,..., inner]
-     *
-     * @return this {@code SparseMatrix} implementation
-     */
-    protected <S extends SparseMatrix<T>> S set(int[] coordinates, T object) {
-        return null;
-    }
-
-    /**
-     * Sets the specified object to be indexed at the index computed from the
-     * specified coordinates.
-     *
-     * @param value the value to be indexed.
-     * @param coordinates the row major coordinates [outer --> ,...,..., inner]
-     *
-     * @return this {@code SparseMatrix} implementation
-     */
-    protected <S extends SparseMatrix<T>> S set(int value, int... coordinates) {
-        return null;
-    }
-
-    /**
-     * Sets the specified object to be indexed at the index computed from the
-     * specified coordinates.
-     *
-     * @param value the value to be indexed.
-     * @param coordinates the row major coordinates [outer --> ,...,..., inner]
-     *
-     * @return this {@code SparseMatrix} implementation
-     */
-    protected <S extends SparseMatrix<T>> S set(double value, int... coordinates) {
-        return null;
     }
 
     /**
@@ -175,7 +103,8 @@ public abstract class SparseMatrix<T> {
      * @param index the index of the T to return
      * @return the T at the specified index.
      */
-    protected T getObject(int index) {
+    @Override
+    public T getIndex(int index) {
         return null;
     }
 
@@ -200,20 +129,13 @@ public abstract class SparseMatrix<T> {
     }
 
     /**
-     * Returns an outer array of T values.
-     *
-     * @return
-     */
-    protected abstract <V> V values();
-
-    /**
      * Returns the T at the index computed from the specified coordinates
      *
      * @param coordinates the coordinates from which to retrieve the indexed
      * object
      * @return the indexed object
      */
-    protected T get(int... coordinates) {
+    public T get(int... coordinates) {
         return null;
     }
 
@@ -246,6 +168,7 @@ public abstract class SparseMatrix<T> {
      *
      * @return a sorted array of occupied indexes.
      */
+    @Override
     public int[] getSparseIndices() {
         return null;
     }
@@ -256,6 +179,7 @@ public abstract class SparseMatrix<T> {
      *
      * @return
      */
+    @Override
     public int[] get1DIndexes() {
         TIntList results = new TIntArrayList(getMaxIndex() + 1);
         visit(dimensions, 0, new int[numDimensions], results);
@@ -300,7 +224,8 @@ public abstract class SparseMatrix<T> {
      * @return the dense array
      */
     @SuppressWarnings("unchecked")
-    public T[] asDense(TypeFactory<T> factory) {
+    @Override
+    public T[] toArray(TypeFactory<T> factory) {
         T[] retVal = (T[]) Array.newInstance(factory.typeClass(), dimensions);
         fill(factory, 0, dimensions, dimensions[0], retVal);
 
@@ -380,10 +305,10 @@ public abstract class SparseMatrix<T> {
      * @param coordinates
      * @return
      */
+    @Override
     public int computeIndex(int[] coordinates) {
         return computeIndex(coordinates, true);
     }
-
 
     /**
      * Assumes row-major ordering. For a 3 dimensional array, the indexing
@@ -398,15 +323,15 @@ public abstract class SparseMatrix<T> {
             checkDims(coordinates);
         }
 
-            
-                int base = 0;
-                for (int i = 0; i < coordinates.length; i++) {
-                    int j = isColumnMajor ? (dimensionMultiples.length - i -1) : i;
-                    base += (dimensionMultiples[j] * coordinates[i]);
-                }
-                return base;
+        int base = 0;
+        for (int i = 0; i < coordinates.length; i++) {
+            int j = isColumnMajor ? (dimensionMultiples.length - i - 1) : i;
+            base += (dimensionMultiples[j] * coordinates[i]);
+        }
+        return base;
 
     }
+
     /**
      * Returns an integer array representing the coordinates of the specified
      * index in terms of the configuration of this {@code SparseMatrix}.
@@ -414,6 +339,7 @@ public abstract class SparseMatrix<T> {
      * @param index the flat index to be returned as coordinates
      * @return
      */
+    @Override
     public int[] computeCoordinates(int index) {
         int[] returnVal = new int[numDimensions];
         int base = index;
@@ -468,4 +394,5 @@ public abstract class SparseMatrix<T> {
         }
         return "[]";
     }
+
 }

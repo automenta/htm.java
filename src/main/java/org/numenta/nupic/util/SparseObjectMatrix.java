@@ -38,14 +38,13 @@ import java.util.Arrays;
  * @param <T>
  */
 public class SparseObjectMatrix<T> extends SparseMatrix<T> {
+    
     private TIntObjectMap<T> sparseMap = new TIntObjectHashMap<>();
     
-    /**
-     * Constructs a new {@code SparseObjectMatrix}
-     * @param dimensions	the dimensions of this array
-     */
-    public SparseObjectMatrix(int[] dimensions) {
-        super(dimensions, false);
+
+    
+    public SparseObjectMatrix(int[] dimensions, boolean useColumnMajorOrdering) {
+        super(dimensions, useColumnMajorOrdering);
     }
     
     /**
@@ -53,43 +52,28 @@ public class SparseObjectMatrix<T> extends SparseMatrix<T> {
      * @param dimensions					the dimensions of this array
      * @param useColumnMajorOrdering		where inner index increments most frequently
      */
-    public SparseObjectMatrix(int[] dimensions, boolean useColumnMajorOrdering) {
-        super(dimensions, useColumnMajorOrdering);
+    public SparseObjectMatrix(int[] dimensions) {
+        this(dimensions, false);
     }
     
-    /**
-     * Sets the object to occupy the specified index.
-     * 
-     * @param index     the index the object will occupy
-     * @param object    the object to be indexed.
-     */
-    @SuppressWarnings("unchecked")
-    @Override
-    public <S extends SparseMatrix<T>> S set(int index, T object) {
-        sparseMap.put(index, object);
-        return (S)this;
-    }
-    
-    /**
-     * Sets the specified object to be indexed at the index
-     * computed from the specified coordinates.
-     * @param object        the object to be indexed.
-     * @param coordinates   the row major coordinates [outer --> ,...,..., inner]
-     */
-    @SuppressWarnings("unchecked")
-    @Override
-    public <S extends SparseMatrix<T>> S set(int[] coordinates, T object) {
-        set(computeIndex(coordinates), object);
-        return (S)this;
-    }
-    
+//    /**
+//     * Sets the object to occupy the specified index.
+//     * 
+//     * @param index     the index the object will occupy
+//     * @param object    the object to be indexed.
+//     */
+//    @SuppressWarnings("unchecked")
+//    @Override
+//    public void set(int index, T object) {
+//        sparseMap.put(index, object);        
+//    }
+
     /**
      * Returns an outer array of T values.
      * @return
      */
-    @SuppressWarnings("unchecked")
-	@Override
-    protected T[] values() {
+    @SuppressWarnings("unchecked")    
+    public T[] values() {
     	return (T[])sparseMap.values();
     }
     
@@ -100,7 +84,7 @@ public class SparseObjectMatrix<T> extends SparseMatrix<T> {
      * @return  the T at the specified index.
      */
     @Override
-    public T getObject(final int index) {
+    public T getIndex(final int index) {
         return sparseMap.get(index);
     }
     
@@ -122,12 +106,28 @@ public class SparseObjectMatrix<T> extends SparseMatrix<T> {
     public int[] getSparseIndices() {
         return ArrayUtils.reverseIt(sparseMap.keys());
     }
-    
-    /**
-     * {@inheritDoc}
-     */
+
+    @Override
+    public void set(T object, int... coordinates) {
+        int i = computeIndex(coordinates);
+        setIndex(object, i);
+    }
+
+    @Override
+    public void setIndex(T object, int index) {
+        sparseMap.put(index, object);
+    }
+
     @Override
     public String toString() {
-    	return Arrays.toString(dimensions);
+        return "m" + Arrays.toString( dimensions );
     }
+
+    
+    
+
+    
+
+    
+    
 }

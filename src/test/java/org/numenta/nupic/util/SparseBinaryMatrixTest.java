@@ -24,7 +24,6 @@ package org.numenta.nupic.util;
 
 import org.junit.Test;
 
-import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.Random;
 
@@ -36,7 +35,8 @@ public class SparseBinaryMatrixTest {
     @Test
     public void testBackingStoreAndSliceAccess() {
         int[] dimensions = new int[]{5, 10};
-        int[][] connectedSynapses = new int[][]{
+        
+        byte[][] connectedSynapses = new byte[][]{
                 {1, 0, 0, 0, 0, 1, 0, 0, 0, 0},
                 {0, 1, 0, 0, 0, 0, 1, 0, 0, 0},
                 {0, 0, 1, 0, 0, 0, 0, 1, 0, 0},
@@ -74,7 +74,7 @@ public class SparseBinaryMatrixTest {
     @Test
     public void testRightVecSumAtNZFast() {
         int[] dimensions = new int[]{5, 10};
-        int[][] connectedSynapses = new int[][]{
+        byte[][] connectedSynapses = new byte[][]{
                 {1, 0, 0, 0, 0, 1, 0, 0, 0, 0},
                 {0, 1, 0, 0, 0, 0, 1, 0, 0, 0},
                 {0, 0, 1, 0, 0, 0, 0, 1, 0, 0},
@@ -104,7 +104,7 @@ public class SparseBinaryMatrixTest {
 
         ///////////////////////
 
-        connectedSynapses = new int[][]{
+        connectedSynapses = new byte[][]{
                 {1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
                 {0, 0, 1, 1, 1, 1, 1, 1, 1, 1},
                 {0, 0, 0, 0, 1, 1, 1, 1, 1, 1},
@@ -136,7 +136,7 @@ public class SparseBinaryMatrixTest {
     @Test
     public void testSetTrueCount() {
         int[] dimensions = new int[]{5, 10};
-        int[][] connectedSynapses = new int[][]{
+        byte[][] connectedSynapses = new byte[][]{
                 {1, 0, 0, 0, 0, 1, 0, 0, 0, 0},
                 {0, 1, 0, 0, 0, 0, 1, 0, 0, 0},
                 {0, 0, 1, 0, 0, 0, 0, 1, 0, 0},
@@ -194,11 +194,11 @@ public class SparseBinaryMatrixTest {
         int[] dimensions = {5, 5, 5};
         SparseBinaryMatrix sm = new SparseBinaryMatrix(dimensions);
          /*set diagonal element to true*/
-        sm.set(1, 0, 0, 0);
-        sm.set(1, 1, 1, 1);
-        sm.set(1, 2, 2, 2);
-        sm.set(1, 3, 3, 3);
-        sm.set(1, 4, 4, 4);
+        sm.set(true, 0, 0, 0);
+        sm.set(true, 1, 1, 1);
+        sm.set(true, 2, 2, 2);
+        sm.set(true, 3, 3, 3);
+        sm.set(true, 4, 4, 4);
         for (int i = 0; i < 5; i++) {
             for (int j = 0; j < 5; j++) {
                 for (int k = 0; k < 5; k++) {
@@ -219,9 +219,9 @@ public class SparseBinaryMatrixTest {
                    for (int j = 0; j < 5; j++) {
                        for (int k = 0; k < 5; k++) {
                            if (0 == i) {
-                               sm.set(1, i, j, k);
+                               sm.set(true, i, j, k);
                            } else {
-                               sm.set(0, i, j, k);
+                               sm.set(false, i, j, k);
                            }
                        }
                    }

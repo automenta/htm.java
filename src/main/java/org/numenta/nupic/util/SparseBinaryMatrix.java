@@ -26,15 +26,16 @@ import gnu.trove.TIntCollection;
 import gnu.trove.iterator.TIntIterator;
 import gnu.trove.list.TIntList;
 import gnu.trove.list.array.TIntArrayList;
-import gnu.trove.map.TIntIntMap;
-import gnu.trove.map.hash.TIntIntHashMap;
+import gnu.trove.map.TIntByteMap;
+import gnu.trove.map.hash.TIntByteHashMap;
 
 import java.lang.reflect.Array;
 import java.util.Arrays;
 
 @SuppressWarnings("rawtypes")
-public class SparseBinaryMatrix extends SparseMatrix {
-    private TIntIntMap sparseMap = new TIntIntHashMap();
+public class SparseBinaryMatrix extends SparseMatrix<Byte> {
+    
+    private TIntByteMap sparseMap = new TIntByteHashMap();
     private TIntList trueCounts;
     private Object backingArray;
     
@@ -57,7 +58,7 @@ public class SparseBinaryMatrix extends SparseMatrix {
      * @param val
      * @param coordinates
      */
-    private void back(int val, int... coordinates) {
+    private void back(byte val, int... coordinates) {
 		ArrayUtils.setValue(this.backingArray, val, coordinates);
         //update true counts
         trueCounts.set(coordinates[0], ArrayUtils.aggregateArray(((Object[])this.backingArray)[coordinates[0]]));
@@ -105,6 +106,8 @@ public class SparseBinaryMatrix extends SparseMatrix {
     	}
     }
     
+    
+    
     /**
      * Sets the value at the specified index.
      * 
@@ -112,9 +115,14 @@ public class SparseBinaryMatrix extends SparseMatrix {
      * @param object    the object to be indexed.
      */
     @Override
-    public SparseBinaryMatrix set(int index, int value) {
+    public void setIndex(Byte value, int index) {
     	int[] coordinates = computeCoordinates(index);
-        return set(value, coordinates);
+        sparseMap.put(computeIndex(coordinates), value);
+        back(value, coordinates);
+    }
+    
+    public void setIndex(boolean value, int index) {
+        setIndex( value ? (byte)1 : (byte)0, index);
     }
     
     /**
@@ -124,10 +132,8 @@ public class SparseBinaryMatrix extends SparseMatrix {
      * @param object        the object to be indexed.
      */
     @Override
-    public SparseBinaryMatrix set(int value, int... coordinates) {
-        sparseMap.put(computeIndex(coordinates), value);
-        back(value, coordinates);
-        return this;
+    public void set(Byte value, int... coordinates) {
+        setIndex(value, computeIndex(coordinates));
     }
     
     /**
@@ -138,11 +144,20 @@ public class SparseBinaryMatrix extends SparseMatrix {
      * 
      * @return this {@code SparseMatrix} implementation
      */
-    public SparseBinaryMatrix set(int[] indexes, int[] values) { 
+    public SparseBinaryMatrix set(int[] indexes, byte[] values) { 
         for(int i = 0;i < indexes.length;i++) {
-            set(indexes[i], values[i]);
+            set(values[i], indexes[i]);
         }
         return this;
+    }
+    public SparseBinaryMatrix set(int[] indexes, byte value) { 
+        for(int i = 0;i < indexes.length;i++) {
+            setIndex(value, indexes[i]);
+        }
+        return this;
+    }
+    public void set(boolean value, int... coord) {
+        set( value ? (byte)1 : (byte)0, coord);
     }
     
     /**
@@ -152,7 +167,7 @@ public class SparseBinaryMatrix extends SparseMatrix {
      * @param index     the index the object will occupy
      * @param object    the object to be indexed.
      */
-    public SparseBinaryMatrix setForTest(int index, int value) {
+    public SparseBinaryMatrix setForTest(int index, byte value) {
         sparseMap.put(index, value);         
         return this;
     }
@@ -165,10 +180,10 @@ public class SparseBinaryMatrix extends SparseMatrix {
      * 
      * @return this {@code SparseMatrix} implementation
      */
-    public SparseBinaryMatrix set(int[] indexes, int[] values, boolean isTest) { 
+    public SparseBinaryMatrix set(int[] indexes, byte[] values, boolean isTest) { 
         for(int i = 0;i < indexes.length;i++) {
         	if(isTest) setForTest(indexes[i], values[i]);
-        	else set(indexes[i], values[i]);
+        	else set(values[i], indexes[i]);
         }
         return this;
     }
@@ -208,17 +223,23 @@ public class SparseBinaryMatrix extends SparseMatrix {
         int[] slice = ((int[][])backingArray)[row];
     	Arrays.fill(slice, 0);
         trueCounts.set(row, 0);
-        sparseMap.put(row, 0);
+        sparseMap.put(row, (byte)0);
+    }
+
+    
+    public byte[] values() {
+        return sparseMap.values();
     }
     
     /**
      * Returns an outer array of T values.
      * @return
      */
-    @Override
-    protected int[] values() {
-    	return sparseMap.values();
-    }
+//    @Override
+//    public int[] values() {
+//    	return sparseMap.values();
+//    }
+    
     
     /**
      * Returns the int value at the index computed from the specified coordinates
@@ -259,9 +280,7 @@ public class SparseBinaryMatrix extends SparseMatrix {
      */
     public SparseBinaryMatrix or(SparseBinaryMatrix inputMatrix) {
         int[] mask = inputMatrix.getSparseIndices();
-        int[] ones = new int[mask.length];
-        Arrays.fill(ones, 1);
-        return set(mask, ones);
+        return set(mask, (byte)1);
     }
     
     /**
@@ -273,9 +292,7 @@ public class SparseBinaryMatrix extends SparseMatrix {
      * @return  this matrix
      */
     public SparseBinaryMatrix or(TIntCollection onBitIndexes) {
-        int[] ones = new int[onBitIndexes.size()];
-        Arrays.fill(ones, 1);
-        return set(onBitIndexes.toArray(), ones);
+        return set(onBitIndexes.toArray(), (byte)1);
     }
     
     /**
@@ -287,9 +304,7 @@ public class SparseBinaryMatrix extends SparseMatrix {
      * @return  this matrix
      */
     public SparseBinaryMatrix or(int[] onBitIndexes) {
-        int[] ones = new int[onBitIndexes.length];
-        Arrays.fill(ones, 1);
-        return set(onBitIndexes, ones);
+        return set(onBitIndexes, (byte)1);
     }
     
     /**
@@ -372,4 +387,6 @@ public class SparseBinaryMatrix extends SparseMatrix {
         }
         return false;
     }
+    
+    
 }

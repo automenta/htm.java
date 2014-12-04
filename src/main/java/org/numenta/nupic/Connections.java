@@ -503,8 +503,8 @@ public class Connections {
      */
     public void setPermanences(SparseObjectMatrix<double[]> s) {
     	for(int idx : s.getSparseIndices()) {
-    		memory.getObject(idx).setProximalPermanences(
-    			this, s.getObject(idx));
+    		memory.getIndex(idx).setProximalPermanences(
+    			this, s.getIndex(idx));
     	}
     }
     
@@ -1285,7 +1285,7 @@ public class Connections {
      * @return
      */
     public Column getColumn(int index) {
-        return memory.getObject(index);
+        return memory.getIndex(index);
     }
     
     /**
@@ -1293,7 +1293,7 @@ public class Connections {
      * 
      * @param columnDimensions
      */
-    public void setColumnDimensions(int[] columnDimensions) {
+    public void setColumnDimensions(int... columnDimensions) {
         this.columnDimensions = columnDimensions;
     }
     
@@ -1316,7 +1316,7 @@ public class Connections {
      * 
      * @param inputDimensions
      */
-    public void setInputDimensions(int[] inputDimensions) {
+    public void setInputDimensions(int... inputDimensions) {
         this.inputDimensions = inputDimensions;
     }
     
@@ -1555,7 +1555,7 @@ public class Connections {
     public List<Column> asColumnObjects(Collection<Integer> cols) {
         List<Column> objs = new ArrayList<>();
         for(int i : cols) {
-            objs.add(this.memory.getObject(i));
+            objs.add(this.memory.getIndex(i));
         }
         return objs;
     }
@@ -1570,7 +1570,7 @@ public class Connections {
     public LinkedHashSet<Column> getColumnSet(int[] indexes) {
     	LinkedHashSet<Column> retVal = new LinkedHashSet<>();
     	for(int i = 0;i < indexes.length;i++) {
-    		retVal.add(memory.getObject(indexes[i]));
+    		retVal.add(memory.getIndex(indexes[i]));
     	}
     	return retVal;
     }
@@ -1585,7 +1585,7 @@ public class Connections {
     public List<Column> getColumnList(int[] indexes) {
     	List<Column> retVal = new ArrayList<>();
     	for(int i = 0;i < indexes.length;i++) {
-    		retVal.add(memory.getObject(indexes[i]));
+    		retVal.add(memory.getIndex(indexes[i]));
     	}
     	return retVal;
     }

@@ -1231,7 +1231,7 @@ public abstract class Encoder<T> {
     public int[] rightVecProd(SparseObjectMatrix<int[]> matrix, int[] encoded) {
     	int[] retVal = new int[matrix.getMaxIndex() + 1];
     	for(int i = 0;i < retVal.length;i++) {
-    		int[] slice = matrix.getObject(i);
+    		int[] slice = matrix.getIndex(i);
     		for(int j = 0;j < slice.length;j++) {
     			retVal[i] += (slice[j] * encoded[j]);
     		}
