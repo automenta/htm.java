@@ -32,7 +32,7 @@ import java.util.BitSet;
 @SuppressWarnings("rawtypes")
 public class SparseBinaryMatrix extends SparseMatrix<Byte> {
 
-    BitSet sparseMap = new BitSet();
+    FastBitSet sparseMap;
     //private TIntByteMap sparseMap = new TIntByteHashMap();
     Object backingArray;
 
@@ -42,6 +42,7 @@ public class SparseBinaryMatrix extends SparseMatrix<Byte> {
 
     public SparseBinaryMatrix(int[] dimensions, boolean useColumnMajorOrdering) {
         super(dimensions, useColumnMajorOrdering);
+        sparseMap = new FastBitSet(size());
         this.backingArray = Array.newInstance(int.class, dimensions);
 
     }
@@ -138,7 +139,7 @@ public class SparseBinaryMatrix extends SparseMatrix<Byte> {
 
     public void setIndex(boolean value, int index) {        
         int[] coordinates = computeCoordinates(index);
-        sparseMap.set(computeIndex(coordinates), value);
+        sparseMap.set(index, value);
         back(value, coordinates);
     }
 
@@ -151,7 +152,10 @@ public class SparseBinaryMatrix extends SparseMatrix<Byte> {
      */
     @Override
     public void set(Byte value, int... coordinates) {
-        setIndex(value, computeIndex(coordinates));
+        int index = computeIndex(coordinates);
+        boolean v = value > 0 ? true : false;
+        sparseMap.set(index, v);
+        back(v, coordinates);
     }
 
     /**
@@ -333,7 +337,7 @@ public class SparseBinaryMatrix extends SparseMatrix<Byte> {
      * @return
      */
     public boolean all(SparseBinaryMatrix m) {
-        BitSet b = (BitSet) m.sparseMap.clone();
+        FastBitSet b = (FastBitSet) m.sparseMap.clone();
         //Clears all of the bits in this BitSet whose corresponding bit is set in the specified BitSet.
         b.andNot(sparseMap);
         

@@ -42,6 +42,7 @@ abstract public class SparseMatrix<T> implements IndexedMatrix<T> {
     protected int[] dimensionMultiples;
     protected int[] dimensions;
     protected int numDimensions;
+    protected int entries;
 
     protected boolean isColumnMajor;
 
@@ -63,9 +64,16 @@ abstract public class SparseMatrix<T> implements IndexedMatrix<T> {
         this.numDimensions = dimensions.length;
         this.dimensionMultiples = initDimensionMultiples(
                 useColumnMajorOrdering ? ArrayUtils.reverse(dimensions) : dimensions);
+        
+        entries = 1;
+        for (int i = 0; i < dimensions.length; i++)
+            entries *= dimensions[i];
+        
         isColumnMajor = useColumnMajorOrdering;
     }
 
+    public int size() { return entries; }
+    
     /**
      * Returns the utility array which holds the multiples used to calculate
      * indexes.
