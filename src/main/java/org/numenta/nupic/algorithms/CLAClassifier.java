@@ -241,20 +241,20 @@ public class CLAClassifier implements Serializable {
 					
 					history.infer(learnIteration, bitVotes);
 					
-					sumVotes = ArrayUtils.d_add(sumVotes, bitVotes);
+					sumVotes = ArrayUtils.addTo(bitVotes, sumVotes);
 				}
 				
 				// Return the votes for each bucket, normalized
 				double total = ArrayUtils.sum(sumVotes);
 				if(total > 0) {
-					sumVotes = ArrayUtils.divide(sumVotes, total);
+					sumVotes = ArrayUtils.divideBy(sumVotes, total);
 				}else{
 					// If all buckets have zero probability then simply make all of the
 			        // buckets equally likely. There is no actual prediction for this
 			        // timestep so any of the possible predictions are just as good.
 					if(sumVotes.length > 0) {
-						Arrays.fill(sumVotes, 1);
-						sumVotes = ArrayUtils.divide(sumVotes, sumVotes.length);
+						Arrays.fill(sumVotes, 1.0 / sumVotes.length);
+						//sumVotes = ArrayUtils.divideBy(sumVotes, sumVotes.length);
 					}
 				}
 				

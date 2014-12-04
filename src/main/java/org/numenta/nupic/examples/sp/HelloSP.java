@@ -108,11 +108,7 @@ public class HelloSP {
         
         sp.compute(mem, inputArray, activeArray, true, true);
         
-        int[] res = ArrayUtils.where(activeArray, new Condition.Adapter<Object>() {
-            public boolean eval(int n) {
-                return n > 0;
-            }
-        });
+        int[] res = ArrayUtils.where(activeArray, Condition.GreaterThanZero);
         System.out.println(Arrays.toString(res));
     }
 

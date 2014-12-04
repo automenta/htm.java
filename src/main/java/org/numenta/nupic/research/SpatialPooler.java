@@ -187,16 +187,16 @@ public class SpatialPooler {
         }
         
         updateBookeepingVars(c, learn);
-        int[] overlaps = calculateOverlap(c, inputVector);
+
         
-        double[] boostedOverlaps;
+        double[] overlaps;
         if(learn) {
-        	boostedOverlaps = ArrayUtils.multiply(c.getBoostFactors(), overlaps);
+        	overlaps = overlap(c, inputVector, c.getBoostFactors());
         }else{
-        	boostedOverlaps = ArrayUtils.toDoubleArray(overlaps);
+        	overlaps = overlap(c, inputVector);
         }
         
-        int[] activeColumns = inhibitColumns(c, boostedOverlaps);
+        int[] activeColumns = inhibitColumns(c, overlaps);
         
         if(learn) {
         	adaptSynapses(c, inputVector, activeColumns);
@@ -310,7 +310,7 @@ public class SpatialPooler {
      * @param activeColumns		An array containing the indices of the active columns,
      *              			the sparse set of columns which survived inhibition
      */
-    public void updateDutyCycles(Connections c, int[] overlaps, int[] activeColumns) {
+    public void updateDutyCycles(Connections c, double[] overlaps, int[] activeColumns) {
     	double[] overlapArray = new double[c.getNumColumns()];
     	double[] activeArray = new double[c.getNumColumns()];
     	ArrayUtils.greaterThanXThanSetToY(overlaps, 0, 1);
@@ -351,7 +351,7 @@ public class SpatialPooler {
      * @return
      */
     public double[] updateDutyCyclesHelper(Connections c, double[] dutyCycles, double[] newInput, double period) {
-    	return ArrayUtils.divide(ArrayUtils.d_add(ArrayUtils.multiply(dutyCycles, period - 1), newInput), period);
+    	return ArrayUtils.divide(ArrayUtils.addTo(newInput, ArrayUtils.multiply(dutyCycles, period - 1)), period);
     }
     
     /**
@@ -693,10 +693,11 @@ public class SpatialPooler {
             colCoords, ArrayUtils.toDoubleArray(c.getColumnDimensions()), 0, 0);
         double[] inputCoords = ArrayUtils.multiply(
             ArrayUtils.toDoubleArray(c.getInputDimensions()), ratios, 0, 0);
-        inputCoords = ArrayUtils.d_add(inputCoords, 
-        	ArrayUtils.multiply(ArrayUtils.divide(
-        		ArrayUtils.toDoubleArray(c.getInputDimensions()), ArrayUtils.toDoubleArray(c.getColumnDimensions()), 0, 0), 
-        			0.5));
+        inputCoords = ArrayUtils.addTo(
+                ArrayUtils.multiply(ArrayUtils.divide(
+        		ArrayUtils.toDoubleArray(c.getInputDimensions()),
+                        ArrayUtils.toDoubleArray(c.getColumnDimensions()), 0, 0), 
+        			0.5), inputCoords);
         int[] inputCoordInts = ArrayUtils.clip(ArrayUtils.toIntArray(inputCoords), c.getInputDimensions(), -1);
         int inputIndex = c.getInputMatrix().computeIndex(inputCoordInts);
         return inputIndex;
@@ -852,12 +853,25 @@ public class SpatialPooler {
      *                      the spatial pooler.
      * @return
      */
-    public int[] calculateOverlap(Connections c, int[] inputVector) {
+    @Deprecated public static int[] overlapInt(Connections c, int[] inputVector) {
         int[] overlaps = new int[c.getNumColumns()];
         c.getConnectedCounts().rightVecSumAtNZ(inputVector, overlaps);
         ArrayUtils.lessThanXThanSetToY(overlaps, (int)c.getStimulusThreshold(), 0);
         return overlaps;
     }
+    
+    public static double[] overlap(Connections c, int[] inputVector) {
+        double[] overlaps = new double[c.getNumColumns()];
+        c.getConnectedCounts().rightVecSumAtNZ(inputVector, overlaps);
+        ArrayUtils.lessThanXThanSetToY(overlaps, c.getStimulusThreshold(), 0);
+        return overlaps;
+    }
+    
+    public static double[] overlap(Connections c, int[] inputVector, double[] boost) {
+        double[] overlaps = new double[c.getNumColumns()];
+        c.getConnectedCounts().rightVecSumAtNZ(inputVector, overlaps, c.getStimulusThreshold(), boost);
+        return overlaps;
+    }    
     
     /**
      * Return the overlap to connected counts ratio for a given column
@@ -894,7 +908,7 @@ public class SpatialPooler {
     	}
     	
     	//Add our fixed little bit of random noise to the scores to help break ties.
-    	ArrayUtils.d_add(overlaps, c.getTieBreaker());
+    	ArrayUtils.addTo(c.getTieBreaker(), overlaps);
     	
     	if(c.getGlobalInhibition() || c.getInhibitionRadius() > ArrayUtils.max(c.getColumnDimensions())) {
     		return inhibitColumnsGlobal(c, overlaps, density);
@@ -998,7 +1012,7 @@ public class SpatialPooler {
 	    	Arrays.fill(numerator, 1 - c.getMaxBoost());
 	    	boostInterim = ArrayUtils.divide(numerator, minActiveDutyCycles, 0, 0);
 	    	boostInterim = ArrayUtils.multiply(boostInterim, activeDutyCycles, 0, 0);
-	    	boostInterim = ArrayUtils.d_add(boostInterim, c.getMaxBoost());
+	    	boostInterim = ArrayUtils.addTo(c.getMaxBoost(), boostInterim);
     	}
     	
     	ArrayUtils.setIndexesTo(boostInterim, ArrayUtils.where(activeDutyCycles, new Condition.Adapter<Object>() {

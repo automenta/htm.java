@@ -1614,7 +1614,7 @@ public class SpatialPoolerTest {
 		}
 		
 		int[] inputVector = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-		int[] overlaps = sp.calculateOverlap(mem, inputVector);
+		int[] overlaps = sp.overlapInt(mem, inputVector);
 		int[] trueOverlaps = new int[5];
 		double[] overlapsPct = sp.calculateOverlapPct(mem, overlaps);
 		double[] trueOverlapsPct = new double[5];
@@ -1646,7 +1646,7 @@ public class SpatialPoolerTest {
 		}
 		
 		inputVector = new int[] { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };
-		overlaps = sp.calculateOverlap(mem, inputVector);
+		overlaps = sp.overlapInt(mem, inputVector);
 		trueOverlaps = new int[] { 10, 8, 6, 4, 2 };
 		overlapsPct = sp.calculateOverlapPct(mem, overlaps);
 		trueOverlapsPct = new double[] { 1, 1, 1, 1, 1 };
@@ -1678,7 +1678,7 @@ public class SpatialPoolerTest {
 		}
 		
 		inputVector = new int[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 };
-		overlaps = sp.calculateOverlap(mem, inputVector);
+		overlaps = sp.overlapInt(mem, inputVector);
 		trueOverlaps = new int[] { 1, 1, 1, 1, 1 };
 		overlapsPct = sp.calculateOverlapPct(mem, overlaps);
 		trueOverlapsPct = new double[] { 0.1, 0.125, 1.0/6, 0.25, 0.5 };
@@ -1710,7 +1710,7 @@ public class SpatialPoolerTest {
 		}
 		
 		inputVector = new int[] { 1, 0, 1, 0, 1, 0, 1, 0, 1, 0 };
-		overlaps = sp.calculateOverlap(mem, inputVector);
+		overlaps = sp.overlapInt(mem, inputVector);
 		trueOverlaps = new int[] { 1, 1, 1, 1, 1 };
 		overlapsPct = sp.calculateOverlapPct(mem, overlaps);
 		trueOverlapsPct = new double[] { 0.5, 0.5, 0.5, 0.5, 0.5 };

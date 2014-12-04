@@ -105,7 +105,29 @@ public class SparseBinaryMatrix extends SparseMatrix<Byte> {
     		}
     	}
     }
-    
+    public void rightVecSumAtNZ(int[] inputVector, double[] results) {
+    	for(int i = 0;i < dimensions[0];i++) {
+    		int[] slice = (int[])(dimensions.length > 1 ? getSlice(i) : backingArray);
+    		for(int j = 0;j < slice.length;j++) {
+    			results[i] += (inputVector[j] * slice[j]);
+    		}
+    	}
+    }    
+    public void rightVecSumAtNZ(int[] inputVector, double[] results, double stimulusThreshold, double[] factor) {
+    	for(int i = 0;i < dimensions[0];i++) {
+    		int[] slice = (int[])(dimensions.length > 1 ? getSlice(i) : backingArray);
+    		for(int j = 0;j < slice.length;j++) {
+    			results[i] += (inputVector[j] * slice[j]);
+    		}
+    	}
+        
+        for (int i = 0; i < results.length; i++) {
+            if (results[i] < stimulusThreshold)
+                results[i] = 0;
+            else
+                results[i] *= factor[i];
+        }       
+    }     
     
     
     /**

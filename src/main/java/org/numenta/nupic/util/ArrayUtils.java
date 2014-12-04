@@ -427,6 +427,16 @@ public class ArrayUtils {
         }
         return quotient;
     }
+    
+    /** modifies the array */
+    public static double[] divideBy(double[] dividend, double divisor) {
+        double denom = 1;
+        for (int i = 0; i < dividend.length; i++) {
+            dividend[i] = (dividend[i]) /
+                    ((denom = divisor) == 0 ? 1 : denom); //Protect against division by 0
+        }
+        return dividend;
+    }    
 
     /**
      * Returns an array whose members are the quotient of the dividend array
@@ -624,36 +634,22 @@ public class ArrayUtils {
         return arr;
     }
 
-    /**
-     * Returns the passed in array with every value being altered
-     * by the addition of the specified double amount at the same
-     * index
-     *
-     * @param arr
-     * @param amount
-     * @return
-     */
-    public static double[] d_add(double[] arr, double[] amount) {
-        for (int i = 0; i < arr.length; i++) {
-            arr[i] += amount[i];
-        }
-        return arr;
-    }
+//    /**
+//     * Returns the passed in array with every value being altered
+//     * by the addition of the specified double amount at the same
+//     * index
+//     *
+//     * @param arr
+//     * @param amount
+//     * @return
+//     */
+//    public static double[] d_add(double[] arr, double[] amount) {
+//        for (int i = 0; i < arr.length; i++) {
+//            arr[i] += amount[i];
+//        }
+//        return arr;
+//    }
 
-    /**
-     * Returns the passed in array with every value being altered
-     * by the addition of the specified double amount
-     *
-     * @param arr
-     * @param amount
-     * @return
-     */
-    public static double[] d_add(double[] arr, double amount) {
-        for (int i = 0; i < arr.length; i++) {
-            arr[i] += amount;
-        }
-        return arr;
-    }
 
     /**
      * Returns the sum of all contents in the specified array.
@@ -1054,10 +1050,11 @@ public class ArrayUtils {
      * @param increment the amount to raise the values
      * @param values the values to raise
      */
-    public static void addTo(double increment, double[] values) {
+    public static double[] addTo(double increment, double[] values) {
         for (int i = 0; i < values.length; i++) {
             values[i] += increment;
         }
+        return values;
     }
 
     /**
@@ -1065,10 +1062,11 @@ public class ArrayUtils {
      * @param increment the amount to raise the values
      * @param values the values to raise
      */
-    public static void addTo(double increment, double[] values, int[] indexesToRaise) {
+    public static double[] addTo(double increment, double[] values, int[] indexesToRaise) {
         for (int i = 0; i < indexesToRaise.length; i++) {
             values[indexesToRaise[i]] += increment;
         }
+        return values;
     }
 
     /**
@@ -1076,10 +1074,11 @@ public class ArrayUtils {
      * @param amount the amount to raise the values
      * @param values the values to raise
      */
-    public static void addTo(double[] increment, double[] values) {
+    public static double[] addTo(double[] increment, double[] values) {
         for (int i = 0; i < values.length; i++) {
             values[i] += increment[i];
         }
+        return values;
     }
 
     /**
