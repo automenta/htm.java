@@ -25,7 +25,7 @@ package org.numenta.nupic.model;
 import java.util.List;
 import java.util.Set;
 
-import org.numenta.nupic.Connections;
+import org.numenta.nupic.CLA;
 
 /**
  * Software implementation of a neuron in the neocortical region.
@@ -73,7 +73,7 @@ public class Cell implements Comparable<Cell> {
      * @param c     the connections state of the temporal memory
      * @param s
      */
-    public void addReceptorSynapse(Connections c, Synapse s) {
+    public void addReceptorSynapse(CLA c, Synapse s) {
         c.getReceptorSynapses(this).add(s);
     }
     
@@ -85,7 +85,7 @@ public class Cell implements Comparable<Cell> {
      * @return  the Set of {@link Synapse}s which have this cell
      *          as their source cells.
      */
-    public Set<Synapse> getReceptorSynapses(Connections c) {
+    public Set<Synapse> getReceptorSynapses(CLA c) {
         return c.getReceptorSynapses(this);
     }
     
@@ -96,7 +96,7 @@ public class Cell implements Comparable<Cell> {
      * @param index     the index of the new {@link DistalDendrite}
      * @return           a newly created {@link DistalDendrite}
      */
-    public DistalDendrite createSegment(Connections c, int index) {
+    public DistalDendrite createSegment(CLA c, int index) {
         DistalDendrite dd = new DistalDendrite(this, index);
         c.getSegments(this).add(dd);
         
@@ -109,7 +109,7 @@ public class Cell implements Comparable<Cell> {
      * @param   c   the connections state of the temporal memory
      * @return  a {@link List} of this {@code Cell}'s {@link DistalDendrite}s
      */
-    public List<DistalDendrite> getSegments(Connections c) {
+    public List<DistalDendrite> getSegments(CLA c) {
         return c.getSegments(this);
     }
     

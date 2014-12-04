@@ -28,10 +28,10 @@ import static org.junit.Assert.assertTrue;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
+import org.junit.Before;
 
 import org.junit.Test;
-import org.numenta.nupic.KEY;
-import org.numenta.nupic.Parameters;
+import org.numenta.nupic.CLA;
 import org.numenta.nupic.KEY;
 import org.numenta.nupic.integration.TemporalMemoryTestMachine.DetailedResults;
 import org.numenta.nupic.util.PatternMachine;
@@ -118,17 +118,18 @@ public class ExtensiveTemporalMemoryTest extends AbstractTemporalMemoryTest {
     /**
      * Basic static input for all tests in this class
      */
-    private void defaultSetup() {
-        parameters = Parameters.getAllDefaultParameters();
-        parameters.set(KEY.COLUMN_DIMENSIONS, new int[] { 100 });
-        parameters.set(KEY.CELLS_PER_COLUMN, 1);
-        parameters.set(KEY.INITIAL_PERMANENCE, 0.8);
-        parameters.set(KEY.CONNECTED_PERMANENCE, 0.7);
-        parameters.set(KEY.MIN_THRESHOLD, 11d);
-        parameters.set(KEY.MAX_NEW_SYNAPSE_COUNT, 11);
-        parameters.set(KEY.PERMANENCE_INCREMENT, 0.4);
-        parameters.set(KEY.PERMANENCE_DECREMENT, 0.0);
-        parameters.set(KEY.ACTIVATION_THRESHOLD, 8d);
+    @Before
+    public void defaultSetup() {
+        param = CLA.Default();
+        param.set(KEY.COLUMN_DIMENSIONS, new int[] { 100 });
+        param.set(KEY.CELLS_PER_COLUMN, 1);
+        param.set(KEY.INITIAL_PERMANENCE, 0.8);
+        param.set(KEY.CONNECTED_PERMANENCE, 0.7);
+        param.set(KEY.MIN_THRESHOLD, 11d);
+        param.set(KEY.MAX_NEW_SYNAPSE_COUNT, 11);
+        param.set(KEY.PERMANENCE_INCREMENT, 0.4);
+        param.set(KEY.PERMANENCE_DECREMENT, 0.0);
+        param.set(KEY.ACTIVATION_THRESHOLD, 8d);
     }
     
     /**
@@ -142,7 +143,7 @@ public class ExtensiveTemporalMemoryTest extends AbstractTemporalMemoryTest {
         
         int seed = 42;
         finishSetUp(new PatternMachine(
-            ((int[])parameters.get(KEY.COLUMN_DIMENSIONS))[0], 23, seed));
+            ((int[])param.get(KEY.COLUMN_DIMENSIONS))[0], 23, seed));
         
         // Instead of implementing the Python "shuffle" method, just use the exact output
         Integer[] shuffledNums = new Integer[] { 

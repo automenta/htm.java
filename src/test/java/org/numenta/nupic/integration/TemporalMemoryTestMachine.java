@@ -32,7 +32,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.numenta.nupic.Connections;
+import org.numenta.nupic.CLA;
 import org.numenta.nupic.model.Cell;
 import org.numenta.nupic.model.DistalDendrite;
 import org.numenta.nupic.model.Synapse;
@@ -53,9 +53,9 @@ import com.bethecoder.table.spec.AsciiTable;
  */
 public class TemporalMemoryTestMachine {
     private final TemporalMemory temporalMemory;
-    private final Connections connections;
+    private final CLA connections;
     
-    public TemporalMemoryTestMachine(TemporalMemory tm, Connections c) {
+    public TemporalMemoryTestMachine(TemporalMemory tm, CLA c) {
         this.temporalMemory = tm;
         this.connections = c;
     }
@@ -66,7 +66,7 @@ public class TemporalMemoryTestMachine {
         ComputeCycle result = null;
         for(Set<Integer> pattern : sequence) {
             if(pattern == SequenceMachine.NONE) {
-                temporalMemory.reset(connections);
+                temporalMemory.clear(connections);
             }else{
                 int[] patt = toIntArray(pattern);
                 result = temporalMemory.compute(connections, patt, learn);
@@ -74,7 +74,7 @@ public class TemporalMemoryTestMachine {
             interimResults.add(result.predictiveCells());
         }
         for(Set<Cell> set : interimResults) {
-            List<Integer> l = connections.asCellIndexes(set);
+            List<Integer> l = connections.getCellIndexes(set);
             results.add(new LinkedHashSet<>(l));
         }
         return results;

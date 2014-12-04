@@ -24,6 +24,7 @@ package org.numenta.nupic;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -39,6 +40,7 @@ import org.numenta.nupic.model.ProximalDendrite;
 import org.numenta.nupic.model.Segment;
 import org.numenta.nupic.model.Synapse;
 import org.numenta.nupic.research.SpatialPooler;
+import org.numenta.nupic.research.SpatialPooler.ColumnRadius;
 import org.numenta.nupic.research.TemporalMemory;
 import org.numenta.nupic.util.MersenneTwister;
 import org.numenta.nupic.util.SparseBinaryMatrix;
@@ -52,18 +54,40 @@ import org.numenta.nupic.util.SparseObjectMatrix;
  * (i.e. Cells, Columns, Segments, Synapses etc.). 
  * 
  * In the separation of data from logic, this class represents the data/state. 
+ * 
+ * TODO add iterator forms of the get...() methods which create collections,
+ * which if they are temporary, can be avoided with an iterator or visitor pattern
  */
-public class Connections {
+public class CLA {
+        
+    public static Build<CLA> Default() {
+        return new Build(
+            new HashMap() {{                
+                put(KEY.COLUMN_DIMENSIONS, new int[]{2048});
+                put(KEY.CELLS_PER_COLUMN, 32);
+
+                put(KEY.SEED, 42);
+                put(KEY.RANDOM, new MersenneTwister((long)((int)get(KEY.SEED))));
+        }});
+    }
+    
 	/////////////////////////////////////// Spatial Pooler Vars ///////////////////////////////////////////
-	private int potentialRadius = 16;
+    
+    private ColumnRadius potentialRadius;// = 16;
+    transient private double potentialRadiusAbsolute;
+    
     private double potentialPct = 0.5;
     private boolean globalInhibition = false;
     private double localAreaDensity = -1.0;
     private double numActiveColumnsPerInhArea;
     private double stimulusThreshold = 0;
-    private double synPermInactiveDec = 0.01;
+    
     private double synPermActiveInc = 0.10;
+    private double synPermInactiveDec = 0.01;
+        
     private double synPermConnected = 0.10;
+    private double synPermDisconnected = -1.0; //-1 to disable disconnection
+    
     private double synPermBelowStimulusInc = synPermConnected / 10.0;
     private double minPctOverlapDutyCycles = 0.001;
     private double minPctActiveDutyCycles = 0.001;
@@ -133,7 +157,7 @@ public class Connections {
     private double[] boostFactors;
     
     
-	/////////////////////////////////////// Temporal Memory Vars ///////////////////////////////////////////
+    /////////////////////////////////////// Temporal Memory Vars ///////////////////////////////////////////
     
     protected Set<Cell> activeCells = new LinkedHashSet<>();
     protected Set<Cell> winnerCells = new LinkedHashSet<>();
@@ -149,6 +173,7 @@ public class Connections {
     protected int cellsPerColumn = 32;
     /** What will comprise the Layer input. Input (i.e. from encoder) */
     protected int[] inputDimensions = new int[] { 32, 32 };
+    
     /** 
      * If the number of active connected synapses on a segment 
      * is at least this threshold, the segment is said to be active.
@@ -197,23 +222,30 @@ public class Connections {
     protected Map<Cell, Set<Synapse>> receptorSynapses;
     
     protected Map<Cell, List<DistalDendrite>> segments;
+    
     protected Map<Segment, List<Synapse>> synapses;
     
     /** Helps index each new Segment */
-    protected int segmentCounter = 0;
-    /** Helps index each new Synapse */
-    protected int synapseCounter = 0;
+    protected int segmentSerial = 0;
+    
+    /** Helps index each new Synapse */    
+    protected int synapseSerial = 0;
+    
     /** The default random number seed */
     protected int seed = 42;
+    
     /** The random number generator */
     protected Random random = new MersenneTwister(42);
     
     
-    /**
-     * Constructs a new {@code Connections} object. Use
-     * 
-     */
-    public Connections() {}
+    
+    protected CLA() {}
+    
+
+    public CLA(Build<CLA> param) {
+        super();
+        param.apply(this);
+    }
     
     /**
      * Returns the configured initial connected percent.
@@ -241,7 +273,7 @@ public class Connections {
      * @return
      */
     public int getSegmentCount() {
-    	return segmentCounter;
+    	return segmentSerial;
     }
     
     /**
@@ -249,7 +281,7 @@ public class Connections {
      * @param counter
      */
     public void setSegmentCount(int counter) {
-    	this.segmentCounter = counter;
+    	this.segmentSerial = counter;
     }
     
     /**
@@ -456,8 +488,13 @@ public class Connections {
      * 
      * @param potentialRadius
      */
-    public void setPotentialRadius(int potentialRadius) {
+    public void setPotentialRadius(ColumnRadius potentialRadius) {
         this.potentialRadius = potentialRadius;
+        this.potentialRadiusAbsolute = potentialRadius.getAbsoluteLength(this);
+    }
+    
+    public void setPotentialRadius(double absoluteRadius) {
+        setPotentialRadius( ColumnRadius.absolute(absoluteRadius) );
     }
     
     /**
@@ -465,8 +502,8 @@ public class Connections {
      * @return  the configured potential radius
      * @see {@link #setPotentialRadius(int)}
      */
-    public int getPotentialRadius() {
-        return Math.min(numInputs, potentialRadius);
+    public double getPotentialRadius() {
+        return Math.min(numInputs, potentialRadiusAbsolute);
     }
 
     /**
@@ -515,7 +552,7 @@ public class Connections {
      * @return
      */
     public int getSynapseCount() {
-    	return synapseCounter;
+    	return synapseSerial;
     }
     
     /**
@@ -523,7 +560,7 @@ public class Connections {
      * @param i
      */
     public void setSynapseCount(int i) {
-    	this.synapseCounter = i;
+    	this.synapseSerial = i;
     }
     
     /**
@@ -746,6 +783,14 @@ public class Connections {
      */
     public double getSynPermConnected() {
         return synPermConnected;
+    }
+    
+    /**
+     * @return the synapse permanence disconnection threshold; -1 disables the possibility of disconnection since permanence >= 0
+     * @see {@link #setSynPermConnected(double)}
+     */
+    public double getSynPermDisconnected() {
+        return synPermDisconnected;
     }
     
     /**
@@ -1511,8 +1556,8 @@ public class Connections {
      * @param cells
      * @return
      */
-    public List<Integer> asCellIndexes(Collection<Cell> cells) {
-        List<Integer> ints = new ArrayList<>();
+    public List<Integer> getCellIndexes(Collection<Cell> cells) {
+        List<Integer> ints = new ArrayList<>(cells.size());
         for(Cell cell : cells) {
             ints.add(cell.getIndex());
         }
@@ -1527,8 +1572,8 @@ public class Connections {
      * @param columns
      * @return
      */
-    public List<Integer> asColumnIndexes(Collection<Column> columns) {
-        List<Integer> ints = new ArrayList<>();
+    public List<Integer> getColumnIndexes(Collection<Column> columns) {
+        List<Integer> ints = new ArrayList<>(columns.size());
         for(Column col : columns) {
             ints.add(col.getIndex());
         }
@@ -1541,8 +1586,8 @@ public class Connections {
      * @param cells		the indexes of the {@link Cell}s to return
      * @return	the specified list of cells
      */
-    public List<Cell> asCellObjects(Collection<Integer> cells) {
-        List<Cell> objs = new ArrayList<>();
+    public List<Cell> getCellObjects(Collection<Integer> cells) {
+        List<Cell> objs = new ArrayList<>(cells.size());
         for(int i : cells) {
             objs.add(this.cells[i]);
         }
@@ -1554,8 +1599,8 @@ public class Connections {
      * @param cols		the indexes of the {@link Column}s to return
      * @return		the specified list of columns
      */
-    public List<Column> asColumnObjects(Collection<Integer> cols) {
-        List<Column> objs = new ArrayList<>();
+    public List<Column> getColumnObjects(Collection<Integer> cols) {
+        List<Column> objs = new ArrayList<>(cols.size());
         for(int i : cols) {
             objs.add(this.memory.getIndex(i));
         }
@@ -1585,7 +1630,7 @@ public class Connections {
      * @return				a List view of the specified columns
      */
     public List<Column> getColumnList(int[] indexes) {
-    	List<Column> retVal = new ArrayList<>();
+    	List<Column> retVal = new ArrayList<>(indexes.length);
     	for(int i = 0;i < indexes.length;i++) {
     		retVal.add(memory.getIndex(indexes[i]));
     	}

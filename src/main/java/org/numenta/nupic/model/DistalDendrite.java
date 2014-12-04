@@ -31,7 +31,7 @@ import java.util.Random;
 import java.util.Set;
 import org.apache.commons.math3.analysis.UnivariateFunction;
 
-import org.numenta.nupic.Connections;
+import org.numenta.nupic.CLA;
 
 /**
  * Represents a proximal or distal dendritic segment.
@@ -77,7 +77,7 @@ public class DistalDendrite extends Segment {
      * 
      * @return
      */
-    public Synapse createSynapse(Connections c, Cell sourceCell, double permanence, int index) {
+    public Synapse createSynapse(CLA c, Cell sourceCell, double permanence, int index) {
     	Pool pool = new Pool(1);
     	Synapse s = super.createSynapse(c, c.getSynapses(this), sourceCell, pool, index, sourceCell.getIndex());
     	pool.setPermanence(c, s, permanence);
@@ -90,7 +90,7 @@ public class DistalDendrite extends Segment {
      * @param   c   the connections state of the temporal memory
      * @return
      */
-    public List<Synapse> getAllSynapses(Connections c) {
+    public List<Synapse> getAllSynapses(CLA c) {
         return c.getSynapses(this);
     }
     
@@ -151,7 +151,7 @@ public class DistalDendrite extends Segment {
      * @param permanenceIncrement   the increment by which permanences are increased.
      * @param permanenceDecrement   the increment by which permanences are decreased.
      */
-    public void adaptSegment(Connections c, Set<Synapse> activeSynapses, double permanenceIncrement, double permanenceDecrement) {
+    public void adaptSegment(CLA c, Set<Synapse> activeSynapses, double permanenceIncrement, double permanenceDecrement) {
         for(Synapse synapse : c.getSynapses(this)) {
             double permanence = synapse.getPermanence();
             if(activeSynapses.contains(synapse)) {
@@ -177,7 +177,7 @@ public class DistalDendrite extends Segment {
      * @return                  a {@link Set} of previous winner {@link Cell}s which aren't already attached to any
      *                          {@link Synapse}s owned by this {@code Segment}
      */
-    public Set<Cell> pickCellsToLearnOn(Connections c, int numPickCells, Set<Cell> prevWinners, Random random) {
+    public Set<Cell> pickCellsToLearnOn(CLA c, int numPickCells, Set<Cell> prevWinners, Random random) {
         //Create a list of cells that aren't already synapsed to this segment
         Set<Cell> candidates = new LinkedHashSet<>(prevWinners);
         for(Synapse synapse : c.getSynapses(this)) {

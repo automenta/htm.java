@@ -26,8 +26,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import org.numenta.nupic.Connections;
-import org.numenta.nupic.Parameters;
+import org.numenta.nupic.CLA;
+import org.numenta.nupic.Build;
+import static org.numenta.nupic.CLA.Default;
 import org.numenta.nupic.integration.TemporalMemoryTestMachine.DetailedResults;
 import org.numenta.nupic.research.TemporalMemory;
 import org.numenta.nupic.util.PatternMachine;
@@ -42,35 +43,31 @@ import org.numenta.nupic.util.SequenceMachine;
  */
 public abstract class AbstractTemporalMemoryTest {
     protected TemporalMemory tm;
-    protected Connections connections;
+    protected CLA cla;
     protected PatternMachine patternMachine;
     protected SequenceMachine sequenceMachine;
     protected TemporalMemoryTestMachine tmTestMachine;
-    protected Parameters parameters;
+    protected Build<CLA> param;
     protected List<Set<Integer>> sequence;
     
     /**
      * Called from each test to instantiate a fresh {@link TemporalMemory}
      * object with configured parameters for the test.
      * 
-     * @see Parameters
+     * @see Build
      * @see TemporalMemory
      */
-    protected void initTM() {
-        tm = new TemporalMemory();
-        connections = new Connections();
-        if(parameters != null) {
-            parameters.apply(connections);
-        }
-        tm.init(connections);
+    protected void initTM() {        
+        cla = new CLA(param);
+        tm = new TemporalMemory(cla, TemporalMemory.Default());
     }
     
     /**
-     * Validates the {@link Parameters} and their existence.
+     * Validates the {@link Build} and their existence.
      * @return
      */
     private boolean checkParams() {
-        return parameters != null;
+        return param != null;
     }
     
     /**
@@ -81,7 +78,7 @@ public abstract class AbstractTemporalMemoryTest {
     protected void finishSetUp(PatternMachine patternMachine) {
         this.patternMachine = patternMachine;
         this.sequenceMachine = new SequenceMachine(patternMachine);
-        this.tmTestMachine = new TemporalMemoryTestMachine(tm, connections);
+        this.tmTestMachine = new TemporalMemoryTestMachine(tm, cla);
     }
     
     /**
@@ -94,7 +91,7 @@ public abstract class AbstractTemporalMemoryTest {
     protected void showInput(List<Set<Integer>> sequence, boolean learn, int num) {
         if(checkParams()) {
             System.out.println("New TemporalMemory Parameters:");
-            System.out.println(parameters);
+            System.out.println(param);
         }
         
         String sequenceText = sequenceMachine.prettyPrintSequence(sequence, 1);

@@ -25,7 +25,7 @@ package org.numenta.nupic;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.Serializable;
-import java.util.Collections;
+import java.lang.reflect.ParameterizedType;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
@@ -35,7 +35,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.numenta.nupic.model.Cell;
 import org.numenta.nupic.model.Column;
-import org.numenta.nupic.model.DistalDendrite;
 import org.numenta.nupic.research.ComputeCycle;
 import org.numenta.nupic.research.SpatialPooler;
 import org.numenta.nupic.research.TemporalMemory;
@@ -50,74 +49,19 @@ import org.numenta.nupic.util.MersenneTwister;
  * @author Kirill Solovyev
  * @see SpatialPooler
  * @see TemporalMemory
- * @see Connections
+ * @see CLA
  * @see ComputeCycle
  */
-public class Parameters implements Serializable {
-    private static Map<KEY, Object> DEFAULTS_ALL;
-    private static Map<KEY, Object> DEFAULTS_TEMPORAL;
-    private static Map<KEY, Object> DEFAULTS_SPATIAL;
-    
-
-    static {
-        Map<KEY, Object> defaultParams = new ParametersMap();
-
-        /////////// Universal Parameters ///////////
-
-        defaultParams.put(KEY.SEED, 42);
-        defaultParams.put(KEY.RANDOM, new MersenneTwister((long)((int)defaultParams.get(KEY.SEED))));
-
-        /////////// Temporal Memory Parameters ///////////
-        Map<KEY, Object> defaultTemporalParams = new ParametersMap();
-        defaultTemporalParams.put(KEY.COLUMN_DIMENSIONS, new int[]{2048});
-        defaultTemporalParams.put(KEY.CELLS_PER_COLUMN, 32);
-        defaultTemporalParams.put(KEY.ACTIVATION_THRESHOLD, 13d);
-        defaultTemporalParams.put(KEY.LEARNING_RADIUS, 2048);
-        defaultTemporalParams.put(KEY.MIN_THRESHOLD, 10d);
-        defaultTemporalParams.put(KEY.MAX_NEW_SYNAPSE_COUNT, 20);
-        defaultTemporalParams.put(KEY.INITIAL_PERMANENCE, 0.21);
-        defaultTemporalParams.put(KEY.CONNECTED_PERMANENCE, 0.5);
-        defaultTemporalParams.put(KEY.PERMANENCE_INCREMENT, 0.10);
-        defaultTemporalParams.put(KEY.PERMANENCE_DECREMENT, 0.10);
-        defaultTemporalParams.put(KEY.TM_VERBOSITY, 0);
-        DEFAULTS_TEMPORAL = Collections.unmodifiableMap(defaultTemporalParams);
-        defaultParams.putAll(DEFAULTS_TEMPORAL);
-
-        /// Spatial Pooler Parameters ///////////
-        Map<KEY, Object> defaultSpatialParams = new ParametersMap();
-        defaultSpatialParams.put(KEY.INPUT_DIMENSIONS, new int[]{64});
-        defaultSpatialParams.put(KEY.POTENTIAL_RADIUS, 16);
-        defaultSpatialParams.put(KEY.POTENTIAL_PCT, 0.5);
-        defaultSpatialParams.put(KEY.GLOBAL_INHIBITIONS, false);
-        defaultSpatialParams.put(KEY.INHIBITION_RADIUS, 0);
-        defaultSpatialParams.put(KEY.LOCAL_AREA_DENSITY, -1.0);
-        defaultSpatialParams.put(KEY.NUM_ACTIVE_COLUMNS_PER_INH_AREA, 10.0);
-        defaultSpatialParams.put(KEY.STIMULUS_THRESHOLD, 0.0);
-        defaultSpatialParams.put(KEY.SYN_PERM_INACTIVE_DEC, 0.01);
-        defaultSpatialParams.put(KEY.SYN_PERM_ACTIVE_INC, 0.1);
-        defaultSpatialParams.put(KEY.SYN_PERM_CONNECTED, 0.10);
-        defaultSpatialParams.put(KEY.SYN_PERM_BELOW_STIMULUS_INC, 0.01);
-        defaultSpatialParams.put(KEY.SYN_PERM_TRIM_THRESHOLD, 0.5);
-        defaultSpatialParams.put(KEY.MIN_PCT_OVERLAP_DUTY_CYCLE, 0.001);
-        defaultSpatialParams.put(KEY.MIN_PCT_ACTIVE_DUTY_CYCLE, 0.001);
-        defaultSpatialParams.put(KEY.DUTY_CYCLE_PERIOD, 1000);
-        defaultSpatialParams.put(KEY.MAX_BOOST, 10.0);
-        defaultSpatialParams.put(KEY.SP_VERBOSITY, 0);
-        DEFAULTS_SPATIAL = Collections.unmodifiableMap(defaultSpatialParams);
-        defaultParams.putAll(DEFAULTS_SPATIAL);
-
-        DEFAULTS_ALL = Collections.unmodifiableMap(defaultParams);
-    }
-
+public class Build<T> implements Serializable {    
 
     /**
      * Save guard decorator around params map
      */
     private static class ParametersMap extends EnumMap<KEY, Object> {
         /** Default serialvers */
-		private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-		ParametersMap() {
+	ParametersMap() {
             super(KEY.class);
         }
 
@@ -142,53 +86,42 @@ public class Parameters implements Serializable {
     public final Map<KEY, Object> paramMap = new ConcurrentHashMap();
     //TODO apply from container to parameters
 
-    /**
-     * Factory method. Return global {@link Parameters} object with default values
-     *
-     * @return {@link Parameters} object
-     */
-    public static Parameters getAllDefaultParameters() {
-        return getParameters(DEFAULTS_ALL);
+
+
+
+
+
+    /** from: http://stackoverflow.com/a/2434094 */
+    protected T newInstance() {
+        ParameterizedType superClass = (ParameterizedType) getClass().getGenericSuperclass();
+        Class<T> type = (Class<T>) superClass.getActualTypeArguments()[0];
+        try {
+            return type.newInstance();
+        }
+        catch (Exception e) {
+            // Oops, no default constructor
+            throw new RuntimeException(e);
+        }
+    }
+    
+    final static BeanUtil beanUtil = BeanUtil.getInstance();
+    
+    public T apply(T t) {        
+        Set<KEY> presentKeys = paramMap.keySet();
+        synchronized (paramMap) {            
+            for (KEY key : presentKeys) {
+                beanUtil.setSimpleProperty(t, key.fieldName, get(key));
+            }
+        }
+        return t;
     }
 
-    /**
-     * Factory method. Return temporal {@link Parameters} object with default values
-     *
-     * @return {@link Parameters} object
-     */
-    public static Parameters getTemporalDefaultParameters() {
-        return getParameters(DEFAULTS_TEMPORAL);
+    /** create an empty Build configuration */
+    public Build() {
+        
     }
-
-
-    /**
-     * Factory method. Return spatial {@link Parameters} object with default values
-     *
-     * @return {@link Parameters} object
-     */
-    public static Parameters getSpatialDefaultParameters() {
-        return getParameters(DEFAULTS_SPATIAL);
-    }
-
-    /**
-     * Factory method. Return encoder {@link Parameters} object with default values
-     *
-     * @return {@link Parameters} object
-     */
-    private static Parameters getParameters(Map<KEY, Object> map) {
-        return new Parameters(map);
-    }
-
-
-    /**
-     * Constructs a new {@code Parameters} object.
-     * It is private. Only allow instantiation with Factory methods.
-     * This way we will never have erroneous Parameters with missing attributes
-     */
-    protected Parameters() {
-    }
-
-    protected Parameters(Map<KEY,Object> map) {
+    
+    public Build(Map<KEY,Object> map) {
         for (KEY key : map.keySet()) {
             set(key, map.get(key));
         }
@@ -196,18 +129,13 @@ public class Parameters implements Serializable {
     
     /**
      * Sets the fields specified by this {@code Parameters} on the specified
-     * {@link Connections} object.
+     * {@link CLA} object.
      *
      * @param cn
      */
-    public void apply(Object cn) {
-        BeanUtil beanUtil = BeanUtil.getInstance();
-        Set<KEY> presentKeys = paramMap.keySet();
-        synchronized (paramMap) {
-            for (KEY key : presentKeys) {
-                beanUtil.setSimpleProperty(cn, key.fieldName, get(key));
-            }
-        }
+    public T build() {
+        T t = newInstance();
+        return apply(t);
     }
 
 
@@ -221,7 +149,7 @@ public class Parameters implements Serializable {
      * @param key
      * @param value
      */
-    public Parameters set(KEY key, Object value) {
+    public Build<T> set(KEY key, Object value) {
         if (value==null)
             remove(key);
         else
@@ -249,7 +177,7 @@ public class Parameters implements Serializable {
 
     /**
      * Convenience method to log difference this {@code Parameters} and specified
-     * {@link Connections} object.
+     * {@link CLA} object.
      *
      * @param cn
      * @return true if find it different

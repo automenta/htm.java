@@ -27,7 +27,7 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.numenta.nupic.Connections;
+import org.numenta.nupic.CLA;
 import org.numenta.nupic.model.Cell;
 import org.numenta.nupic.model.Column;
 import org.numenta.nupic.model.DistalDendrite;
@@ -64,7 +64,7 @@ public class ComputeCycle {
      * 
      * @param   c       the current connections state of the TemporalMemory
      */
-    public ComputeCycle(Connections c) {
+    public ComputeCycle(CLA c) {
         this.activeCells = new LinkedHashSet<>(c.getActiveCells());
         this.winnerCells = new LinkedHashSet<>(c.getWinnerCells());
         this.predictiveCells = new LinkedHashSet<>(c.getPredictiveCells());

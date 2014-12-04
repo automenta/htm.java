@@ -23,7 +23,7 @@ package org.numenta.nupic.model;
 
 import java.util.List;
 
-import org.numenta.nupic.Connections;
+import org.numenta.nupic.CLA;
 
 public class ProximalDendrite extends Segment {
 
@@ -42,10 +42,10 @@ public class ProximalDendrite extends Segment {
      * Creates the pool of {@link Synapse}s representing the connection to the
      * input vector.
      *
-     * @param c	the {@link Connections} memory
+     * @param c	the {@link CLA} memory
      * @param inputIndexes	indexes specifying the input vector bit
      */
-    public Pool createPool(Connections c, int[] inputIndexes) {
+    public Pool createPool(CLA c, int[] inputIndexes) {
         pool = new Pool(inputIndexes.length);
         for (int i = 0; i < inputIndexes.length; i++) {
             int synCount = c.getSynapseCount();
@@ -55,7 +55,7 @@ public class ProximalDendrite extends Segment {
         return pool;
     }
 
-    public void clearSynapses(Connections c) {
+    public void clearSynapses(CLA c) {
         List<Synapse> s = c.getSynapses(this, false);
         if (s != null) {
             s.clear();
@@ -77,10 +77,10 @@ public class ProximalDendrite extends Segment {
      * bits a given column will be "attached" to which is the same number as the
      * number of {@link Synapse}s
      *
-     * @param c	the {@link Connections} memory
+     * @param c	the {@link CLA} memory
      * @param perms	the floating point degree of connectedness
      */
-    public void setPermanences(Connections c, double[] perms) {
+    public void setPermanences(CLA c, double[] perms) {
         pool.resetConnections();
         c.getConnectedCounts().clearStatistics(index);
 
@@ -106,14 +106,14 @@ public class ProximalDendrite extends Segment {
      *
      * Note: This is the "sparse" version of this method.
      *
-     * @param c	the {@link Connections} memory
+     * @param c	the {@link CLA} memory
      * @param perms	the floating point degree of connectedness
      */
-    public void setPermanences(Connections c, double[] perms, int[] inputIndexes) {
+    public void setPermanences(CLA c, double[] perms, int[] inputIndexes) {
         pool.resetConnections();
         c.getConnectedCounts().clearStatistics(index);
         for (int i = 0; i < inputIndexes.length; i++) {
-            pool.setPermanence(c, pool.getSynapseWithInput(inputIndexes[i]), perms[i]);
+            pool.setPermanence(c, pool.getSynapse(inputIndexes[i]), perms[i]);
             if (perms[i] >= c.getSynPermConnected()) {
                 c.getConnectedCounts().set(true, index, i);
             }
@@ -127,7 +127,7 @@ public class ProximalDendrite extends Segment {
      * @param c
      * @param connectedIndexes
      */
-    public void setConnectedSynapsesForTest(Connections c, int[] connectedIndexes) {
+    public void setConnectedSynapsesForTest(CLA c, int[] connectedIndexes) {
         Pool pool = createPool(c, connectedIndexes);
         c.getPotentialPools().setIndex(pool, index);
     }
@@ -138,8 +138,8 @@ public class ProximalDendrite extends Segment {
      * @param c
      * @return
      */
-    public int[] getConnectedSynapsesDense(Connections c) {
-        return c.getPotentialPools().getIndex(index).getDenseConnections(c);
+    public int[] getConnectedSynapsesDense(CLA c) {
+        return c.getPotentialPools().getIndex(index).getConnectionsDense(c);
     }
 
     /**
@@ -149,7 +149,7 @@ public class ProximalDendrite extends Segment {
      * @param c
      * @return
      */
-    public int[] getConnectedSynapsesSparse(Connections c) {
+    public int[] getConnectedSynapsesSparse(CLA c) {
         return c.getPotentialPools().getIndex(index).getSparseConnections();
     }
 }

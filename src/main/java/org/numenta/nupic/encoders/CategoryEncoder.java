@@ -36,7 +36,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.numenta.nupic.Parameters;
+import org.numenta.nupic.Build;
 import org.numenta.nupic.util.ArrayUtils;
 import org.numenta.nupic.util.MinMax;
 import org.numenta.nupic.util.SparseObjectMatrix;
@@ -74,7 +74,7 @@ import org.numenta.nupic.util.Tuple;
  * @see ScalarEncoder
  * @see Encoder
  * @see EncoderResult
- * @see Parameters
+ * @see Build
  */
 public class CategoryEncoder extends Encoder<String> {
 	protected int ncategories;

@@ -29,9 +29,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
+import org.junit.Before;
 
 import org.junit.Test;
-import org.numenta.nupic.Parameters;
+import org.numenta.nupic.Build;
 import org.numenta.nupic.KEY;
 import org.numenta.nupic.integration.TemporalMemoryTestMachine.DetailedResults;
 import org.numenta.nupic.research.TemporalMemory;
@@ -50,17 +51,18 @@ public class BasicTemporalMemoryTest extends AbstractTemporalMemoryTest {
     /**
      * Basic static input for all tests in this class
      */
-    private void defaultSetup() {
-        parameters = Parameters.getAllDefaultParameters();
-        parameters.set(KEY.COLUMN_DIMENSIONS, new int[] { 6 });
-        parameters.set(KEY.CELLS_PER_COLUMN, 4);
-        parameters.set(KEY.INITIAL_PERMANENCE, 0.3);
-        parameters.set(KEY.CONNECTED_PERMANENCE, 0.5);
-        parameters.set(KEY.MIN_THRESHOLD, 1d);
-        parameters.set(KEY.MAX_NEW_SYNAPSE_COUNT, 6);
-        parameters.set(KEY.PERMANENCE_INCREMENT, 0.1);
-        parameters.set(KEY.PERMANENCE_DECREMENT, 0.05);
-        parameters.set(KEY.ACTIVATION_THRESHOLD, 1d);
+    @Before
+    public void start() {
+        param = new Build().
+            set(KEY.COLUMN_DIMENSIONS, new int[] { 6 }).
+            set(KEY.CELLS_PER_COLUMN, 4).
+            set(KEY.INITIAL_PERMANENCE, 0.3).
+            set(KEY.CONNECTED_PERMANENCE, 0.5).
+            set(KEY.MIN_THRESHOLD, 1d).
+            set(KEY.MAX_NEW_SYNAPSE_COUNT, 6).
+            set(KEY.PERMANENCE_INCREMENT, 0.1).
+            set(KEY.PERMANENCE_DECREMENT, 0.05).
+            set(KEY.ACTIVATION_THRESHOLD, 1d);
     }
     
     /**
@@ -68,13 +70,13 @@ public class BasicTemporalMemoryTest extends AbstractTemporalMemoryTest {
      */
     @Test
     public void testA() {
-        defaultSetup();
+        
         
         //Basic first order sequences
         initTM();
         
-        assertEquals(0.05, connections.getPermanenceDecrement(), .001);
-        assertEquals(0.1, connections.getPermanenceIncrement(), .001);
+        assertEquals(0.05, cla.getPermanenceDecrement(), .001);
+        assertEquals(0.1, cla.getPermanenceIncrement(), .001);
         
         finishSetUp(new ConsecutivePatternMachine(6, 1));
         
@@ -100,12 +102,12 @@ public class BasicTemporalMemoryTest extends AbstractTemporalMemoryTest {
      */
     @Test
     public void testB() {
-        defaultSetup();
+        
         
         initTM();
         
-        assertEquals(0.05, connections.getPermanenceDecrement(), .001);
-        assertEquals(0.1, connections.getPermanenceIncrement(), .001);
+        assertEquals(0.05, cla.getPermanenceDecrement(), .001);
+        assertEquals(0.1, cla.getPermanenceIncrement(), .001);
         
         finishSetUp(new ConsecutivePatternMachine(6, 1));
         
@@ -150,12 +152,12 @@ public class BasicTemporalMemoryTest extends AbstractTemporalMemoryTest {
      */
     @Test
     public void testC() {
-        defaultSetup();
+        
         
         initTM();
         
-        assertEquals(0.05, connections.getPermanenceDecrement(), .001);
-        assertEquals(0.1, connections.getPermanenceIncrement(), .001);
+        assertEquals(0.05, cla.getPermanenceDecrement(), .001);
+        assertEquals(0.1, cla.getPermanenceIncrement(), .001);
         
         finishSetUp(new ConsecutivePatternMachine(6, 1));
         
@@ -180,14 +182,14 @@ public class BasicTemporalMemoryTest extends AbstractTemporalMemoryTest {
      */
     @Test
     public void testD() {
-        defaultSetup();
-        parameters.setColumnDimensions(new int[] { 2 });
+        
+        param.setColumnDimensions(new int[] { 2 });
         
         initTM();
         
-        assertEquals(0.05, connections.getPermanenceDecrement(), .001);
-        assertEquals(0.1, connections.getPermanenceIncrement(), .001);
-        assertTrue(Arrays.equals(new int[] { 2 }, connections.getColumnDimensions()));
+        assertEquals(0.05, cla.getPermanenceDecrement(), .001);
+        assertEquals(0.1, cla.getPermanenceIncrement(), .001);
+        assertTrue(Arrays.equals(new int[] { 2 }, cla.getColumnDimensions()));
         
         finishSetUp(new ConsecutivePatternMachine(2, 1));
         
@@ -206,16 +208,16 @@ public class BasicTemporalMemoryTest extends AbstractTemporalMemoryTest {
      */
     @Test
     public void testE() {
-        defaultSetup();
-        parameters.setColumnDimensions(new int[] { 2 });
-        parameters.setMaxNewSynapseCount(1);
-        parameters.setCellsPerColumn(10);
+        
+        param.setColumnDimensions(new int[] { 2 });
+        param.setMaxNewSynapseCount(1);
+        param.setCellsPerColumn(10);
         
         initTM();
         
-        assertEquals(0.05, connections.getPermanenceDecrement(), .001);
-        assertEquals(0.1, connections.getPermanenceIncrement(), .001);
-        assertTrue(Arrays.equals(new int[] { 2 }, connections.getColumnDimensions()));
+        assertEquals(0.05, cla.getPermanenceDecrement(), .001);
+        assertEquals(0.1, cla.getPermanenceIncrement(), .001);
+        assertTrue(Arrays.equals(new int[] { 2 }, cla.getColumnDimensions()));
         
         finishSetUp(new ConsecutivePatternMachine(2, 1));
         
@@ -236,12 +238,12 @@ public class BasicTemporalMemoryTest extends AbstractTemporalMemoryTest {
      */
     @Test
     public void testF() {
-        defaultSetup();
-        parameters.setColumnDimensions(new int[] { 3 });
+        
+        param.setColumnDimensions(new int[] { 3 });
         
         initTM();
         
-        assertTrue(Arrays.equals(new int[] { 3 }, connections.getColumnDimensions()));
+        assertTrue(Arrays.equals(new int[] { 3 }, cla.getColumnDimensions()));
         
         finishSetUp(new ConsecutivePatternMachine(3, 1));
         
@@ -267,12 +269,12 @@ public class BasicTemporalMemoryTest extends AbstractTemporalMemoryTest {
      */
     @Test
     public void testG() {
-        defaultSetup();
-        parameters.setColumnDimensions(new int[] { 1 });
+        
+        param.setColumnDimensions(new int[] { 1 });
         
         initTM();
         
-        assertTrue(Arrays.equals(new int[] { 1 }, connections.getColumnDimensions()));
+        assertTrue(Arrays.equals(new int[] { 1 }, cla.getColumnDimensions()));
         
         finishSetUp(new ConsecutivePatternMachine(1, 1));
         

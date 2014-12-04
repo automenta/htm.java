@@ -22,7 +22,7 @@
 
 package org.numenta.nupic.model;
 
-import org.numenta.nupic.Connections;
+import org.numenta.nupic.CLA;
 import org.numenta.nupic.research.TemporalMemory;
 
 /**
@@ -68,7 +68,7 @@ public class Synapse {
      * @param index         this {@code Synapse}'s index
      * @param inputIndex	the index of this {@link Synapse}'s input; be it a Cell or InputVector bit.
      */
-    public Synapse(Connections c, Cell sourceCell, Segment segment, Pool pool, int index, int inputIndex) {
+    public Synapse(CLA c, Cell sourceCell, Segment segment, Pool pool, int index, int inputIndex) {
         this.sourceCell = sourceCell;
         this.segment = segment;
         this.pool = pool;
@@ -110,7 +110,7 @@ public class Synapse {
      * Sets this {@code Synapse}'s degree of connectedness.
      * @param perm
      */
-    public void setPermanence(Connections c, double perm) {
+    public void setPermanence(CLA c, double perm) {
         pool.setPermanence(c, this, perm);
     }
     

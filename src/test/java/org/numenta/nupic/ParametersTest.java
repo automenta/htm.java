@@ -33,12 +33,12 @@ import org.numenta.nupic.util.MersenneTwister;
 
 public class ParametersTest {
     @SuppressWarnings("unused")
-	private Parameters parameters;
+	private Build parameters;
 
     @Test
     public void testApply() {
         DummyContainer dc = new DummyContainer();
-        Parameters params = Parameters.getAllDefaultParameters();
+        Build params = CLA.Default();
         params.set(KEY.COLUMN_DIMENSIONS, new int[] { 2048 });
         params.set(KEY.POTENTIAL_PCT, 20.0);
         params.set(KEY.CELLS_PER_COLUMN, null);
@@ -49,7 +49,7 @@ public class ParametersTest {
 
     @Test
     public void testDefaults() {
-        Parameters params = Parameters.getAllDefaultParameters();
+        Build params = CLA.Default();
         assertEquals(params.get(KEY.CELLS_PER_COLUMN), 32);
         assertEquals(params.get(KEY.SEED), 42);
         assertEquals(true, params.get(KEY.RANDOM).getClass().equals(MersenneTwister.class));

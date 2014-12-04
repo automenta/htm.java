@@ -24,7 +24,7 @@ package org.numenta.nupic.model;
 
 import java.util.List;
 
-import org.numenta.nupic.Connections;
+import org.numenta.nupic.CLA;
 
 /**
  * For now simply a marker interface
@@ -51,7 +51,7 @@ public abstract class Segment {
      * 
      * @return
      */
-    public Synapse createSynapse(Connections c, List<Synapse> syns, Cell sourceCell, Pool pool, int index, int inputIndex) {
+    public Synapse createSynapse(CLA c, List<Synapse> syns, Cell sourceCell, Pool pool, int index, int inputIndex) {
         Synapse s = new Synapse(c, sourceCell, this, pool, index, inputIndex);
         syns.add(s);
         return s;

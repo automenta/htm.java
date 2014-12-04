@@ -397,7 +397,7 @@ public class ArrayUtils {
      * @throws IllegalArgumentException if the two argument arrays are not the same length
      */
     public static double[] divide(int[] dividend, int[] divisor) {
-        ensureEqualArrays(dividend.length, divisor.length);
+        ensureEqualArrayLength(dividend.length, divisor.length);
 
         double[] quotient = new double[dividend.length];
         double denom = 1;
@@ -408,7 +408,7 @@ public class ArrayUtils {
         return quotient;
     }
     public static double[] divide(int[] dividend, double[] divisor) {
-        ensureEqualArrays(dividend.length, divisor.length);
+        ensureEqualArrayLength(dividend.length, divisor.length);
         
         double[] quotient = new double[dividend.length];
         double denom = 1;
@@ -419,10 +419,10 @@ public class ArrayUtils {
         return quotient;
     }
     
-    public static void ensureEqualArrays(int x, int y) {        
+    public static void ensureEqualArrayLength(int x, int y) {        
         if (x!=y)
             throw new IllegalArgumentException(
-                    "The array operands must be equal length");
+                    "The array operands must be equal length: " + x + "!=" + y);
     }
 
     /**
@@ -497,10 +497,8 @@ public class ArrayUtils {
     public static double[] multiply(double[] multiplicand, double[] factor,
                                     double multiplicandAdjustment, double factorAdjustment) {
 
-        if (multiplicand.length != factor.length) {
-            throw new IllegalArgumentException(
-                    "The multiplicand array and the factor array must be the same length");
-        }
+        ensureEqualArrayLength(multiplicand.length, factor.length);
+        
         double[] product = new double[multiplicand.length];
         for (int i = 0; i < multiplicand.length; i++) {
             product[i] = (multiplicand[i] + multiplicandAdjustment) * (factor[i] + factorAdjustment);
@@ -817,6 +815,21 @@ public class ArrayUtils {
             n[i] = (int)v.getEntry(i);
         }
         return n;
+    }
+
+    public static final Random DEFAULT_RANDOM = new Random();
+    
+    public static int[] randomInt(int length, int bound) {
+        return randomInt(DEFAULT_RANDOM, length, bound);
+    }
+
+    /** @param bound ex: nextInt(2) returns 0 or 1 */
+    public static int[] randomInt(Random rand, int length, int bound) {
+        int[] r = new int[length];
+        for (int i = 0; i < length; i++) {            
+            r[i] = rand.nextInt(bound);
+        }
+        return r;
     }
 
     /**

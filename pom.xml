@@ -105,6 +105,9 @@
                     <failIfNoTests>false</failIfNoTests>
                 </configuration>
             </plugin>
+            
+            <!-- temporarily disable the following to run tests faster while developing: -->            
+            <!--
             <plugin>
                 <groupId>org.eluder.coveralls</groupId>
                 <artifactId>coveralls-maven-plugin</artifactId>
@@ -127,6 +130,7 @@
                     </execution>
                 </executions>
             </plugin>
+            -->
         </plugins>
     </build>
 </project>

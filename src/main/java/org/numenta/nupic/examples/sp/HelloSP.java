@@ -25,12 +25,14 @@ package org.numenta.nupic.examples.sp;
 import java.util.Arrays;
 import java.util.Random;
 
-import org.numenta.nupic.Connections;
-import org.numenta.nupic.Parameters;
+import org.numenta.nupic.CLA;
+import org.numenta.nupic.Build;
 import org.numenta.nupic.KEY;
 import org.numenta.nupic.research.SpatialPooler;
+import org.numenta.nupic.research.SpatialPooler.ColumnRadius;
 import org.numenta.nupic.util.ArrayUtils;
 import org.numenta.nupic.util.Condition;
+
 
 /**
  * A simple program that demonstrates the working of the spatial pooler
@@ -38,9 +40,9 @@ import org.numenta.nupic.util.Condition;
  * @author Neal Miller
  */
 public class HelloSP {
+    private Build<SpatialPooler> spParam;
     private final SpatialPooler sp;
-    private final Parameters parameters;
-    private final Connections mem;
+    private final CLA cla;
     private int[] inputArray;
     private final int[] activeArray;
     private int inputSize;
@@ -52,62 +54,57 @@ public class HelloSP {
      * @param columnDimensions        The size of the 2 dimensional array of columns
      */
     HelloSP(int[] inputDimensions, int[] columnDimensions) {
-        inputSize = 1;
+        
         columnNumber = 1;
-        for (int x : inputDimensions) {
-            inputSize *= x;
-        }
-        for (int x : columnDimensions) {
+        for (int x : columnDimensions)
             columnNumber *= x;
-        }
+        
         activeArray = new int[columnNumber];
         
-        parameters = Parameters.getSpatialDefaultParameters().
+        
+        cla = new CLA(CLA.Default().
             set(KEY.INPUT_DIMENSIONS, inputDimensions).
-            set(KEY.COLUMN_DIMENSIONS, columnDimensions).
-            set(KEY.POTENTIAL_RADIUS, inputSize).
+            set(KEY.COLUMN_DIMENSIONS, columnDimensions)
+        );
+        
+        sp = new SpatialPooler(cla, spParam = SpatialPooler.Default().
+            set(KEY.POTENTIAL_RADIUS, ColumnRadius.factorOfNumInputs(1.0)).
             set(KEY.GLOBAL_INHIBITIONS, true).
             set(KEY.NUM_ACTIVE_COLUMNS_PER_INH_AREA, 0.02*columnNumber).
             set(KEY.SYN_PERM_ACTIVE_INC, 0.01).
-            set(KEY.SYN_PERM_TRIM_THRESHOLD, 0.005);
-
-        System.out.println(parameters);
+            set(KEY.SYN_PERM_TRIM_THRESHOLD, 0.005)
+        );
         
-        sp = new SpatialPooler();
-        mem = new Connections();
-        parameters.apply(mem);
-        sp.init(mem);
+        inputSize = cla.getNumInputs();
+
+        System.out.println(spParam);
+    }
+    
+    public static void msg(String message) {
+        for (int i = 0; i < 5; i++) System.out.print("-----");
+        System.out.print(message);
+        for (int i = 0; i < 5; i++) System.out.print("-----");
+        System.out.println();
+        
     }
     
     /**
      * Create a random input vector
      */
     public void createInput() {
-        for (int i = 0; i < 70; i++) System.out.print("-");
-        System.out.print("Creating a random input vector");
-        for (int i = 0; i < 70; i++) System.out.print("-");
-        System.out.println();
-        
-        inputArray = new int[inputSize];
-        
-        Random rand = new Random();
-        for (int i = 0; i < inputSize; i++) {
-            // nextInt(2) returns 0 or 1
-            inputArray[i] = rand.nextInt(2);
-        }
+        msg("Creating a random input vector");
+        inputArray = ArrayUtils.randomInt(new Random(), inputSize, 2);
     }
+    
     
     /**
      * Run the spatial pooler with the input vector
      */
     public int[] run() {
-        for (int i = 0; i < 80; i++) System.out.print("-");
-        System.out.print("Computing the SDR");
-        for (int i = 0; i < 70; i++) System.out.print("-");
-        System.out.println();
         
-        sp.compute(mem, inputArray, activeArray, true, true);
+        msg("Computing the SDR");
         
+        sp.compute(cla, inputArray, activeArray, true, true);        
         
         System.out.println(Arrays.toString(activeArray));
         int[] res = ArrayUtils.where(activeArray, Condition.GreaterThanZero);
@@ -132,9 +129,9 @@ public class HelloSP {
         HelloSP example = new HelloSP(new int[]{32, 32}, new int[]{64, 64});
         
         // Lesson 1
-        System.out.println("\n \nFollowing columns represent the SDR");
-        System.out.println("Different set of columns each time since we randomize the input");
-        System.out.println("Lesson - different input vectors give different SDRs\n\n");
+        msg("\n \nFollowing columns represent the SDR " +
+        "Different set of columns each time since we randomize the input " +
+        "Lesson - different input vectors give different SDRs\n\n");
         
         //Trying random vectors
         for (int i = 0; i < 3; i++) {

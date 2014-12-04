@@ -33,7 +33,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.numenta.nupic.Parameters;
+import org.numenta.nupic.Build;
 import org.numenta.nupic.util.Tuple;
 
 /**
@@ -43,7 +43,7 @@ import org.numenta.nupic.util.Tuple;
  * 
  * @see Encoder
  * @see EncoderResult
- * @see Parameters
+ * @see Build
  * 
  * @author wlmiller
  */

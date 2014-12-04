@@ -28,7 +28,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
-import org.numenta.nupic.Connections;
+import org.numenta.nupic.CLA;
 import org.numenta.nupic.research.SpatialPooler;
 import org.numenta.nupic.research.TemporalMemory;
 
@@ -109,7 +109,7 @@ public class Column {
      * @param random
      * @return
      */
-    public Cell getLeastUsedCell(Connections c, Random random) {
+    public Cell getLeastUsedCell(CLA c, Random random) {
         List<Cell> cells = getCells();
         List<Cell> leastUsedCells = new ArrayList<>();
         int minNumSegments = Integer.MAX_VALUE;
@@ -142,30 +142,30 @@ public class Column {
     /**
      * Delegates the potential synapse creation to the one {@link ProximalDendrite}.
      * 
-     * @param c						the {@link Connections} memory
+     * @param c						the {@link CLA} memory
      * @param inputVectorIndexes	indexes specifying the input vector bit
      */
-    public Pool createPotentialPool(Connections c, int[] inputVectorIndexes) {
+    public Pool createPotentialPool(CLA c, int[] inputVectorIndexes) {
     	return proximalDendrite.createPool(c, inputVectorIndexes);
     }
     
     /**
      * Sets the permanences on the {@link ProximalDendrite} {@link Synapse}s
      * 
-     * @param c				the {@link Connections} memory object
+     * @param c				the {@link CLA} memory object
      * @param permanences	floating point degree of connectedness
      */
-    public void setProximalPermanences(Connections c, double[] permanences) {
+    public void setProximalPermanences(CLA c, double[] permanences) {
     	proximalDendrite.setPermanences(c, permanences);
     }
     
     /**
      * Sets the permanences on the {@link ProximalDendrite} {@link Synapse}s
      * 
-     * @param c				the {@link Connections} memory object
+     * @param c				the {@link CLA} memory object
      * @param permanences	floating point degree of connectedness
      */
-    public void setProximalPermanencesSparse(Connections c, double[] permanences, int[] indexes) {
+    public void setProximalPermanencesSparse(CLA c, double[] permanences, int[] indexes) {
     	proximalDendrite.setPermanences(c, permanences, indexes);
     }
     
@@ -175,7 +175,7 @@ public class Column {
      * @param c
      * @param connections
      */
-    public void setProximalConnectedSynapsesForTest(Connections c, int[] connections) {
+    public void setProximalConnectedSynapsesForTest(CLA c, int[] connections) {
     	proximalDendrite.setConnectedSynapsesForTest(c, connections);
     }
     
