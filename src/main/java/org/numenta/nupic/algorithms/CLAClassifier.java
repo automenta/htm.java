@@ -148,18 +148,50 @@ public class CLAClassifier implements Serializable {
         patternNZHistory = new Deque<>(steps.size() + 1);
     }
 
+    /** input to the classifier compute */
+    public static class Classify<O> {
+        
+        public final int bucketIdx;
+        public final O value;
+
+        public Classify(int bucketIndex, O value) {
+            this.bucketIdx = bucketIndex;
+            this.value = value;
+        }
+        
+        public Classify(O value) {
+            this(-1, value);
+        }
+        
+    }
+    
+    @Deprecated public <T> Classification<T> compute(int recordNum, Map<String, Object> classification, int[] patternNZ, boolean learn, boolean infer) {
+        
+        Object bucket = classification.get("bucketIdx");
+        Object value = classification.get("actValue");
+        
+        Classify c;
+        if (bucket == null)
+            c = new Classify(value);
+        else
+            c = new Classify((Integer)bucket, value);
+        
+        return compute(recordNum, c, patternNZ, learn, infer);
+        
+    }
     /**
      * Process one input sample. This method is called by outer loop code
      * outside the nupic-engine. We use this instead of the nupic engine
      * compute() because our inputs and outputs aren't fixed size vectors of
      * reals.
      *
-     * @param recordNum	Record number of this input pattern. Record numbers
+     * @param time	Record number of this input pattern. Record numbers
      * should normally increase sequentially by 1 each time unless there are
      * missing records in the dataset. Knowing this information insures that we
      * don't get confused by missing records.
-     * @param classification	{@link Map} of the classification information:
-     * bucketIdx: index of the encoder bucket actValue: actual value going into
+     * @param classify	{@link Map} of the classification information:
+     * @param bucketIdx: index of the encoder bucket 
+     * @param actValue: actual value going into
      * the encoder
      * @param patternNZ	list of the active indices from the output below
      * @param learn	if true, learn this sample
@@ -177,25 +209,25 @@ public class CLAClassifier implements Serializable {
      * 'actualValues': [1.5, 3,5, 5,5, 7.6], }
      */
     @SuppressWarnings("unchecked")
-    public <T> Classification<T> compute(int recordNum, Map<String, Object> classification, int[] patternNZ, boolean learn, boolean infer) {
+    public <T> Classification<T> compute(int time, Classify classify, int[] patternNZ, boolean learn, boolean infer) {
         Classification<T> retVal = new Classification<>();
         List<T> actualValues = (List<T>) this.actualValues;
 
 		// Save the offset between recordNum and learnIteration if this is the first
         // compute
         if (recordNumMinusLearnIteration == -1) {
-            recordNumMinusLearnIteration = recordNum - learnIteration;
+            recordNumMinusLearnIteration = time - learnIteration;
         }
 
         // Update the learn iteration
-        learnIteration = recordNum - recordNumMinusLearnIteration;
+        learnIteration = time - recordNumMinusLearnIteration;
 
         if (verbosity >= 1) {
             System.out.println(String.format("\n%s: compute ", g_debugPrefix));
-            System.out.println(" recordNum: " + recordNum);
+            System.out.println(" recordNum: " + time);
             System.out.println(" learnIteration: " + learnIteration);
             System.out.println(String.format(" patternNZ(%d): ", patternNZ.length, patternNZ));
-            System.out.println(" classificationIn: " + classification);
+            System.out.println(" classificationIn: " + classify);
         }
 
         patternNZHistory.append(new Tuple(learnIteration, patternNZ));
@@ -216,7 +248,7 @@ public class CLAClassifier implements Serializable {
             if (steps.get(0) == 0) {
                 defaultValue = 0;
             } else {
-                defaultValue = classification.get("actValue");
+                defaultValue = classify.value;
             }
 
             T[] actValues = (T[]) new Object[this.actualValues.size()];
@@ -270,10 +302,10 @@ public class CLAClassifier implements Serializable {
         // For each active bit in the activationPattern, store the classification
         // info. If the bucketIdx is None, we can't learn. This can happen when the
         // field is missing in a specific record.
-        if (learn && classification.get("bucketIdx") != null) {
+        if (learn && classify.bucketIdx != -1) {
             // Get classification info
-            int bucketIdx = (int) classification.get("bucketIdx");
-            Object actValue = classification.get("actValue");
+            int bucketIdx = classify.bucketIdx;
+            Object actValue = classify.value;
 
             // Update maxBucketIndex
             maxBucketIdx = Math.max(maxBucketIdx, bucketIdx);
@@ -301,7 +333,10 @@ public class CLAClassifier implements Serializable {
             int nSteps = -1;
             int iteration = 0;
             int[] learnPatternNZ = null;
-            for (int n : steps.toArray()) {
+            
+            for (int x = 0; x < steps.size(); x++) {
+                int n =steps.get(x);
+                
                 nSteps = n;
 				// Do we have the pattern that should be assigned to this classification
                 // in our pattern history? If not, skip it
@@ -324,7 +359,8 @@ public class CLAClassifier implements Serializable {
                 for (int bit : learnPatternNZ) {
                     // Get the history structure for this bit and step
                     IntTuple key = new IntTuple(bit, nSteps);
-                    BitHistory history = getActiveBitHistory().get(key);
+                    BitHistory history = getActiveBitHistory().get(
+                            key);
                     if (history == null) {
                         getActiveBitHistory().put(key, history = new BitHistory(this, bit, nSteps));
                     }

@@ -31,6 +31,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.junit.Test;
+import org.numenta.nupic.algorithms.CLAClassifier.Classify;
 
 public class CLAClassifierTest {
 	private CLAClassifier classifier;
@@ -331,41 +332,36 @@ public class CLAClassifierTest {
 	public void testMissingRecords() {
 		classifier = new CLAClassifier(new TIntArrayList(new int[] { 1 }), 0.1, 0.1, 0);
 		int recordNum = 0;
-		Map<String, Object> classification = new LinkedHashMap<>();
-		classification.put("bucketIdx", 0);
-		classification.put("actValue", 0);
-		classifier.compute(recordNum, classification, new int[] { 1, 3, 5 }, true, true);
+		
+                Classify classify = new Classify(0,0);
+                
+		classifier.compute(recordNum, classify, new int[] { 1, 3, 5 }, true, true);
 		recordNum += 1;
 		
-		classification.put("bucketIdx", 1);
-		classification.put("actValue", 1);
-		classifier.compute(recordNum, classification, new int[] { 2, 4, 6 }, true, true);
+		classify = new Classify(1,1);
+		classifier.compute(recordNum, classify, new int[] { 2, 4, 6 }, true, true);
 		recordNum += 1;
 		
-		classification.put("bucketIdx", 2);
-		classification.put("actValue", 2);
-		classifier.compute(recordNum, classification, new int[] { 1, 3, 5 }, true, true);
+		classify = new Classify(2,2);
+		classifier.compute(recordNum, classify, new int[] { 1, 3, 5 }, true, true);
 		recordNum += 1;
 		
-		classification.put("bucketIdx", 1);
-		classification.put("actValue", 1);
-		classifier.compute(recordNum, classification, new int[] { 2, 4, 6 }, true, true);
+		classify = new Classify(1,1);
+		classifier.compute(recordNum, classify, new int[] { 2, 4, 6 }, true, true);
 		recordNum += 1;
 		
 		// ----------------------------------------------------------------------------------
 		// At this point, we should have learned [1, 3, 5] => bucket 1
 		//                                       [2, 4, 6] => bucket 2
-		classification.put("bucketIdx", 2);
-		classification.put("actValue", 2);
-		Classification<Double> result = classifier.compute(recordNum, classification, new int[] { 1, 3, 5 }, true, true);
+		classify = new Classify(2,2);
+		Classification<Double> result = classifier.compute(recordNum, classify, new int[] { 1, 3, 5 }, true, true);
 		recordNum += 1;
 		assertEquals(0.0, result.getStat(1, 0), 0.00001);
 		assertEquals(1.0, result.getStat(1, 1), 0.00001);
 		assertEquals(0.0, result.getStat(1, 2), 0.00001);
 		
-		classification.put("bucketIdx", 1);
-		classification.put("actValue", 1);
-		result = classifier.compute(recordNum, classification, new int[] { 2, 4, 6 }, true, true);
+                classify = new Classify(1,1);                
+		result = classifier.compute(recordNum, classify, new int[] { 2, 4, 6 }, true, true);
 		recordNum += 1;
 		assertEquals(0.0, result.getStat(1, 0), 0.00001);
 		assertEquals(0.0, result.getStat(1, 1), 0.00001);
@@ -379,9 +375,9 @@ public class CLAClassifierTest {
 		// the previous learning associates with bucket 0
 		recordNum += 1; // <----- Does the skip
 		
-		classification.put("bucketIdx", 0);
-		classification.put("actValue", 0);
-		result = classifier.compute(recordNum, classification, new int[] { 1, 3, 5 }, true, true);
+                classify = new Classify(0,0);
+                
+		result = classifier.compute(recordNum, classify, new int[] { 1, 3, 5 }, true, true);
 		recordNum += 1;
 		assertEquals(0.0, result.getStat(1, 0), 0.00001);
 		assertEquals(1.0, result.getStat(1, 1), 0.00001);
@@ -391,9 +387,9 @@ public class CLAClassifierTest {
 		// the previous learning associates with bucket 0
 		recordNum += 1; // <----- Does the skip
 		
-		classification.put("bucketIdx", 0);
-		classification.put("actValue", 0);
-		result = classifier.compute(recordNum, classification, new int[] { 2, 4, 6 }, true, true);
+		classify = new Classify(0,0);
+                
+		result = classifier.compute(recordNum, classify, new int[] { 2, 4, 6 }, true, true);
 		recordNum += 1;
 		assertEquals(0.0, result.getStat(1, 0), 0.00001);
 		assertEquals(0.0, result.getStat(1, 1), 0.00001);
@@ -403,9 +399,9 @@ public class CLAClassifierTest {
 		// the previous learning associates with bucket 0
 		recordNum += 1; // <----- Does the skip
 		
-		classification.put("bucketIdx", 0);
-		classification.put("actValue", 0);
-		result = classifier.compute(recordNum, classification, new int[] { 1, 3, 5 }, true, true);
+		classify = new Classify(0,0);
+                
+		result = classifier.compute(recordNum, classify, new int[] { 1, 3, 5 }, true, true);
 		recordNum += 1;
 		assertEquals(0.0, result.getStat(1, 0), 0.00001);
 		assertEquals(1.0, result.getStat(1, 1), 0.00001);
@@ -421,10 +417,9 @@ public class CLAClassifierTest {
 	public void testMissingRecordInitialization() {
 		classifier = new CLAClassifier(new TIntArrayList(new int[] { 2 }), 0.1, 0.1, 0);
 		int recordNum = 0;
-		Map<String, Object> classification = new LinkedHashMap<>();
-		classification.put("bucketIdx", 0);
-		classification.put("actValue", 34.7);
-		classifier.compute(recordNum, classification, new int[] { 1, 5, 9 }, true, true);
+                
+                Classify classification;
+		classifier.compute(recordNum, classification = new Classify(0, 34.7), new int[] { 1, 5, 9 }, true, true);
 		
 		recordNum = 2;
 		Classification<Double> result = classifier.compute(recordNum, classification, new int[] { 1, 5, 9 }, true, true);
@@ -442,9 +437,6 @@ public class CLAClassifierTest {
 	public <T> Classification<T> compute(CLAClassifier classifier, int recordNum, int[] pattern,
 		int bucket, Object value) {
 		
-		Map<String, Object> classification = new LinkedHashMap<>();
-		classification.put("bucketIdx", bucket);
-		classification.put("actValue", value);
-		return classifier.compute(recordNum, classification, pattern, true, true);
+		return classifier.compute(recordNum, new Classify(bucket, value), pattern, true, true);
 	}
 }
