@@ -29,10 +29,8 @@ import java.io.Serializable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 import org.numenta.nupic.Build;
 
@@ -44,7 +42,6 @@ import org.numenta.nupic.util.ArrayUtils;
 import org.numenta.nupic.util.Condition;
 import static org.numenta.nupic.util.Condition.GreaterThanEqualToZero;
 import org.numenta.nupic.util.Condition.LessThan;
-import org.numenta.nupic.util.IMatrix;
 import org.numenta.nupic.util.IndexedMatrix;
 import org.numenta.nupic.util.SparseBinaryMatrix;
 import org.numenta.nupic.util.SparseBinaryMatrixTrueCount;

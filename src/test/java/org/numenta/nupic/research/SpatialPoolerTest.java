@@ -43,7 +43,7 @@ import org.numenta.nupic.util.SparseBinaryMatrixTrueCount;
 import org.numenta.nupic.util.SparseObjectMatrix;
 
 public class SpatialPoolerTest {
-    private Build<CLA> param;
+    private Build param;
     private SpatialPooler sp;
     private CLA cla;
     
@@ -51,6 +51,8 @@ public class SpatialPoolerTest {
         param = CLA.Default();
         param.set(KEY.INPUT_DIMENSIONS, new int[] { 5 });//5
         param.set(KEY.COLUMN_DIMENSIONS, new int[] { 5 });//5
+        
+        param.add(SpatialPooler.Default());
         param.set(KEY.POTENTIAL_RADIUS, 3);//3
         param.set(KEY.POTENTIAL_PCT, 0.5);//0.5
         param.set(KEY.GLOBAL_INHIBITIONS, false);
@@ -71,7 +73,7 @@ public class SpatialPoolerTest {
     
     private void initSP() {        
         cla = new CLA(param);        
-        sp = new SpatialPooler(cla, SpatialPooler.Default());
+        sp = new SpatialPooler(cla, param);
     }
     
     @Test

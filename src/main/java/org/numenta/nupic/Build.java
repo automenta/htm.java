@@ -54,6 +54,7 @@ import org.numenta.nupic.util.MersenneTwister;
  */
 public class Build<T> implements Serializable {    
 
+
     /**
      * Save guard decorator around params map
      */
@@ -141,6 +142,12 @@ public class Build<T> implements Serializable {
 
     public Object remove(KEY key) {
         return paramMap.remove(key);
+    }
+
+    /** merge another build with this */
+    public Build<T> add(Build b) {
+        paramMap.putAll(b.paramMap);
+        return this;
     }
     
     /**

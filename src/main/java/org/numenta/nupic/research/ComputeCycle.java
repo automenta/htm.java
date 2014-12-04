@@ -40,22 +40,34 @@ import org.numenta.nupic.model.Synapse;
  * through a comparison between states of those different cycles, therefore
  * this state container is necessary.
  * 
+ * TODO cells and segment collections can be combined using an inner class
+ * or array to hold their associated state.  this should improve performance
+ * 
  * @author David Ray
  */
 public class ComputeCycle {
-    Set<Cell> activeCells = new LinkedHashSet<>();
-    Set<Cell> winnerCells = new LinkedHashSet<>();
-    Set<Cell> predictiveCells = new LinkedHashSet<>();
-    Set<Column> predictedColumns = new LinkedHashSet<>();
-    Set<DistalDendrite> activeSegments = new LinkedHashSet<>();
-    Set<DistalDendrite> learningSegments = new LinkedHashSet<>();
-    Map<DistalDendrite, Set<Synapse>> activeSynapsesForSegment = new LinkedHashMap<>();
+    
+    public final Set<Cell> activeCells;
+    public final Set<Cell> winnerCells;
+    public final Set<Cell> predictiveCells;
+    public final Set<Column> predictedColumns;
+    public final Set<DistalDendrite> activeSegments;
+    public final Set<DistalDendrite> learningSegments;
+    public final Map<DistalDendrite, Set<Synapse>> activeSynapsesForSegment;
     
     
     /**
      * Constructs a new {@code ComputeCycle}
      */
-    public ComputeCycle() {}
+    public ComputeCycle() {
+        activeCells = new LinkedHashSet<>();
+        winnerCells = new LinkedHashSet<>();
+        predictiveCells = new LinkedHashSet<>();
+        predictedColumns = new LinkedHashSet<>();
+        activeSegments = new LinkedHashSet<>();
+        learningSegments = new LinkedHashSet<>();
+        activeSynapsesForSegment = new LinkedHashMap<>();    
+    }
     
     /**
      * Constructs a new {@code ComputeCycle} initialized with
@@ -73,6 +85,22 @@ public class ComputeCycle {
         this.learningSegments = new LinkedHashSet<>(c.getLearningSegments());
         this.activeSynapsesForSegment = new LinkedHashMap<>(c.getActiveSynapsesForSegment());
     }
+    
+    /** resets the compute cycle so it may be re-used */
+    void clear() {
+        
+        activeCells.clear();
+        winnerCells.clear();
+        this.predictiveCells.clear();
+        
+        this.predictedColumns.clear();
+        
+        this.activeSegments.clear();
+        this.learningSegments.clear();
+        
+        this.activeSynapsesForSegment.clear();        
+    }
+
     
     /**
      * Returns the current {@link Set} of active cells
@@ -132,4 +160,5 @@ public class ComputeCycle {
     public Map<DistalDendrite, Set<Synapse>> activeSynapsesForSegment() {
         return activeSynapsesForSegment;
     }
+
 }

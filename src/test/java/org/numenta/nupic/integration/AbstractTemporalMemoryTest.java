@@ -47,7 +47,7 @@ public abstract class AbstractTemporalMemoryTest {
     protected PatternMachine patternMachine;
     protected SequenceMachine sequenceMachine;
     protected TemporalMemoryTestMachine tmTestMachine;
-    protected Build<CLA> param;
+    protected Build param;
     protected List<Set<Integer>> sequence;
     
     /**
@@ -59,7 +59,7 @@ public abstract class AbstractTemporalMemoryTest {
      */
     protected void initTM() {        
         cla = new CLA(param);
-        tm = new TemporalMemory(cla, TemporalMemory.Default());
+        tm = new TemporalMemory(cla, param);
     }
     
     /**

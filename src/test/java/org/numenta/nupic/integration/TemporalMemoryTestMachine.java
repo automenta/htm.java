@@ -64,12 +64,13 @@ public class TemporalMemoryTestMachine {
         List<Set<Integer>> results = new ArrayList<>();
         List<Set<Cell>> interimResults = new ArrayList<>();
         ComputeCycle result = null;
+        
         for(Set<Integer> pattern : sequence) {
             if(pattern == SequenceMachine.NONE) {
                 temporalMemory.clear(connections);
             }else{
                 int[] patt = toIntArray(pattern);
-                result = temporalMemory.compute(connections, patt, learn);
+                result = temporalMemory.compute(connections, patt, learn, result);
             }
             interimResults.add(result.predictiveCells());
         }

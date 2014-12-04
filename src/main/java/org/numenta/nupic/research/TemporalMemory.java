@@ -119,12 +119,13 @@ public class TemporalMemory {
      * @param connections	the connection memory
      * @param activeColumns direct proximal dendrite input
      * @param learn learning mode flag
+     * @param recyclableCycle an existing ComputeCycle to re-use, or null to create a new
      * @return {@link ComputeCycle} container for one cycle of inference values.
      */
-    public ComputeCycle compute(CLA connections, int[] activeColumns, boolean learn) {
+    public ComputeCycle compute(CLA connections, int[] activeColumns, boolean learn, ComputeCycle recyclableCycle) {
         ComputeCycle result = computeFn(connections, connections.getColumnSet(activeColumns), new LinkedHashSet<>(connections.getPredictiveCells()),
                 new LinkedHashSet<>(connections.getActiveSegments()), new LinkedHashMap<>(connections.getActiveSynapsesForSegment()),
-                new LinkedHashSet<>(connections.getWinnerCells()), learn);
+                new LinkedHashSet<>(connections.getWinnerCells()), learn, recyclableCycle);
 
         connections.setActiveCells(result.activeCells());
         connections.setWinnerCells(result.winnerCells());
@@ -151,9 +152,12 @@ public class TemporalMemory {
      * @return
      */
     public ComputeCycle computeFn(CLA c, Set<Column> activeColumns, Set<Cell> prevPredictiveCells, Set<DistalDendrite> prevActiveSegments,
-            Map<DistalDendrite, Set<Synapse>> prevActiveSynapsesForSegment, Set<Cell> prevWinnerCells, boolean learn) {
+            Map<DistalDendrite, Set<Synapse>> prevActiveSynapsesForSegment, Set<Cell> prevWinnerCells, boolean learn, ComputeCycle cycle) {
 
-        ComputeCycle cycle = new ComputeCycle();
+        if (cycle == null)
+            cycle = new ComputeCycle();
+        else
+            cycle.clear();
 
         activateCorrectlyPredictiveCells(cycle, prevPredictiveCells, activeColumns);
 
@@ -163,7 +167,7 @@ public class TemporalMemory {
             learnOnSegments(c, prevActiveSegments, cycle.learningSegments, prevActiveSynapsesForSegment, cycle.winnerCells, prevWinnerCells);
         }
 
-        cycle.activeSynapsesForSegment = computeActiveSynapses(c, cycle.activeCells);
+        computeActiveSynapses(c, cycle.activeCells, cycle.activeSynapsesForSegment);
 
         computePredictiveCells(c, cycle, cycle.activeSynapsesForSegment);
 
@@ -327,9 +331,15 @@ public class TemporalMemory {
      * @param cellsActive
      * @return
      */
-    public Map<DistalDendrite, Set<Synapse>> computeActiveSynapses(CLA c, Set<Cell> cellsActive) {
-        Map<DistalDendrite, Set<Synapse>> activesSynapses = new LinkedHashMap<>();
+    public Map<DistalDendrite, Set<Synapse>> computeActiveSynapses(CLA c, Set<Cell> cellsActive, Map<DistalDendrite, Set<Synapse>> activesSynapses) {        
 
+        if (activesSynapses == null) {
+            activesSynapses = new LinkedHashMap();
+        }
+        else {
+            activesSynapses.clear();
+        }
+        
         for (Cell cell : cellsActive) {
             for (Synapse s : cell.getReceptorSynapses(c)) {
                 Set<Synapse> set = null;
@@ -493,5 +503,9 @@ public class TemporalMemory {
      */
     public LinkedHashSet<Column> getColumns(CLA c, int[] columnIndexes) {
         return c.getColumnSet(columnIndexes);
+    }
+
+    Map<DistalDendrite, Set<Synapse>> computeActiveSynapses(CLA cla, Set<Cell> activeCells) {
+        return computeActiveSynapses(cla, activeCells, null);
     }
 }
