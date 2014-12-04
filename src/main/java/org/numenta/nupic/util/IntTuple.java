@@ -8,18 +8,27 @@ package org.numenta.nupic.util;
 import gnu.trove.list.array.TIntArrayList;
 
 /**
- *
- * @author me
+ * TIntArrayList that caches hash code when constructed
  */
 public class IntTuple extends TIntArrayList implements ITuple<Integer> {
+    
+    private final int hash;
 
     public IntTuple(int... values) {
         super(values);
+        
+        hash = super.hashCode();
     }
     
     @Override
     public Integer the(int index) {
         return super.getQuick(index);
     }
+
+    @Override
+    public int hashCode() {
+        return hash;
+    }
+    
     
 }
